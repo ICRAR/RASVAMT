@@ -68,12 +68,14 @@ YUM_PACKAGES = [
    'wget.x86_64',
    'gcc',
    'patch',
+   'httpd24',
 ]
 
 APT_PACKAGES = [
         'libreadline-dev',
         'sqlite3',
         'libsqlite3-dev',
+        'httpd24',
         ]
 
 
@@ -782,13 +784,7 @@ def test_deploy():
     system_install()
     if env.postfix:
         postfix_config()
-    user_setup()
-    with settings(user=USERS[0]):
-        ppath = check_python()
-        if not ppath:
-            python_setup()
-        virtualenv_setup()
-        package_install()
+    install()
     #init_deploy()
 
 @task
