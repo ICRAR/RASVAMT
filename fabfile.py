@@ -30,9 +30,15 @@ from fabric.operations import prompt
 from fabric.utils import puts, abort, fastprint
 
 #Defaults
+#Defaults
+thisDir = os.path.dirname(os.path.realpath(__file__))
+
 USERNAME = 'ec2-user'
 POSTFIX = False
-AMI_ID = 'ami-7c807d14' # This is correct for the US-East1 region
+
+# The AMI Ids are correct for the US-EAST1 region
+AMI_IDs = {'New':'ami-7c807d14', 'CentOS':'ami-aecd60c7', 'SLES':'ami-e8084981'}
+AMI_ID = AMI_IDs['New']
 INSTANCE_NAME = 'RASVAMT'
 INSTANCE_TYPE = 't1.micro'
 INSTANCES_FILE = os.path.expanduser('~/.aws/aws_instances')
@@ -42,12 +48,12 @@ AWS_KEY = os.path.expanduser('~/.ssh/icrar_ngas.pem')
 KEY_NAME = 'icrar_ngas'
 SECURITY_GROUPS = ['NGAS'] # Security group allows SSH and other ports
 ####
-ELASTIC_IP = False
+ELASTIC_IP = 'False'
 APP_PYTHON_VERSION = '2.7'
 APP_PYTHON_URL = 'http://www.python.org/ftp/python/2.7.6/Python-2.7.6.tar.bz2'
 USERS = ['rasvamt']
 GROUP = 'rasvamt'
-PORTAL_DIR = 'rasvamt_portal' # runtime directory
+APP_DIR = 'rasvamt_portal' # runtime directory
 APP_DEF_DB = '/home/rasvamt/DB/rasvamt.sqlite'
 GITUSER = 'icrargit'
 GITREPO = 'github.com:ICRAR/RASVAMT'
@@ -218,6 +224,30 @@ def create_instance(names, use_elastic_ip, public_ips):
 
     return host_names
 
+@task
+def get_linux_flavor():
+    """
+    Obtain and set the env variable linux_flavor
+    """
+    if (check_path('/etc/issue')):
+        re = run('cat /etc/issue')
+        linux_flavor = re.split()
+        if (len(linux_flavor) > 0):
+            if linux_flavor[0] == 'CentOS' or linux_flavor[0] == 'Ubuntu' \
+               or linux_flavor[0] == 'Debian':
+                linux_flavor = linux_flavor[0]
+            elif linux_flavor[0] == 'Amazon':
+                linux_flavor = ' '.join(linux_flavor[:2])
+            elif linux_flavor[2] == 'SUSE':
+                linux_flavor = linux_flavor[2]
+    else:
+        linux_flavor = run('uname -s')
+
+    print "Remote machine running %s" % linux_flavor
+    env.linux_flavor = linux_flavor
+    return linux_flavor
+
+
 
 def to_boolean(choice, default=False):
     """Convert the yes/no to true/false
@@ -272,7 +302,7 @@ def check_python():
     path to python binary    string, could be empty string
     """
     # Try whether there is already a local python installation for this user
-    ppath = os.path.realpath(env.PORTAL_DIR_ABS+'/../python')
+    ppath = os.path.realpath(env.APP_DIR_ABS+'/../python')
     ppath = check_command('{0}/bin/python{1}'.format(ppath, APP_PYTHON_VERSION))
     if ppath:
         return ppath
@@ -352,8 +382,8 @@ def virtualenv(command):
     """
     Just a helper function to execute commands in the virtualenv
     """
-    env.activate = 'source {0}/bin/activate'.format(env.PORTAL_DIR_ABS)
-    with cd(env.PORTAL_DIR_ABS):
+    env.activate = 'source {0}/bin/activate'.format(env.APP_DIR_ABS)
+    with cd(env.APP_DIR_ABS):
         run(env.activate + '&&' + command)
 
 def git_clone():
@@ -361,7 +391,7 @@ def git_clone():
     Clones the repository.
     """
     copy_public_keys()
-    with cd(env.PORTAL_DIR_ABS):
+    with cd(env.APP_DIR_ABS):
         run('git clone {0}@{1}'.format(env.GITUSER, env.GITREPO))
 
 
@@ -376,10 +406,10 @@ def git_clone_tar():
     set_env()
     with cd('/tmp'):
         local('cd /tmp && git clone {0}@{1}'.format(env.GITUSER, env.GITREPO))
-        local('cd /tmp && tar -cjf {0}.tar.bz2 {0}'.format(PORTAL_DIR))
-        tarfile = '{0}.tar.bz2'.format(PORTAL_DIR)
+        local('cd /tmp && tar -cjf {0}.tar.bz2 {0}'.format(APP_DIR))
+        tarfile = '{0}.tar.bz2'.format(APP_DIR)
         put('/tmp/{0}'.format(tarfile), tarfile)
-        local('rm -rf /tmp/{0}'.format(PORTAL_DIR))  # cleanup local git clone dir
+        local('rm -rf /tmp/{0}'.format(APP_DIR))  # cleanup local git clone dir
         run('tar -xjf {0} && rm {0}'.format(tarfile))
 
 
@@ -497,6 +527,8 @@ default_destination_concurrency_limit = 1" >> /etc/postfix/main.cf''')
     sudo('chmod 400 /etc/postfix/sasl_passwd')
     sudo('postmap /etc/postfix/sasl_passwd')
 
+
+@task
 def user_setup():
     """
     setup ngas users.
@@ -507,22 +539,23 @@ def user_setup():
     set_env()
     if not env.user:
         env.user = USERNAME # defaults to ec2-user
-    sudo('groupadd '.format(GROUP), warn_only=True)
+    sudo('groupadd {0}'.format(GROUP), warn_only=True)
     for user in env.USERS:
-        sudo('useradd -g {0} -m -s /bin/bash {1}'.format(group, user), warn_only=True)
+        sudo('useradd -g {0} -m -s /bin/bash {1}'.format(GROUP, user), warn_only=True)
         sudo('mkdir /home/{0}/.ssh'.format(user), warn_only=True)
         sudo('chmod 700 /home/{0}/.ssh'.format(user))
         sudo('chown -R {0}:{1} /home/{0}/.ssh'.format(user,GROUP))
         home = run('echo $HOME')
         sudo('cp {0}/.ssh/authorized_keys /home/{1}/.ssh/authorized_keys'.format(home, user))
         sudo('chmod 600 /home/{0}/.ssh/authorized_keys'.format(user))
-        sudo('chown {0}:{1} /home/{0}/.ssh/authorized_keys'.format(user, group))
+        sudo('chown {0}:{1} /home/{0}/.ssh/authorized_keys'.format(user, GROUP))
         
     # create NGAS directories and chown to correct user and group
     sudo('mkdir -p {0}'.format(env.APP_DIR_ABS))
-    sudo('chown {0}:{1} {2}'.format(env.APP_USERS[0], group, env.APP_DIR_ABS))
+    sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
     sudo('mkdir -p {0}/../NGAS'.format(env.APP_DIR_ABS))
-    sudo('chown {0}:{1} {2}/../NGAS'.format(env.USERS[0], group, env.APP_DIR_ABS))
+    sudo('chown {0}:{1} {2}/../NGAS'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
+    print "\n\n******** USER SETUP COMPLETED!********\n\n"
 
 
 @task
@@ -549,6 +582,7 @@ def python_setup():
         run('./configure --prefix {0};make;make install'.format(ppath))
         ppath = '{0}/bin/python{1}'.format(ppath,APP_PYTHON_VERSION)
     env.PYTHON = ppath
+    print "\n\n******** PYTHON SETUP COMPLETED!********\n\n"
 
 
 @task
@@ -558,14 +592,16 @@ def virtualenv_setup():
     """
     set_env()
     check_python()
-    print "CHECK_DIR: {0}".format(check_dir(env.PORTAL_DIR_ABS))
-    if check_dir(env.PORTAL_DIR_ABS):
-        abort('{0} directory exists already'.format(env.PORTAL_DIR_ABS))
+    print "CHECK_DIR: {0}/src".format(check_dir(env.APP_DIR_ABS))
+    if check_dir(env.APP_DIR_ABS+'/src'):
+        abort('{0}/src directory exists already'.format(env.APP_DIR_ABS))
 
     with cd('/tmp'):
-        run('wget --no-check-certificate -q https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.10.tar.gz')
-        run('tar -xvzf virtualenv-1.10.tar.gz')
-        run('cd virtualenv-1.10; {0} virtualenv.py {1}'.format(env.PYTHON, env.PORTAL_DIR_ABS))
+        run('wget https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.tar.gz')
+        run('tar -xzf virtualenv-1.11.tar.gz')
+        with settings(user=env.USERS[0]):
+            run('cd virtualenv-1.11; {0} virtualenv.py {1}'.format(env.PYTHON, env.APP_DIR_ABS))
+    print "\n\n******** VIRTUALENV SETUP COMPLETED!********\n\n"
 
 @task
 def package_install():
@@ -584,6 +620,17 @@ def test_env():
 
     Allow the user to select if a Elastic IP address is to be used
     """
+    if not env.has_key('instance_name') or not env.instance_name:
+        env.instance_name = INSTANCE_NAME
+    if not env.has_key('use_elastic_ip') or not env.use_elastic_ip:
+        env.use_elastic_ip = ELASTIC_IP
+    if not env.has_key('key_filename') or not env.key_filename:
+        env.key_filename = AWS_KEY
+    if not env.has_key('ami_name') or not env.ami_name:
+        env.ami_name = 'CentOS'
+    env.AMI_ID = AMI_IDs[env.ami_name]
+    env.instance_name = INSTANCE_NAME
+    env.use_elastic_ip = ELASTIC_IP
     if 'use_elastic_ip' in env:
         use_elastic_ip = to_boolean(env.use_elastic_ip)
     else:
@@ -605,10 +652,16 @@ def test_env():
     if not env.host_string:
         env.host_string = env.hosts[0]
     env.user = USERNAME
+    if env.ami_name == 'SLES':
+        env.user = 'root'
+
     env.key_filename = AWS_KEY
     env.roledefs = {
-        USERS[0] : host_names,
+        'ngasmgr' : host_names,
+        'ngas' : host_names,
     }
+    print "\n\n******** EC2 ENVIRONMENT SETUP!********\n\n"
+
 
 @task
 def user_deploy():
@@ -635,16 +688,16 @@ def init_deploy():
     #       is just a hook.
     """
 
-    if not env.has_key('PORTAL_DIR_ABS') or not env.PORTAL_DIR_ABS:
-        env.PORTAL_DIR_ABS = '{0}/{1}'.format('/home/ngas', PORTAL_DIR)
+    if not env.has_key('APP_DIR_ABS') or not env.APP_DIR_ABS:
+        env.APP_DIR_ABS = '{0}/{1}'.format('/home/ngas', APP_DIR)
 
     sudo('cp {0}/src/ngamsStartup/ngamsServer.init.sh /etc/init.d/ngamsServer'.\
-         format(env.PORTAL_DIR_ABS))
+         format(env.APP_DIR_ABS))
     sudo('chmod a+x /etc/init.d/ngamsServer')
     sudo('chkconfig --add /etc/init.d/ngamsServer')
-    with cd(env.PORTAL_DIR_ABS):
+    with cd(env.APP_DIR_ABS):
         sudo('ln -s {0}/cfg/{1} {0}/cfg/ngamsServer.conf'.format(\
-              env.PORTAL_DIR_ABS, APP_DEF_DB))
+              env.APP_DIR_ABS, APP_DEF_DB))
 
 
 
@@ -681,13 +734,40 @@ def operations_deploy():
     #init_deploy()
 
 @task
-def install():
+def install(standalone=0):
     """
-    Just execute the installation methods, not the system setup
+    Install NGAS users and NGAS software on existing machine.
+    Note: Requires root permissions!
     """
-    virtualenv_setup()
-    zope_install()
-    content_install()
+    set_env()
+    user_setup()
+    with settings(user=env.USERS[0]):
+        ppath = check_python()
+        if not ppath:
+            python_setup()
+    if env.PREFIX != env.HOME: # generate non-standard directory
+        sudo('mkdir -p {0}'.format(env.PREFIX))
+        sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.PREFIX))
+    with settings(user=env.USERS[0]):
+        virtualenv_setup()
+        # more installation goes here
+#    init_deploy() TODO: Fix this for what is required for the APP
+    print "\n\n******** INSTALLATION COMPLETED!********\n\n"
+
+@task
+def uninstall():
+    """
+    Uninstall NGAS, NGAS users and init script.
+    
+    NOTE: This can only be used with a sudo user.
+    """
+    set_env()
+    for u in env.USERS:
+        sudo('userdel -r {0}'.format(u), warn_only=True)
+    sudo('groupdel {0}'.format(GROUP), warn_only=True)
+    sudo('rm -rf {0}'.format(env.PREFIX), warn_only=True)
+    sudo('rm -rf {0}'.format(env.APP_DIR_ABS), warn_only=True)
+    print "\n\n******** UNINSTALL COMPLETED!********\n\n"
 
 @task
 @serial
@@ -722,4 +802,4 @@ def uninstall():
             sudo('userdel -r {0}'.format(u), warn_only=True)
 #            sudo('rm /etc/init.d/ngamsServer', warn_only=True)
     else:
-        run('rm -rf {0}'.format(env.PORTAL_DIR_ABS))
+        run('rm -rf {0}'.format(env.APP_DIR_ABS))
