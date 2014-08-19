@@ -38,15 +38,18 @@ POSTFIX = False
 
 # The AMI Ids are correct for the US-EAST1 region
 AMI_IDs = {'New':'ami-7c807d14', 'CentOS':'ami-aecd60c7', 'SLES':'ami-e8084981'}
+# Probably want to change region for us to ap-southeast-2
+SYD_AMI_IDs = {'New':'ami-d9fe9be3','CentOS':'ami-5d254067','SLES':'ami-3760040d'}
 AMI_ID = AMI_IDs['New']
 INSTANCE_NAME = 'RASVAMT'
 INSTANCE_TYPE = 't1.micro'
 INSTANCES_FILE = os.path.expanduser('~/.aws/aws_instances')
 
 #### This should be replaced by another key and security group
-AWS_KEY = os.path.expanduser('~/.ssh/icrar_ngas.pem')
-KEY_NAME = 'icrar_ngas'
-SECURITY_GROUPS = ['NGAS'] # Security group allows SSH and other ports
+AWS_KEY = os.path.expanduser('~/.ssh/RASVAMT.pem')
+KEY_NAME = 'RASVAMT'
+#SECURITY_GROUPS = {'RASVAMT':'Allows ssh with RASVAMT'} # Security group allows SSH and other ports
+SECURITY_GROUPS = ['RASVAMT']
 ####
 ELASTIC_IP = 'False'
 APP_PYTHON_VERSION = '2.7'
@@ -55,8 +58,12 @@ USERS = ['rasvamt']
 GROUP = 'rasvamt'
 APP_DIR = 'rasvamt_portal' # runtime directory
 APP_DEF_DB = '/home/rasvamt/DB/rasvamt.sqlite'
+
 GITUSER = 'icrargit'
-GITREPO = 'github.com:ICRAR/RASVAMT'
+GITREPO = 'github.com/ICRAR/RASVAMT'
+
+#Check Boto 
+BOTO_CONFIG = os.path.expanduser('~/.boto')
 
 YUM_PACKAGES = [
    'autoconf',
@@ -91,6 +98,7 @@ PUBLIC_KEYS = os.path.expanduser('~/.ssh')
 # UPLOAD_HOST = 1
 # DOWNLOAD_HOST = 2
 
+@task
 def set_env():
     # set environment to default for EC2, if not specified on command line.
 
@@ -150,6 +158,17 @@ def set_env():
                    env.src_dir))
 
 
+
+@task(alias='setup')
+def check_setup():
+    """ Check current user has everything required to deploy 
+
+    Includes boto config/aws config 
+    Security keys, possibly check permissions
+    """
+    if not os.path.isfile(BOTO_CONFIG):
+	abort('Require boto config to create instance')
+
 @task
 def create_instance(names, use_elastic_ip, public_ips):
     """Create the EC2 instance
@@ -169,6 +188,10 @@ def create_instance(names, use_elastic_ip, public_ips):
 
     # This relies on a ~/.boto file holding the '<aws access key>', '<aws secret key>'
     conn = boto.connect_ec2()
+    
+#    for sec,desc in SECURITY_GROUPS.iteritems():
+#	    if sec not in conn.get_all_security_groups():
+#		    conn.create_security_group(sec,desc).authorize('tcp', 80, 80, '0.0.0.0/0')
 
     if use_elastic_ip:
         # Disassociate the public IP
@@ -388,14 +411,23 @@ def virtualenv(command):
     with cd(env.APP_DIR_ABS):
         run(env.activate + '&&' + command)
 
+@task
 def git_clone():
     """
     Clones the repository.
     """
     copy_public_keys()
     with cd(env.APP_DIR_ABS):
-        run('git clone {0}@{1}'.format(env.GITUSER, env.GITREPO))
+        run('git clone https://{1}.git'.format(env.GITUSER, env.GITREPO))
 
+@task
+def git_pull():
+    """
+    Update repo
+    """
+    copy_public_keys()
+    with cd(env.APP_DIR_ABS):
+	run('git pull')
 
 @task
 def git_clone_tar():
@@ -533,7 +565,7 @@ default_destination_concurrency_limit = 1" >> /etc/postfix/main.cf''')
 @task
 def user_setup():
     """
-    setup ngas users.
+    setup rasvamt users.
 
     TODO: sort out the ssh keys
     """
@@ -552,11 +584,11 @@ def user_setup():
         sudo('chmod 600 /home/{0}/.ssh/authorized_keys'.format(user))
         sudo('chown {0}:{1} /home/{0}/.ssh/authorized_keys'.format(user, GROUP))
         
-    # create NGAS directories and chown to correct user and group
+    # create RASVAMT directories and chown to correct user and group
     sudo('mkdir -p {0}'.format(env.APP_DIR_ABS))
     sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
-    sudo('mkdir -p {0}/../NGAS'.format(env.APP_DIR_ABS))
-    sudo('chown {0}:{1} {2}/../NGAS'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
+    sudo('mkdir -p {0}/../RASVAMT'.format(env.APP_DIR_ABS))
+    sudo('chown {0}:{1} {2}/../RASVAMT'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
     print "\n\n******** USER SETUP COMPLETED!********\n\n"
 
 
@@ -659,8 +691,8 @@ def test_env():
 
     env.key_filename = AWS_KEY
     env.roledefs = {
-        'ngasmgr' : host_names,
-        'ngas' : host_names,
+        'rasvamtmgr' : host_names,
+        'rasvamt' : host_names,
     }
     print "\n\n******** EC2 ENVIRONMENT SETUP!********\n\n"
 
@@ -691,16 +723,32 @@ def init_deploy():
     """
 
     if not env.has_key('APP_DIR_ABS') or not env.APP_DIR_ABS:
-        env.APP_DIR_ABS = '{0}/{1}'.format('/home/ngas', APP_DIR)
+        env.APP_DIR_ABS = '{0}/{1}'.format('/home/RASVAMT', APP_DIR)
+    
+    #check if git repo exists pull else clone 
+    git_clone()
 
-    sudo('cp {0}/src/ngamsStartup/ngamsServer.init.sh /etc/init.d/ngamsServer'.\
-         format(env.APP_DIR_ABS))
-    sudo('chmod a+x /etc/init.d/ngamsServer')
-    sudo('chkconfig --add /etc/init.d/ngamsServer')
-    with cd(env.APP_DIR_ABS):
-        sudo('ln -s {0}/cfg/{1} {0}/cfg/ngamsServer.conf'.format(\
-              env.APP_DIR_ABS, APP_DEF_DB))
 
+    #sudo('cp {0}/src/ngamsStartup/ngamsServer.init.sh /etc/init.d/ngamsServer'.\
+    #     format(env.APP_DIR_ABS))
+    #sudo('chmod a+x /etc/init.d/ngamsServer')
+    #sudo('chkconfig --add /etc/init.d/ngamsServer')
+    #with cd(env.APP_DIR_ABS):
+    #    sudo('ln -s {0}/cfg/{1} {0}/cfg/ngamsServer.conf'.format(\
+    #          env.APP_DIR_ABS, APP_DEF_DB))
+
+
+@task(alias='update')
+def update_deploy():
+	"""
+	Update git repository and db etc
+	TODO
+	"""
+	set_env()
+	with cd(env.APP_DIR_ABS):
+		#check if git repo exists
+		run('ls {}'.format(env.APP_DIR_ABS))
+	git_update()
 
 
 @task
@@ -738,7 +786,7 @@ def operations_deploy():
 @task
 def install(standalone=0):
     """
-    Install NGAS users and NGAS software on existing machine.
+    Install RASVAMT users and RASVAMT software on existing machine.
     Note: Requires root permissions!
     """
     set_env()
@@ -753,13 +801,13 @@ def install(standalone=0):
     with settings(user=env.USERS[0]):
         virtualenv_setup()
         # more installation goes here
-#    init_deploy() TODO: Fix this for what is required for the APP
+    init_deploy()
     print "\n\n******** INSTALLATION COMPLETED!********\n\n"
 
 @task
 def uninstall():
     """
-    Uninstall NGAS, NGAS users and init script.
+    Uninstall RASVAMT, RASVAMT users and init script.
     
     NOTE: This can only be used with a sudo user.
     """
@@ -788,7 +836,7 @@ def test_deploy():
     #init_deploy()
 
 @task
-def uninstall():
+def uninstall_user():
     """
     Uninstall application, users and init script.
     """
