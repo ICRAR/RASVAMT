@@ -1,0 +1,3 @@
+Document for step by step instructions of test deploying a running actually deployment on ec2.
+
+#TODO: write instructions
