@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ title }}</title>
+        <!-- <link rel="stylesheet" type="text/css" href="file/style.css"/> -->
+        <link rel="stylesheet" href="/file/jquery.mobile-1.4.2.min.css">
+            </head>
+    <body>
+        
+        <h1>{{ title }}</h1>
+        
+        <!-- Request data through javascript -->
+        <form id="get" action="">
+            <input id="t" autocomplete="off" /><button>Get</button>
+        </form>
+        
+        <!-- Normal GET request with html reply, passing in argument 'message' -->
+        <form action="/rename" method="GET">
+            <input type="text" name="message"/>
+            <input type="submit" value="Submit"/>
+        </form>
+        
+        <ul id="messages"></ul>
+        
+        <script src="/file/jquery-1.11.1.min.js"></script>
+        <script>
+            
+            // javascript query to the server, to receive data!
+            function GetData(msg) {
+                
+                $.get(
+                      "/getdata",
+                      {myParam : msg},    // optional argument
+                      function(data) {
+                      $('#messages').append($('<li>').text(data));
+                      }
+                      );
+            }
+            
+            // submitting form with id="get" will query the server with the value in id="t"
+            $('#get').submit(function(){
+                             GetData($('#t').val());
+                             return false;
+                             });
+            
+            // jQuery event example. When mouse hovers over <input/> 's, they go grey.
+            // More examples at http://www.w3schools.com/jQuery/
+            $(document).ready(function() {
+                              
+                              $("input").hover(function(){
+                                               $(this).css("background-color","#cccccc");
+                                               },
+                                               function(){
+                                               $(this).css("background-color","#ffffff");
+                                               });
+                              
+                              });
+            
+            </script>
+    </body>
+</html>

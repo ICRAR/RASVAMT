@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>
+            
+            Rasvama · ICRAR
+        
+        </title>
+            
+        <!-- Core CSS -->
+        <link rel="stylesheet" href="/file/bootstrap/css/bootstrap.min.dark.css">
+        <style>
+            #loading {padding: 5px;}
+            p {
+                display: block;
+                -webkit-margin-before: 1em;
+                -webkit-margin-after: 1em;
+                -webkit-margin-start: 0px;
+                -webkit-margin-end: 0px;
+            }
+        </style>
+            
+        <!-- Icon -->
+        <link rel="icon" href="/file/favicon.ico">
+    </head>
+    <body>
+        
+        <!-- Main Tab -->
+        <ul id="mainTab" class="nav nav-tabs" role="tablist">
+            <li class="active">
+                <a href="#home" role="tab" data-toggle="tab">Home</a>
+            </li>
+            <li>
+                <a href="#about" role="tab" data-toggle="tab">About</a>
+            </li>
+            <li>
+                <a href="#contact" role="tab" data-toggle="tab">Contact</a>
+            </li>
+        </ul>
+        <!-- Contents of Main Tab -->
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="home">
+                
+                <!-- Loading icon -->
+                <!-- <img id="loading" src="/file/loading.gif"/> -->
+                
+                <!-- WWT window -->
+                <div class="row" id="WorldWideTelescopeControlHost">
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <div id="WWTCanvas" style="width:500px; height:500px; border-style: none; border-width: 0px;"></div>
+                    </div>
+                    <div class="clearfix visible-xs"></div>
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                        <div class="well" style="padding: 0px 0;">
+                            <div style="overflow-y: scroll; overflow-x: hidden; height: 500px;">
+                                <ul class="nav nav-list">
+                                    <li><label class="tree-toggler nav-header">Header 1</label>
+                                        <ul class="nav nav-list tree">
+                                            <li><a href="#">Link</a></li>
+                                            <li><a href="#">Link</a></li>
+                                            <li><label class="tree-toggler nav-header">Header 1.1</label>   <!-- FIX FOR INDENTATION -->
+                                                <ul class="nav nav-list tree">
+                                                    <div class="btn-group" data-toggle="buttons">
+                                                        <label class="astro_filter btn btn-default" value="Filter my results">
+                                                            <input type="checkbox">Option 1</label>
+                                                    </div>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li><label class="tree-toggler nav-header">Header 2</label>
+                                        <ul class="nav nav-list tree">
+                                            <li><a href="#">Link</a></li>
+                                            <li><a href="#">Link</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="tab-pane fade" id="about">
+                <h1>Welcome to RASVAMA</h1>
+                <p>
+                    The International Centre of Radio Astronomy Research (ICRAR) is proud to present the Radio Astronomy Survey Visualisation And Monitoring App (RASVAMA), a tool for observing surveys performed here at ICRAR.
+                </p>
+            </div>
+            <div class="tab-pane fade" id="contact">
+                <h1>Contact Information</h1>
+                <h2>ICRAR</h2>
+                <ul class="list-unstyled">
+                    <li>person 1</li>
+                    <li>email@email.com</li>
+                    <li>phone: 9999 9999</li>
+                </ul>
+                <ul class="list-unstyled">
+                    <li>person 2</li>
+                    <li>email@email.com</li>
+                    <li>phone: 9999 9999</li>
+                </ul>
+                <h2>UWA</h2>
+                <ul class="list-unstyled">
+                    <li>person 1</li>
+                    <li>email@email.com</li>
+                    <li>phone: 9999 9999</li>
+                </ul>
+                <ul class="list-unstyled">
+                    <li>person 2</li>
+                    <li>email@email.com</li>
+                    <li>phone: 9999 9999</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Request data through javascript -->
+        <form id="get" action="">
+            <input id="t" autocomplete="off" /><button>Get</button>
+        </form>
+        
+        <!-- Normal GET request with html reply, passing in argument 'message' -->
+        <form action="/rename" method="GET">
+            <input type="text" name="message"/>
+            <input type="submit" value="Submit"/>
+        </form>
+        
+        <ul id="messages"></ul>
+        
+        <script src="/file/jquery-1.11.1.min.js"></script>
+        <script src="/file/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/file/wwtsdk.aspx"></script>
+        <script type="text/javascript">
+            
+            // $("#WorldWideTelescopeControlHost").hide();  If using the loading icon
+            
+            // javascript query to the server, to receive data!
+            function GetData(msg) {
+                
+                $.get(
+                      "/getdata",
+                      {myParam : msg},    // optional argument
+                      function(data) {
+                      $('#messages').append($('<li>').text(data));
+                      }
+                      );
+            }
+            
+            // submitting form with id="get" will query the server with the value in id="t"
+            $('#get').submit(function(){
+                             $.get(
+                                   "/survey/WALLABY/",
+                                   // {myParam : "hello"} optional argument,
+                                   function(data) {
+                                   var my_json_data = JSON.parse(data);
+                                   alert( my_json_data.id );
+                                   }
+                                   );
+                                    return false;
+                                   });
+            
+            // button click event
+            $('.astro_filter').click(function(){
+                            
+                            if($(this).find('input').is(':checked')) {
+                                alert("checked")
+                            }
+                            
+                            alert("value: " + $(this).attr('value'));
+                            
+                            });
+            
+            // jQuery code that should be able to execute before initialize()
+            $("input").hover(function(){
+                             $(this).css("background-color","#cccccc");
+                             },
+                             function(){
+                             $(this).css("background-color","#ffffff");
+                             });
+            
+            // jQuery event example. When mouse hovers over <input/> 's, they go grey.
+            // More examples at http://www.w3schools.com/jQuery/
+            $(document).ready(function() {
+                              
+                              // init WWT
+                              initialize();
+                              //$("#loading").hide(); If using loading icon
+                              //$("#WorldWideTelescopeControlHost").show();
+                              
+                              $('label.tree-toggler').click(function () {
+                                                            $(this).parent().children('ul.tree').toggle(300);
+                                                            });
+                              
+                              });
+            
+            // WWT SPECIFIC CODE
+            
+            // declare global Worldwide Telescope object
+            var wwt;
+            var myCircle;
+            // Create variables to hold the changeable settings
+            var bShowCrosshairs = false;
+            var bShowUI = true;
+            var bShowFigures = false;
+            // This function initializes the wwt object and once it is done 
+            // it fires the wwtReady event
+            function initialize() {
+                wwt = wwtlib.WWTControl.initControl("WWTCanvas");
+                wwt.add_ready(wwtReady);
+                // This ensures that events that would have fired before we registered them get fired
+                wwt.endInit();
+            }
+            
+            var surveys = [];
+            
+            // This function is where you would put your custom code for WWT
+            // following the initForWwt() call
+            function wwtReady() {
+                
+                wwt.settings.set_showCrosshairs(bShowCrosshairs);
+                wwt.settings.set_showConstellationFigures(bShowFigures);
+                wwt.hideUI(!bShowUI);
+                wwt.settings.set_showConstellationBoundries(false);
+                
+                // custom WWT code here
+                
+                $.get("/survey/", function(data) {
+                        var surveys_data = JSON.parse(data);
+                        
+                        for (var i = 0; i < surveys_data.length; i++) {
+                        
+                            var survey = surveys_data[i];
+                            survey.annotations = [];    // will store any WWT annotations of the the survey (GAMA looks like it has more than one!)
+                            
+                            // create a simple poly annotation, and store it
+                            var points = survey.characterization.spatialAxis.coverage;
+                            var center = survey.characterization.spatialAxis.centralPosition;
+                            var poly = createWWTPolygon(true, "grey", "blue", 1, 0.1, points);
+                            poly.set_center(center[0], center[1]);
+                            poly.set_id(survey.id);
+                            poly.set_label("Survey " + survey.id);
+                            poly.set_showHoverLabel(true);  // Why doesn't this work??
+                            survey.annotations.push(poly);  // Add poly annotation data to survey
+                            
+                            // cache survey
+                            surveys.push(survey);
+                            
+                            // add the annotations (generated above) to WWT to be displayed
+                            for(var j = 0; j < survey.annotations.length; j++) {
+                                wwt.addAnnotation(survey.annotations[0]);
+                            }
+                        }
+                        
+                      }
+                      );
+            }
+            
+            function createWWTPolygon(fill, lineColor, fillColor, lineWidth, opacity, points) {
+                var poly = wwt.createPolygon(fill);
+                poly.set_lineColor(lineColor);
+                poly.set_fillColor(fillColor);
+                poly.set_lineWidth(lineWidth);
+                poly.set_opacity(opacity);
+                for (var i in points) {
+                    poly.addPoint(points[i][0], points[i][1]);
+                }   
+                return poly;
+            } 
+            
+        </script>
+    </body>
+</html>

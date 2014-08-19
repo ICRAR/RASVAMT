@@ -1,0 +1,227 @@
+[
+{
+	"id": "WALLABY",
+	"project": "WALLABY",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "ASKAP", "telescope": "ASKAP"},
+	 "characterization":
+	 {
+		 "spatialAxis":
+		 {
+			 "centralPosition": [0.0, -90.0],
+			 "coverage": ["CAP", [0.0,-90.0], 120.0]
+		 }
+	 },
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "DINGO_A",
+	"project": "DINGO",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "ASKAP", "telescope": "ASKAP"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [[129.19869981640272, 3.2960558988433628], [134.80130018359728, 3.2960558988433624], [134.79891373214326, -2.2972526426486581], [129.20108626785674, -2.2972526426486581]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "DINGO_B",
+	"project": "DINGO",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "ASKAP", "telescope": "ASKAP"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [[135.19869981640272, 3.2960558988433633], [140.80130018359725, 3.2960558988433637], [140.79891373214326, -2.2972526426486586], [135.20108626785674, -2.2972526426486581]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "DINGO_C",
+	"project": "DINGO",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "ASKAP", "telescope": "ASKAP"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [[174.20108626785674, 2.2972526426486586], [179.79891373214326, 2.2972526426486586], [179.80130018359728, -3.2960558988433624], [174.19869981640272, -3.2960558988433624]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "DINGO_D",
+	"project": "DINGO",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "ASKAP", "telescope": "ASKAP"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [[-179.79891373214326, 2.2972526426486586], [-174.20108626785677, 2.2972526426486586], [-174.19869981640272, -3.2960558988433624], [-179.80130018359731, -3.2960558988433624]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "DINGO_E",
+	"project": "DINGO",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "ASKAP", "telescope": "ASKAP"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [[-148.30130018359728, 3.2960558988433628], [-142.69869981640272, 3.2960558988433628], [-142.70108626785674, -2.2972526426486577], [-148.29891373214323, -2.2972526426486577]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "DINGO_F",
+	"project": "DINGO",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "ASKAP", "telescope": "ASKAP"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [[-142.30130018359728, 3.2960558988433637], [-136.69869981640272, 3.2960558988433637], [-136.70108626785677, -2.2972526426486581], [-142.29891373214326, -2.2972526426486581]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "DINGO_O",
+	"project": "DINGO",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "ASKAP", "telescope": "ASKAP"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [[-22.15787903645883, -30.160196377220903], [-15.687920963541163, -30.160196377220888], [-15.476181575328232, -35.750681292808338], [-22.369618424671767, -35.750681292808352]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "DINGO_P",
+	"project": "DINGO",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "ASKAP", "telescope": "ASKAP"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [[-15.003679036458832, -30.160196377220885], [-8.5337209635411657, -30.160196377220888], [-8.3219815753282358, -35.750681292808338], [-15.215418424671764, -35.750681292808338]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "DINGO_X",
+	"project": "DINGO",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "ASKAP", "telescope": "ASKAP"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [[31.695818784420567, -4.1949767924236525], [37.304181215579426, -4.1949767924236534], [37.338008775510488, -9.7881849102654606], [31.661991224489501, -9.7881849102654606]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "GAMA09",
+	"project": "GAMA",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "multiple", "telescope": "multiple"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [["PATH",[129,3],["smallCircle",[0,90],12.0],["greatCircleTo",[141.0,-2.0]],["smallCircle",[0,90],-12.0]]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "GAMA12",
+	"project": "GAMA",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "multiple", "telescope": "multiple"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [["PATH",[174.0,2],["smallCircle",[0,90],12.0],["greatCircleTo",[186.0,-3]],["smallCircle",[0,90],-12.0]]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "GAMA15",
+	"project": "GAMA",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "multiple", "telescope": "multiple"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [["PATH",[211.5,3],["smallCircle",[0,90],12.0],["greatCircleTo",[223.5,-2]],["smallCircle",[0,90],-12.0]]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "GAMA02",
+	"project": "GAMA",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "multiple", "telescope": "multiple"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [["PATH",[30.0,-3.0],["smallCircle",[0,90],9],["greatCircleTo",[39.0,-11.0]],["smallCircle",[0,90],-9]]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+},
+{
+	"id": "GAMA23",
+	"project": "GAMA",
+	"publisher": "ICRAR",
+	"acquisitionSetup": {"instrument": "multiple", "telescope": "multiple"},
+	"characterization":
+	{
+		"spatialAxis":
+		{
+			"centralPosition": [0.0, 0.0],
+			"coverage": [["PATH",[338.1,-30.0],["smallCircle",[0,90],13.8],["greatCircleTo",[351.9,-35]],["smallCircle",[0,90],-13.8]]]
+		}
+	},
+	"ESO": {"metadataType": "Survey"}
+}
+]
