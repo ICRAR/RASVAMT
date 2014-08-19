@@ -76,6 +76,7 @@ YUM_PACKAGES = [
    'gcc',
    'patch',
    'httpd24',
+   'nginx',
 ]
 
 APT_PACKAGES = [
@@ -91,6 +92,7 @@ PIP_PACKAGES = [
                 'fabric',
                 'boto',
                 'flask',
+		'guincorn'
                 ]
 
 PUBLIC_KEYS = os.path.expanduser('~/.ssh')
@@ -638,12 +640,21 @@ def virtualenv_setup():
     print "\n\n******** VIRTUALENV SETUP COMPLETED!********\n\n"
 
 @task
-def package_install():
+def package_install(all=True,package=''):
     """
     Install required python packages.
     """
-    for p in PIP_PACKAGES:
-        virtualenv('pip install '.format(p))
+    if all:
+	for p in PIP_PACKAGES:
+	    virtualenv('pip install {}'.format(p))
+    else:
+	virtualenv('pip install {}'.format(package))
+
+@task
+def new_package(package):
+    set_env()
+    package_install(all=False,package=package)
+
 
 @task
 @serial
@@ -741,6 +752,7 @@ def init_deploy():
 @task(alias='update')
 def update_deploy():
 	"""
+	Stop app running
 	Update git repository and db etc
 	TODO
 	"""
@@ -748,7 +760,7 @@ def update_deploy():
 	with cd(env.APP_DIR_ABS):
 		#check if git repo exists
 		run('ls {}'.format(env.APP_DIR_ABS))
-	git_update()
+	git_pull()
 
 
 @task
@@ -833,7 +845,7 @@ def test_deploy():
     if env.postfix:
         postfix_config()
     install()
-    #init_deploy()
+    init_deploy()
 
 @task
 def uninstall_user():
