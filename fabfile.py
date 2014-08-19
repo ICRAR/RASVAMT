@@ -92,7 +92,7 @@ PIP_PACKAGES = [
                 'fabric',
                 'boto',
                 'flask',
-		'guincorn'
+		'gunicorn'
                 ]
 
 PUBLIC_KEYS = os.path.expanduser('~/.ssh')
@@ -738,7 +738,9 @@ def init_deploy():
     
     #check if git repo exists pull else clone 
     git_clone()
-
+    
+    #check if nginx is running else
+    sudo('service nginx start')
 
     #sudo('cp {0}/src/ngamsStartup/ngamsServer.init.sh /etc/init.d/ngamsServer'.\
     #     format(env.APP_DIR_ABS))
