@@ -98,6 +98,7 @@ function initialize() {
 }
 
 var surveys = [];
+var scheduleBlocks = [];
 
 // This function is where you would put your custom code for WWT
 // following the initForWwt() call
