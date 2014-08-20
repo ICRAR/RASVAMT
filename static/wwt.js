@@ -97,8 +97,8 @@ function initialize() {
     wwt.endInit();
 }
 
-var surveys = [];
-var scheduleBlocks = [];
+var survey_cache = [];
+var sb_cache = [];
 
 // This function is where you would put your custom code for WWT
 // following the initForWwt() call
@@ -130,7 +130,7 @@ function wwtReady() {
                 survey.annotations.push(poly);  // Add poly annotation data to survey
                 
                 // cache survey
-                surveys.push(survey);
+                survey_cache.push(survey);
                 
                 // add the annotations (generated above) to WWT to be displayed
                 for(var j = 0; j < survey.annotations.length; j++) {
@@ -138,8 +138,31 @@ function wwtReady() {
                 }
             }
             
-          }
-          );
+          });
+
+	$.get("/sb/", function(data) {
+
+		var sb_data = JSON.parse(data);
+
+		for(var i = 0; i < sb_data.length; i++) {
+		
+			var sb = sb_data[i];			
+
+			var points = sb.ESO.observationBlock.tileCoverage[0];
+			var poly = createWWTPolygon(true, "yellow", "yellow", 1, 0.1, points);
+			poly.set_id(sb.id);
+			poly.set_label(sb.id);
+			poly.set_showHoverLabel(true);
+			sb.annotation = poly;
+
+			// cache SB
+			sb_cache.push(sb);
+
+			// add the annotation to WWT for display
+			wwt.addAnnotation(sb.annotation);
+
+		}
+	});
 }
 
 function createWWTPolygon(fill, lineColor, fillColor, lineWidth, opacity, points) {

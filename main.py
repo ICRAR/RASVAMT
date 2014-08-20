@@ -2,9 +2,15 @@ from flask import Flask, url_for, redirect, render_template, request
 import json
 app = Flask(__name__)
 
+#json_survey_data is assumed to contain ALL surveys
 json_survey_file = open('./static/WallabyDingoGamaSurvey.json')
 json_survey_data = json.load(json_survey_file)
 json_survey_file.close()
+
+#json_sb_data assumed to contain ALL SBs, even from other surveys
+json_sb_file = open('./static/WallabyObs.json')
+json_sb_data = json.load(json_sb_file)
+json_sb_file.close()
 
 # send the root HTML page. "app.send_static_file" sends files located in 'static'.
 @app.route('/')
@@ -22,7 +28,7 @@ def get_file(filename):
 def get_surveys():
     return json.dumps(json_survey_data)
 
-# for getting a particular survey id. This should query some sort of database
+# for getting a particular survey id
 @app.route('/survey/<id>/')
 def get_survey(id):
     for s in json_survey_data:  #can replace with some query on SQL database
@@ -30,20 +36,18 @@ def get_survey(id):
             return json.dumps(s)
     return "404 Page"
 
-# for getting an OB from a survey. This should query some sort of database
+# for getting all SBs
 @app.route('/sb/')
 def get_sbs():
-    return "return all SBs"
+    return json.dumps(json_sb_data)
 
-# for getting an OB from a survey. This should query some sort of database
-@app.route('/sb/<survey_id>/')
-def get_sbs(survey_id):
-    return "return SBs from project survey_id"
-
-# for getting an OB from a survey. This should query some sort of database
-@app.route('/sb/<survey_id>/<id>')
-def get_survey_ob(survey_id, id):
-    return "return particular SB from project survey_id"
+# for getting a particular SB
+@app.route('/sb/<id>')
+def get_survey_sb(id):
+    for s in json_sb_data:  #can replace with some query on SQL database
+        if s['id'] == id:
+            return json.dumps(s)
+    return "404 Page"
 
 # JUST AN EXAMPLE
 # an example of rendering templates. This sets 'title' to the argument 'message' in the GET request.
@@ -62,7 +66,7 @@ def get_data():
 
 if __name__ == '__main__':
     # For Testing
-    app.debug = True
-    app.run()
+    #app.debug = True
+    #app.run()
     # For deployment
-#   app.run(host='0.0.0.0', port=3000)
+	app.run(host='0.0.0.0', port=5000)
