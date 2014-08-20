@@ -54,12 +54,13 @@ SECURITY_GROUPS = ['RASVAMT']
 ELASTIC_IP = 'False'
 APP_PYTHON_VERSION = '2.7'
 APP_PYTHON_URL = 'http://www.python.org/ftp/python/2.7.6/Python-2.7.6.tar.bz2'
-USERS = ['rasvamt']
-GROUP = 'rasvamt'
+USERS = ['rasvamt','cpoole','jdunne']
+GROUP = 'rasvamt_user'
 APP_DIR = 'rasvamt_portal' # runtime directory
 APP_DEF_DB = '/home/rasvamt/DB/rasvamt.sqlite'
 
-GITUSER = 'icrargit'
+#User will have to change and ensure they can pull from git
+GITUSER = 'pooli3'
 GITREPO = 'github.com/ICRAR/RASVAMT'
 
 #Check Boto 
@@ -88,7 +89,6 @@ APT_PACKAGES = [
 
 
 PIP_PACKAGES = [
-                'zc.buildout',
                 'fabric',
                 'boto',
                 'flask',
@@ -422,7 +422,7 @@ def git_clone():
     """
     copy_public_keys()
     with cd(env.APP_DIR_ABS):
-        run('git clone https://{1}.git'.format(env.GITUSER, env.GITREPO))
+        sudo('git clone https://{1}.git'.format(env.GITUSER, env.GITREPO))
 
 @task
 def git_pull():
@@ -430,7 +430,7 @@ def git_pull():
     Update repo
     """
     copy_public_keys()
-    with cd(env.APP_DIR_ABS):
+    with cd(env.APP_DIR_ABS+'/RASVAMT'):
 	run('git pull')
 
 @task
@@ -587,12 +587,15 @@ def user_setup():
         sudo('cp {0}/.ssh/authorized_keys /home/{1}/.ssh/authorized_keys'.format(home, user))
         sudo('chmod 600 /home/{0}/.ssh/authorized_keys'.format(user))
         sudo('chown {0}:{1} /home/{0}/.ssh/authorized_keys'.format(user, GROUP))
+	#change to allow group permissions to acces home
+        sudo('chmod 770 /home/{0}/'.format(user))
         
     # create RASVAMT directories and chown to correct user and group
     sudo('mkdir -p {0}'.format(env.APP_DIR_ABS))
-    sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
+    #sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
     sudo('mkdir -p {0}/../RASVAMT'.format(env.APP_DIR_ABS))
     sudo('chown {0}:{1} {2}/../RASVAMT'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
+    sudo('usermod -a -G ec2-user {}'.format(GROUP))
     print "\n\n******** USER SETUP COMPLETED!********\n\n"
 
 
@@ -730,24 +733,25 @@ def user_deploy():
 def init_deploy():
     """
     Install the init script for an operational deployment
-    
-    # NOTE: The actual init script has to be developed. This
-    #       is just a hook.
+    Requires user with sudo access 
     """
-
+    #TODO:Sort out ec2-user into rasvamt group ? 
     if not env.has_key('APP_DIR_ABS') or not env.APP_DIR_ABS:
-        env.APP_DIR_ABS = '{0}/{1}'.format('/home/rasvamt/', APP_DIR)
+        env.APP_DIR_ABS = '{0}/{1}/'.format('/home/rasvamt', APP_DIR)
     
     #check if git repo exists pull else clone 
     set_env()
-    if check_dir(env.APP_DIR_ABS+'/RASVAMT/'):
+    if check_dir(env.APP_DIR_ABS+'/RASVAMT'):
 	git_pull()
     else:
 	git_clone()
-    with cd(env.APP_DIR_ABS):
-	    sudo('mv nginx.conf /etc/nginx/')
-	    sudo('mv conf.d /etc/supervisor/')
-	    run('chmod +x gunicorn_start')
+    
+    sudo('mkdir /etc/supervisor/')
+    #Having trouble with 
+    with cd(env.APP_DIR_ABS+'/RASVAMT'):
+	sudo('mv nginx.conf /etc/nginx/')
+    	sudo('mv conf.d /etc/supervisor/')
+    	run('chmod +x gunicorn_start')
 
     #check if nginx is running else
     sudo('service nginx start')
@@ -765,10 +769,8 @@ def update_deploy():
 	"""
 	set_env()
     	sudo("supervisorctl restart RASVAMT")
-	with cd(env.APP_DIR_ABS):
-		#check if git repo exists
-		run('ls {}'.format(env.APP_DIR))
-	git_pull()
+	if check_dir(env.APP_DIR_ABS):
+		git_pull()
 
 
 @task
@@ -820,8 +822,8 @@ def install(standalone=0):
         sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.PREFIX))
     with settings(user=env.USERS[0]):
         virtualenv_setup()
+	package_install()
         # more installation goes here
-    init_deploy()
     print "\n\n******** INSTALLATION COMPLETED!********\n\n"
 
 @task
