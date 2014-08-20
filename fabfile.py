@@ -92,7 +92,9 @@ PIP_PACKAGES = [
                 'fabric',
                 'boto',
                 'flask',
-		'gunicorn'
+		'gunicorn',
+		'pysendfile',
+   		'supervisor',
                 ]
 
 PUBLIC_KEYS = os.path.expanduser('~/.ssh')
@@ -734,21 +736,24 @@ def init_deploy():
     """
 
     if not env.has_key('APP_DIR_ABS') or not env.APP_DIR_ABS:
-        env.APP_DIR_ABS = '{0}/{1}'.format('/home/RASVAMT', APP_DIR)
+        env.APP_DIR_ABS = '{0}/{1}'.format('/home/rasvamt/', APP_DIR)
     
     #check if git repo exists pull else clone 
-    git_clone()
-    
+    set_env()
+    if check_dir(env.APP_DIR_ABS+'/RASVAMT/'):
+	git_pull()
+    else:
+	git_clone()
+    with cd(env.APP_DIR_ABS):
+	    sudo('mv nginx.conf /etc/nginx/')
+	    sudo('mv conf.d /etc/supervisor/')
+	    run('chmod +x gunicorn_start')
+
     #check if nginx is running else
     sudo('service nginx start')
+    sudo('supervisorctl restart RASVAMT')
 
-    #sudo('cp {0}/src/ngamsStartup/ngamsServer.init.sh /etc/init.d/ngamsServer'.\
-    #     format(env.APP_DIR_ABS))
-    #sudo('chmod a+x /etc/init.d/ngamsServer')
-    #sudo('chkconfig --add /etc/init.d/ngamsServer')
-    #with cd(env.APP_DIR_ABS):
-    #    sudo('ln -s {0}/cfg/{1} {0}/cfg/ngamsServer.conf'.format(\
-    #          env.APP_DIR_ABS, APP_DEF_DB))
+
 
 
 @task(alias='update')
@@ -756,12 +761,13 @@ def update_deploy():
 	"""
 	Stop app running
 	Update git repository and db etc
-	TODO
+	TODO: maybe use zc.buildout
 	"""
 	set_env()
+    	sudo("supervisorctl restart RASVAMT")
 	with cd(env.APP_DIR_ABS):
 		#check if git repo exists
-		run('ls {}'.format(env.APP_DIR_ABS))
+		run('ls {}'.format(env.APP_DIR))
 	git_pull()
 
 
@@ -795,7 +801,7 @@ def operations_deploy():
             python_setup()
         virtualenv_setup()
         package_install()
-    #init_deploy()
+    init_deploy()
 
 @task
 def install(standalone=0):
