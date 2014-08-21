@@ -1,139 +1,129 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+    
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>
             
-            Rasvama · ICRAR
-        
-        </title>
-            
-        <!-- Core CSS -->
         <link rel="stylesheet" href="/file/bootstrap/css/bootstrap.min.dark.css">
-        <style>
-            #loading {padding: 5px;}
-            p {
-                display: block;
-                -webkit-margin-before: 1em;
-                -webkit-margin-after: 1em;
-                -webkit-margin-start: 0px;
-                -webkit-margin-end: 0px;
-            }
-        </style>
-            
-        <!-- Icon -->
+        <link rel="stylesheet" href="/file/rasvamt-style.css">
+        
+        <script src="/file/jquery-1.11.0.min.js"></script>
+        <script src="/file/wwtsdk.aspx"></script>
+        <script src="/file/bootstrap/js/bootstrap.min.js"></script>
+        
+        <title>Rasvamt · ICRAR</title>
         <link rel="icon" href="/file/favicon.ico">
     </head>
-    <body>
+    
+    <body onload="initialize()" onresize="resize_canvas()">
         
-        <!-- Main Tab -->
-        <ul id="mainTab" class="nav nav-tabs" role="tablist">
-            <li class="active">
-                <a href="#home" role="tab" data-toggle="tab">Home</a>
-            </li>
-            <li>
-                <a href="#about" role="tab" data-toggle="tab">About</a>
-            </li>
-            <li>
-                <a href="#contact" role="tab" data-toggle="tab">Contact</a>
-            </li>
-        </ul>
-        <!-- Contents of Main Tab -->
-        <div class="tab-content">
-            <div class="tab-pane fade in active" id="home">
+        <!-- The top navbar -->
+        <nav class="navbar navbar-default" role="navigation" id='navigation'>
+            
+            <!-- Navbar Header -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Rasvamt</a>
+            </div>
+            
+            <!-- Navbar items -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
                 
-                <!-- Loading icon -->
-                <!-- <img id="loading" src="/file/loading.gif"/> -->
+                <!-- Left items -->
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="/file/about.html">About</a>
+                    </li>
+                    <li>
+                        <a href="/file/contact.html">Contact</a>
+                    </li>
+                </ul>
                 
-                <!-- WWT window -->
-                <div class="row" id="WorldWideTelescopeControlHost">
-                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                        <div id="WWTCanvas" style="width:500px; height:500px; border-style: none; border-width: 0px;"></div>
-                    </div>
-                    <div class="clearfix visible-xs"></div>
-                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                        <div class="well" style="padding: 0px 0;">
-                            <div style="overflow-y: scroll; overflow-x: hidden; height: 500px;">
-				<ul class="nav nav-list">
-                                    <li><label class="tree-toggler nav-header">Header 1</label>
-                                        <ul class="nav nav-list tree">
-                                            <li><a href="#">Link</a></li>
-                                            <li><a href="#">Link</a></li>
-                                            <li><label class="tree-toggler nav-header">Header 1.1</label>   <!-- FIX FOR INDENTATION -->
-                                                <ul class="nav nav-list tree">
-                                                    <div class="btn-group" data-toggle="buttons">
-                                                        <label class="astro_filter btn btn-default" value="Filter my results">
-                                                            <input type="checkbox">Option 1</label>
-                                                    </div>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li><label class="tree-toggler nav-header">Header 2</label>
-                                        <ul class="nav nav-list tree">
-                                            <li><a href="#">Link</a></li>
-                                            <li><a href="#">Link</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Right item -->
+                <p class="navbar-text pull-right">ICRAR</p>
+            </div>
+        </nav>
+        
+        <!-- The Filtering box -->
+        <div class="well" id="facet-ui">
+            <div id="filter-container">
+                
+                <!-- Filter box title -->
+                <div class="well-title">
+                    <span>FILTER BY:</span>
                 </div>
                 
+                <!-- SURVEY FILTER -->
+                <div class="well-title">
+                    <br/>
+                    <span>CHOOSE SURVEY</span>
+                </div>
+                
+                <div class="facets">
+                    
+                    <span id="facet-list">
+                        
+                        <span class="label label-info">Object</span>
+                        <a href="allSources_512" class="label label-default">All</a>
+                        <a href="Star_512">Stars</a>
+                        <a href="Galaxy_512">Galaxies</a>
+                        <a href="HII-region_512">HII regions</a>
+                        <a href="Nebula_512">Nebulae</a>
+                        <a href="Other_512">Other</a>
+                        
+                        <br>
+                        
+                        <span class="label label-info">Band</span>
+                        <a data-step="9" data-intro="Facets also work for wavelength. For example, click on <b>Radio</b>, to see how the sky looks to radio astronomers (based on their scholarly output)." href="Radio_512">Radio</a>
+                        <a href="Infrared_512">Infrared</a>
+                        <a href="UV_512">Ultraviolet</a>
+                        <a href="X_512">X-ray</a>
+                        
+                    </span>
+                    
+                </div>
+                
+                <!-- OTHER FILTER -->
+                <div style="margin-top:10px" class="well-title">
+                    <span data-step="12" data-intro="The buttons below allow you to change the background layer.">BACKGROUND LAYER</span>
+                </div>
+                
+                <span id="base-list">
+                    <span id="toggle-list">
+                        <a href="Digitized Sky Survey (Color)" data-toggle="tooltip" title="Digitized Sky Survey"> Optical </a>
+                        <a href="2MASS: Catalog (Synthetic, Near Infrared)" data-toggle="tooltip" title="2 Micron All-Sky Survey"> 2MASS </a>
+                        <a href="WISE All Sky (Infrared)" class="label label-default" data-toggle="tooltip" title="WISE All Sky Infrared Survey"> WISE </a>
+                        <a href="SFD Dust Map (Infrared)" data-toggle="tooltip" title="Infrared dust map"> SFD </a>
+                        <a href="IRIS: Improved Reprocessing of IRAS Survey (Infrared)" data-toggle="tooltip" title="Improved IRAS Infrared Map"> IRIS </a>
+                        <a href="GLIMPSE/MIPSGAL" data-toggle="tooltip" title="Infrared Survey of the Galactic Midplane"> GLIMPSE </a>
+                        <a data-step="13" data-intro="Click on these surveys to change the background image." href="Hydrogen Alpha Full Sky Map" data-toggle="tooltip" title="Hydrogen alpha Map"> H-alpha </a>
+                        <a href="RASS: ROSAT All Sky Survey (X-ray)" data-toggle="tooltip" title="ROSAT All Sky Survey"> ROSAT  </a>
+                        <a href="Fermi (Gamma)" data-toggle="tooltip" title="Fermi Gamma Ray Map"> Fermi </a>
+                        <a href="VLSS: VLA Low-frequency Sky Survey (Radio)" data-toggle="tooltip" title="VLA Low-Frequency Sky Survey"> VLSS </a>
+                    </span>
+                </span>
+                
+                <!-- PUT MORE FILTERS HERE -->
+                
             </div>
-            <div class="tab-pane fade" id="about">
-                <h1>Welcome to RASVAMA</h1>
-                <p>
-                    The International Centre of Radio Astronomy Research (ICRAR) is proud to present the Radio Astronomy Survey Visualisation And Monitoring App (RASVAMA), a tool for observing surveys performed here at ICRAR.
-                </p>
-            </div>
-            <div class="tab-pane fade" id="contact">
-                <h1>Contact Information</h1>
-                <h2>ICRAR</h2>
-                <ul class="list-unstyled">
-                    <li>person 1</li>
-                    <li>email@email.com</li>
-                    <li>phone: 9999 9999</li>
-                </ul>
-                <ul class="list-unstyled">
-                    <li>person 2</li>
-                    <li>email@email.com</li>
-                    <li>phone: 9999 9999</li>
-                </ul>
-                <h2>UWA</h2>
-                <ul class="list-unstyled">
-                    <li>person 1</li>
-                    <li>email@email.com</li>
-                    <li>phone: 9999 9999</li>
-                </ul>
-                <ul class="list-unstyled">
-                    <li>person 2</li>
-                    <li>email@email.com</li>
-                    <li>phone: 9999 9999</li>
-                </ul>
+            
+            <br>
+            
+            <!-- Filter expand/contract button -->
+            <a id="toggle-filter-menu" class="pull-right glyphicon glyphicon-resize-small" role="button" href="#"></a>
+            
+        </div>
+
+        <!-- WWT window -->
+        <div id="WorldWideTelescopeControlHost">
+            <div id="WWTCanvas" style="width: 500px; height: 518px; border-style: none; border-width: 0px;">
             </div>
         </div>
         
-        <!-- Request data through javascript -->
-        <form id="get" action="">
-            <input id="t" autocomplete="off" /><button>Get</button>
-        </form>
+        <!-- sky coordinates -->
+        <span id="sky-coordinates"></span>
         
-        <!-- Normal GET request with html reply, passing in argument 'message' -->
-        <form action="/rename" method="GET">
-            <input type="text" name="message"/>
-            <input type="submit" value="Submit"/>
-        </form>
-        
-        <ul id="messages"></ul>
-        
-        <script src="/file/jquery-1.11.1.min.js"></script>
-        <script src="/file/bootstrap/js/bootstrap.min.js"></script>
-        <script src="/file/wwtsdk.aspx"></script>
-	<script src="/file/wwt.js"></script>
+        <script src="/file/rasvamt.js"></script>
     </body>
 </html>
