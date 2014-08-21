@@ -603,7 +603,7 @@ def user_setup():
     #sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
     sudo('mkdir -p {0}/../RASVAMT'.format(env.APP_DIR_ABS))
     sudo('chown {0}:{1} {2}/../RASVAMT'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
-    sudo('usermod -a -G ec2-user {}'.format(GROUP))
+    sudo('usermod -a -G {} ec2-user'.format(GROUP))
     print "\n\n******** USER SETUP COMPLETED!********\n\n"
 
 
