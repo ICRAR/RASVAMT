@@ -5,7 +5,7 @@ FLASKDIR=/home/rasvamt/rasvamt_portal/RASVAMT/
 VENVDIR=/home/rasvamt/rasvamt_portal/
 SOCKFILE=/home/rasvamt/rasvamt_portal/RASVAMT/sock
 USER=rasvamt
-GROUP=RASVAMT
+GROUP=rasvamt_user
 NUM_WORKERS=3
 
 echo "Starting $NAME"

@@ -27,6 +27,7 @@ from fabric.contrib.console import confirm
 from fabric.contrib.files import append, sed, comment, exists
 from fabric.decorators import task, serial
 from fabric.operations import prompt
+from fabric.network import ssh
 from fabric.utils import puts, abort, fastprint
 from fabric.colors import *
 
@@ -63,6 +64,9 @@ APP_DEF_DB = '/home/rasvamt/DB/rasvamt.sqlite'
 #User will have to change and ensure they can pull from git
 GITUSER = 'pooli3'
 GITREPO = 'github.com/ICRAR/RASVAMT'
+
+#Keep log of process
+ssh.util.log_to_file('setup.log',10)
 
 #Check Boto 
 BOTO_CONFIG = os.path.expanduser('~/.boto')
@@ -596,11 +600,11 @@ def user_setup():
         sudo('chmod 600 /home/{0}/.ssh/authorized_keys'.format(user))
         sudo('chown {0}:{1} /home/{0}/.ssh/authorized_keys'.format(user, GROUP))
 	#change to allow group permissions to acces home
-        sudo('chmod 770 /home/{0}/'.format(user))
+        #sudo('chmod 770 /home/{0}/'.format(user))
         
     # create RASVAMT directories and chown to correct user and group
     sudo('mkdir -p {0}'.format(env.APP_DIR_ABS))
-    #sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
+    sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
     sudo('mkdir -p {0}/../RASVAMT'.format(env.APP_DIR_ABS))
     sudo('chown {0}:{1} {2}/../RASVAMT'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
     sudo('usermod -a -G {} ec2-user'.format(GROUP))
@@ -771,7 +775,8 @@ def init_deploy():
 def deploy():
     """Runs deployment"""
     print(red("Beginning Deploy:"))
-    print(blue("Deploy finished check server {}".format(env.host)))
+    #might need setenv 
+    print(blue("Deploy finished check server {}".format(env.host_string)))
 
 
 @task(alias='update')
@@ -827,18 +832,23 @@ def install(standalone=0):
     """
     set_env()
     user_setup()
+    print(green("Setting up python path"))
+    print("Users {}".format(env.USERS))
     with settings(user=env.USERS[0]):
         ppath = check_python()
         if not ppath:
             python_setup()
+    print(green("Setting up home directory might require chmod"))
     if env.PREFIX != env.HOME: # generate non-standard directory
         sudo('mkdir -p {0}'.format(env.PREFIX))
         sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.PREFIX))
+    print(green("Setting up virtual env"))
     with settings(user=env.USERS[0]):
         virtualenv_setup()
-	package_install()
+    	print(green("Installing python packages"))
+    	package_install()
         # more installation goes here
-    print "\n\n******** INSTALLATION COMPLETED!********\n\n"
+    print(red("\n\n******** INSTALLATION COMPLETED!********\n\n"))
 
 @task
 def uninstall():
