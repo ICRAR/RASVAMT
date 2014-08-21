@@ -5,7 +5,7 @@ FLASKDIR=/home/rasvamt/rasvamt_portal/RASVAMT/
 VENVDIR=/home/rasvamt/rasvamt_portal/
 SOCKFILE=/home/rasvamt/rasvamt_portal/RASVAMT/sock
 USER=rasvamt
-GROUP=RASVAMT
+GROUP=rasvamt_user
 NUM_WORKERS=3
 
 echo "Starting $NAME"
@@ -21,7 +21,7 @@ RUNDIR=$(dirname $SOCKFILE)
 test -d $RUNDIR || mkdir -p $RUNDIR
 
 # Start your unicorn
-exec gunicorn main:app -b 127.0.0.1:3000 \
+exec gunicorn main:app -b 127.0.0.1:5000 \
   --name $NAME \
   --workers $NUM_WORKERS \
   --user=$USER --group=$GROUP \
