@@ -787,10 +787,11 @@ def update_deploy():
 	TODO: maybe use zc.buildout
 	"""
 	set_env()
-	sudo(virtualenv('supervisorctl restart RASVAMT'))
-	if check_dir(env.APP_DIR_ABS):
-		git_pull()
-
+	#sudo(virtualenv('supervisorctl restart RASVAMT'))
+	git_pull()
+    	with cd(env.APP_DIR_ABS+'/RASVAMT'):
+	    sudo('cp nginx.conf /etc/nginx/')
+	    sudo('cp conf.d /etc/supervisor/')
 
 @task
 @serial
