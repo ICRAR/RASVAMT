@@ -420,9 +420,16 @@ def git_clone():
     """
     Clones the repository.
     """
+    print(green("Cloning from GitHub..."))
     copy_public_keys()
     with cd(env.APP_DIR_ABS):
-        sudo('git clone https://{1}.git'.format(env.GITUSER, env.GITREPO))
+	try:
+	    sudo('git clone https://{1}.git'.format(env.GITUSER, env.GITREPO))
+	except:
+	    gituser = raw_input("Enter git user name")
+	    sudo('git clone https://{1}.git'.format(gituser,env.GITREPO))
+
+    print(green("Clone complete"))
 
 @task
 def git_pull():
@@ -431,7 +438,7 @@ def git_pull():
     """
     copy_public_keys()
     with cd(env.APP_DIR_ABS+'/RASVAMT'):
-	run('git pull')
+	sudo('git pull')
 
 @task
 def git_clone_tar():
@@ -739,7 +746,8 @@ def init_deploy():
     if not env.has_key('APP_DIR_ABS') or not env.APP_DIR_ABS:
         env.APP_DIR_ABS = '{0}/{1}/'.format('/home/rasvamt', APP_DIR)
     
-    #check if git repo exists pull else clone 
+    #check if git repo exists pull else clone
+    print(red("Initialising deployment"))
     set_env()
     if check_dir(env.APP_DIR_ABS+'/RASVAMT'):
 	git_pull()
@@ -749,15 +757,20 @@ def init_deploy():
     sudo('mkdir /etc/supervisor/')
     #Having trouble with 
     with cd(env.APP_DIR_ABS+'/RASVAMT'):
-	sudo('mv nginx.conf /etc/nginx/')
-    	sudo('mv conf.d /etc/supervisor/')
-    	run('chmod +x gunicorn_start')
+	sudo('cp nginx.conf /etc/nginx/')
+    	sudo('cp conf.d /etc/supervisor/')
+    	sudo('chmod +x gunicorn_start')
 
     #check if nginx is running else
     sudo('service nginx start')
-    sudo('supervisorctl restart RASVAMT')
+    print(red("Server setup and ready to deploy"))
+    #Think we have 
 
-
+@task(alias='run')
+def deploy():
+    """Runs deployment"""
+    print(red("Beginning Deploy:"))
+    print(blue("Deploy finished check server {}".format(env.host)))
 
 
 @task(alias='update')
@@ -768,7 +781,7 @@ def update_deploy():
 	TODO: maybe use zc.buildout
 	"""
 	set_env()
-    	sudo("supervisorctl restart RASVAMT")
+	sudo(virtualenv('supervisorctl restart RASVAMT'))
 	if check_dir(env.APP_DIR_ABS):
 		git_pull()
 
@@ -856,6 +869,7 @@ def test_deploy():
         postfix_config()
     install()
     init_deploy()
+    deploy()
 
 @task
 def uninstall_user():
