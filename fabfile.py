@@ -28,6 +28,7 @@ from fabric.contrib.files import append, sed, comment, exists
 from fabric.decorators import task, serial
 from fabric.operations import prompt
 from fabric.utils import puts, abort, fastprint
+from fabric.colors import *
 
 #Defaults
 #Defaults
