@@ -66,7 +66,7 @@ def get_data():
 
 if __name__ == '__main__':
     # For Testing
-    #app.debug = True
-    #app.run()
+    app.debug = True
+    app.run()
     # For deployment
-	app.run(host='0.0.0.0', port=5000)
+    #app.run(host='0.0.0.0', port=5000)

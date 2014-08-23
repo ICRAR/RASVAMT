@@ -51,7 +51,7 @@ function wwtReady() {
                              });
     
     $.getJSON("/survey/", function(survey_data) {
-              for (var i = 0; i < data.length; i++) {
+              for (var i = 0; i < survey_data.length; i++) {
               
               var survey = survey_data[i];
               survey.annotations = [];    // will store any WWT annotations of the the survey (GAMA looks like it has more than one!)
@@ -77,7 +77,7 @@ function wwtReady() {
               });
     
     $.getJSON("/sb/", function(sb_data) {
-              for(var i = 0; i < data.length; i++) {
+              for(var i = 0; i < sb_data.length; i++) {
               
               var sb = sb_data[i];
               
