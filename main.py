@@ -1,4 +1,5 @@
 from flask import Flask, url_for, redirect, render_template, request
+#from werkzeug.contrib.fixers import ProxyFix   (UNCOMMENT FOR DEPLOYMENT WITH GUNICORN/NGINX)
 import json
 app = Flask(__name__)
 
@@ -23,7 +24,7 @@ def root():
 def get_file(filename):
     return app.send_static_file(filename)
 
-# should return all the surveys
+# should return all the surveys. Possibly have arguments to filter results!
 @app.route('/survey/')
 def get_surveys():
     return json.dumps(json_survey_data)
@@ -36,7 +37,7 @@ def get_survey(id):
             return json.dumps(s)
     return "404 Page"
 
-# for getting all SBs
+# for getting all SBs. Possibly have arguments to filter the results!
 @app.route('/sb/')
 def get_sbs():
     return json.dumps(json_sb_data)
@@ -64,9 +65,11 @@ def get_data():
     message=request.args.get('myParam')
     return ('you wrote ' + message)
 
+#app.wsgi_app = ProxyFix(app.wsgi_app)  (UNCOMMENT FOR DEPLOYMENT WITH GUNICORN/NGINX)
+
 if __name__ == '__main__':
     # For Testing
-    app.debug = True
-    app.run()
+    #app.debug = True
+    #app.run()
     # For deployment
-    #app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8000)

@@ -2,6 +2,7 @@ var wwt;
 
 var survey_cache = [];
 var sb_cache = [];
+var filters = [];
 
 var bShowCrosshairs = false;
 var bShowUI = true;
@@ -26,6 +27,7 @@ function resize_canvas() {
 }
 
 // click function, that gives coordinates 'eventArgs.get_RA()' and 'eventArgs.get_dec()'
+// this may be needed to select surveys/SBs, because WWT sucks and can't do this on its own
 function clicked(obj, eventArgs) {
     alert("Clicked on: " + eventArgs.get_RA().toString() + ", " + eventArgs.get_dec().toString());
 }
@@ -47,7 +49,7 @@ function wwtReady() {
     wwt.hideUI(!bShowUI);
     wwt.settings.set_showConstellationBoundries(false);
     
-    // custom WWT code here
+    // custom WWT code below
     
     $('#WWTCanvas').mousemove(displayCoordinates);
     $('#WWTCanvas').scroll(function(e) {
@@ -71,15 +73,13 @@ function wwtReady() {
               poly.set_id(survey.id);
               poly.set_label("Survey " + survey.id);
               poly.set_showHoverLabel(true);  // Why doesn't this work??
-              survey.annotations.push(poly);  // Add poly annotation data to survey
+              
+              survey.annotation = poly;  // Add poly annotation data to survey
+              survey.isShown = false;
               
               // cache survey
               survey_cache.push(survey);
               
-              // add the annotations (generated above) to WWT to be displayed
-              for(var j = 0; j < survey.annotations.length; j++) {
-              wwt.addAnnotation(survey.annotations[0]);
-              }
               }
               });
     
@@ -93,13 +93,12 @@ function wwtReady() {
               poly.set_id(sb.id);
               poly.set_label(sb.id);
               poly.set_showHoverLabel(true);
+              
               sb.annotation = poly;
+              sb.isShown = false;
               
               // cache SB
               sb_cache.push(sb);
-              
-              // add the annotation to WWT for display
-              wwt.addAnnotation(sb.annotation);
               
               }
               });
@@ -150,7 +149,24 @@ function deselectFacets() {
 // activates/deactivates filter "filter"
 function setFilter(filter) {
     
-    alert(filter + " Selected");
+    console.log(filter);
+    
+    for(var i = 0; i < sb_cache.length; i++) {
+        
+        if(sb_cache[i].project == filter.id) {
+        
+            if(!sb_cache[i].isShown) {
+                console.log("added SB");
+                sb_cache[i].isShown = true;
+                wwt.addAnnotation(sb_cache[i].annotation);
+            }
+            else {
+                console.log("removed SB");
+                sb_cache[i].isShown = false;
+                wwt.removeAnnotation(sb_cache[i].annotation);
+            }
+        }
+    }
 }
 
 // Code that should be activated once document has loaded
@@ -170,6 +186,15 @@ $(function() {
                                                      $(this).attr('class', '');
                                                      });
                             $(this).attr('class', 'label label-default');
+                            });
+
+    $('#survey-list .btn').click(function(e) {
+                            e.preventDefault();
+                            $(this).blur();
+                            
+                            var json = $(this).attr('href');
+                            var obj = JSON.parse(json);
+                            setFilter(obj);
                             });
   
   $('#facet-list a').click(function(e) {

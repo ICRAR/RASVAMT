@@ -2,6 +2,17 @@ body {
     overflow:hidden;
 }
 
+.btn {
+    background-color: rgba(179, 197, 255, 0.14);
+    border-color: #1f79a3;
+}
+
+.btn.active {
+    color: #ffffff;
+    background-color: rgba(0, 153, 255, 0.64);
+    border-color: #1f79a3;
+}
+
 .well-title {
     font-size: 12px;
     font-weight: bold;
@@ -33,11 +44,6 @@ body {
     padding-bottom: 0px;
     border:none;
     
-}
-
-#facet-ui .input-group, #facet-ui .btn {
-    width:100%;
-    margin-bottom:5px;
 }
 
 #sky-coordinates {
