@@ -792,6 +792,7 @@ def update_deploy():
     	with cd(env.APP_DIR_ABS+'/RASVAMT'):
 	    sudo('cp nginx.conf /etc/nginx/')
 	    sudo('cp conf.d /etc/supervisor/')
+    	sudo('service nginx reload')
 
 @task
 @serial
@@ -882,6 +883,43 @@ def test_deploy():
     install()
     init_deploy()
     deploy()
+
+
+@task
+def test_server():
+	"""
+	Tests if server is up and running
+	"""
+	pass
+
+@task
+def test_db():
+	"""
+	Tests if database is working
+	"""
+	pass
+@task
+def test_flask_app():
+	"""
+	Runs flask tests
+	"""
+	pass
+@task
+def test_front_end():
+	"""
+	Runs automated front end testing
+	"""
+	pass
+
+@task(alias='test')
+def test_all():
+	"""
+	Run all tests for given host
+	"""
+	check_setup()
+	test_db()
+	test_flask_app()
+	test_front_end()
 
 @task
 def uninstall_user():
