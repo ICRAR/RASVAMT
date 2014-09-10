@@ -1,7 +1,8 @@
 import sqlite3 as sql
 #TABLE SCHEMA
 #Going to assume drop all old tables
-
+#Could move structure outside 
+# Probably give executable status
 
 ras_db_schema = '''CREATE TABLE surveys
 				(id text primary key,
