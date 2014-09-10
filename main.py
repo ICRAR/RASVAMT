@@ -1,7 +1,15 @@
-from flask import Flask, url_for, redirect, render_template, request
+from flask import Flask, url_for, redirect, render_template, request, g
 #from werkzeug.contrib.fixers import ProxyFix   (UNCOMMENT FOR DEPLOYMENT WITH GUNICORN/NGINX)
 import json
+import sqlite3
+#http://flask.pocoo.org/docs/0.10/patterns/sqlite3/
+#Probably have a look at how to implement DB
+
 app = Flask(__name__)
+DATABASE = 'rasvamt.db'
+
+
+
 
 #json_survey_data is assumed to contain ALL surveys
 json_survey_file = open('./static/WallabyDingoGamaSurvey.json')
@@ -66,6 +74,19 @@ def get_data():
     return ('you wrote ' + message)
 
 #app.wsgi_app = ProxyFix(app.wsgi_app)  (UNCOMMENT FOR DEPLOYMENT WITH GUNICORN/NGINX)
+
+def get_db():
+    db = getattr(g, '_database', None)
+    if db is None:
+        db = g._database = connect_to_database()
+    return db
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
+
 
 if __name__ == '__main__':
     # For Testing
