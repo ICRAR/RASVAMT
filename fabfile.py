@@ -15,6 +15,12 @@ For a local installation under a normal user without sudo access
 
 fab -u `whoami` -H <IP address> -f machine-setup/deploy.py user_deploy
 """
+#TODO:
+# 1 : Create DB/dir
+# 2 : Get Supervisor working
+# 3 : Local installation
+# 4 : Remove redundant RASVAMT directory
+# 5 : Work out users situation
 import glob
 
 import boto
@@ -56,10 +62,10 @@ SECURITY_GROUPS = ['RASVAMT']
 ELASTIC_IP = 'False'
 APP_PYTHON_VERSION = '2.7'
 APP_PYTHON_URL = 'http://www.python.org/ftp/python/2.7.6/Python-2.7.6.tar.bz2'
-USERS = ['rasvamt','cpoole','jdunne']
+USERS = ['rasvamt']
 GROUP = 'rasvamt_user'
 APP_DIR = 'rasvamt_portal' # runtime directory
-APP_DEF_DB = '/home/rasvamt/DB/rasvamt.sqlite'
+APP_DEF_DB = '/home/rasvamt/rasvamt_portal/RASVAMT/rasvamt.db'
 
 #User will have to change and ensure they can pull from git
 GITUSER = 'pooli3'
@@ -603,6 +609,7 @@ def user_setup():
         #sudo('chmod 770 /home/{0}/'.format(user))
         
     # create RASVAMT directories and chown to correct user and group
+    #TODO current structure has redundancies
     sudo('mkdir -p {0}'.format(env.APP_DIR_ABS))
     sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
     sudo('mkdir -p {0}/../RASVAMT'.format(env.APP_DIR_ABS))
@@ -792,6 +799,8 @@ def update_deploy():
     	with cd(env.APP_DIR_ABS+'/RASVAMT'):
 	    sudo('cp nginx.conf /etc/nginx/')
 	    sudo('cp conf.d /etc/supervisor/')
+	    sudo('chmod +x create_db.py')
+	    sudo('create_db.py')
     	sudo('service nginx reload')
 
 @task
