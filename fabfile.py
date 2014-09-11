@@ -611,9 +611,12 @@ def user_setup():
     # create RASVAMT directories and chown to correct user and group
     #TODO current structure has redundancies
     sudo('mkdir -p {0}'.format(env.APP_DIR_ABS))
-    sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
-    sudo('mkdir -p {0}/../RASVAMT'.format(env.APP_DIR_ABS))
-    sudo('chown {0}:{1} {2}/../RASVAMT'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
+    #Probably turn this back on
+    #sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
+    
+    #These lines are unnecessary i think
+    #sudo('mkdir -p {0}/../RASVAMT'.format(env.APP_DIR_ABS))
+    #sudo('chown {0}:{1} {2}/../RASVAMT'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
     sudo('usermod -a -G {} ec2-user'.format(GROUP))
     print "\n\n******** USER SETUP COMPLETED!********\n\n"
 
