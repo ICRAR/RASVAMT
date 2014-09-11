@@ -87,7 +87,6 @@ YUM_PACKAGES = [
    'wget.x86_64',
    'gcc',
    'patch',
-   'httpd24',
    'nginx',
 ]
 
