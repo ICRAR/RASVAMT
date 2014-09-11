@@ -1,11 +1,19 @@
 ------------------
-  TODO items
+#TODO items
 ------------------
-Urgent:
-[ ] - Some item
+##Urgent:
+  - [ ] Testing current system
+  - [ ] Getting supervisor and gunicorn working together auto
+  - [ ] Decision on Aladin vs WWT
 
-Moderate:
-[ ] - Some other item
+##Moderate:
+  - [ ] Database in flask, testing and schema
+  - [ ] Filter for SBs/Footprints
+  - [ ] Sorting out directory structure
+  - [ ] Setup localhost deployment
 
-Least:
-[ ] - Another one 
+##Least:
+  - [ ] Loading/Landing page
+  - [ ] HttpAuth 
+  - [ ] User settings
+  - [ ] Search and restful api
