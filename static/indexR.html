@@ -2,22 +2,22 @@
 <html>
     
     <head>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
             
-        <link rel="stylesheet" href="/file/bootstrap/css/bootstrap.min.dark.css"/>
-        <link rel="stylesheet" href="/file/aladin.min.css" />
-        <link rel="stylesheet" href="/file/index.css"/>
+        <link rel="stylesheet" href="/file/bootstrap/css/bootstrap.min.dark.css">
+        <link rel="stylesheet" href="/file/index.css">
         
         <script src="/file/jquery-1.11.1.min.js"></script>
+        <script src="/file/wwtsdk.aspx"></script>
         <script src="/file/bootstrap/js/bootstrap.min.js"></script>
         
         <title>Rasvamt</title>
-        <link rel="icon" href="/file/favicon.ico"/>
+        <link rel="icon" href="/file/favicon.ico">
     </head>
     
-    <body>
+    <body onload="initialize()" onresize="resize_canvas()">
         
         <!-- The top navbar -->
         <nav class="navbar navbar-default" role="navigation" id='navigation'>
@@ -55,7 +55,7 @@
                 </div>
                 
                 <!-- SURVEY FILTER -->
-                <div class="well-title" href="facet-list">
+                <div class="well-title">
                     <span>FACETS ACROSS COLUMNS</span>
                 </div>
                 
@@ -84,7 +84,7 @@
                 </div>
                 
                 <!-- OTHER FILTER -->
-                <div class="well-title" href="base-list">
+                <div style="margin-top:10px" class="well-title">
                     <span>EASY FACET ROW</span>
                 </div>
                 
@@ -106,7 +106,7 @@
                 <!-- PUT MORE FILTERS HERE -->
                 
                 <!-- OTHER FILTER -->
-                <div class="well-title" href="survey-list">
+                <div style="margin-top:10px" class="well-title">
                     <span>CHECKBOXES</span>
                 </div>
                 
@@ -119,17 +119,22 @@
                 
             </div>
             
-            
+            <br>
             
             <!-- Filter expand/contract button -->
             <a id="toggle-filter-menu" class="pull-right glyphicon glyphicon-resize-small" role="button" href="#"></a>
             
         </div>
+
+        <!-- WWT window -->
+        <div id="WorldWideTelescopeControlHost">
+            <div id="WWTCanvas" style="width: 500px; height: 518px; border-style: none; border-width: 0px;">
+            </div>
+        </div>
         
-        <!-- Aladin window -->
-        <div id="aladin-lite-div" style="width:700px;height:700px;" class="aladin-container aladin-fullscreen"></div>
+        <!-- sky coordinates -->
+        <span id="sky-coordinates"></span>
         
-        <script type="text/javascript" src="/file/aladin.min.js" charset="utf-8"></script>
         <script src="/file/index.js"></script>
     </body>
 </html>

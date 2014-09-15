@@ -20,62 +20,36 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 5px;
-    margin-top: 5px;
+    margin-top: -7px;
+}
+
+#WorldWideTelescopeControlHost {
+    height: 100%;
 }
 
 #toggle-filter-menu {
     position: relative;
+    right: 10px;
+    top: -15px;
     font-size: 20px;
     text-decoration: none;
-    padding: 0px;
 }
 
 #facet-ui {
     position: absolute;
-    padding: 10px;
-    margin-top: 5px;
-    margin-left: 40px;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-bottom: 0px;
     background-color: rgba(0,0,0,.5);
+    padding-bottom: 0px;
     border:none;
-    z-index:10;
+    
 }
 
-.aladin-fullscreen {
-    z-index:-1;
-}
-
-.aladin-fov {
-    display: none;
-}
-
-.aladin-location {
-    bottom: 0px;
-    background-color: rgba(0,0,0,0);
-}
-
-.aladin-location-text {
-    color: #FFFFFF;
-}
-
-.aladin-fullscreenControl {
-    display: none;
-}
-
-.aladin-layersControl-container {
-    top: 60px;
-}
-
-.aladin-layerBox {
-    top: 60px;
-    z-index: 20;
-}
-
-.aladin-gotoControl {
-    display: none;
-}
-
-.aladin-frameChoice {
-    display: none;
+#sky-coordinates {
+    position: absolute;
+    padding: .2em 10px;
+    
 }
 
 .collapsed {
@@ -84,11 +58,6 @@ body {
 
 .navbar {
     margin: 0px;
-}
-
-.navbar-default {
-    background-color: rgba(0,0,0,0);
-    border-color: rgba(0,0,0,0);
 }
 
 .well a {
