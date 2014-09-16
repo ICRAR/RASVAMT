@@ -1,7 +1,7 @@
 var aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:60});
 
 // Add SB footprint object to Aladin
-var SB_overlay = aladin.createOverlay({color: '#4484ff'});
+var SB_overlay = aladin.createOverlay({color: '#1a108b'});
 aladin.addOverlay(SB_overlay);
 
 // Add catalog object to Aladin
@@ -14,13 +14,13 @@ sources.push(aladin.createSource(0.0, 0.0));
 catalog.addSources(sources);
 
 // Cache
-var survey_cache = [];
-var sb_cache = [];
-var filters = [];
+var survey_cache = TAFFY([]);
+var sb_cache = TAFFY([]);
+var filters = {};
 
 function getJSONData() {
     
-    $.getJSON("/survey/", function(survey_data) {
+    /*$.getJSON("/survey/", function(survey_data) {
               for (var i = 0; i < survey_data.length; i++) {
               var survey = survey_data[i];
               
@@ -34,7 +34,7 @@ function getJSONData() {
               // cache survey
               survey_cache.push(survey);
               }
-              });
+              });*/
     
     $.getJSON("/sb/", function(sb_data) {
               for(var i = 0; i < sb_data.length; i++) {
@@ -51,17 +51,20 @@ function getJSONData() {
                 sb_string += ' ' + points[p][1];
               }
               
-              // Create the Aladin footprint using the string
-              var sb_footprint = aladin.createFootprintsFromSTCS(sb_string);
+              // Create the Aladin footprint(s) using the string
+              // NOTE: sb_footprints is an array!
+              var sb_footprints = aladin.createFootprintsFromSTCS(sb_string);
               
               // add footprint to Aladin, and to the cache
-              SB_overlay.addFootprints(sb_footprint);
-              sb.footprint = sb_footprint;
-              //sb.footprint.hide();
+              SB_overlay.addFootprints(sb_footprints);
+              sb.footprints = sb_footprints;
               
               // cache SB
-              sb_cache.push(sb);
+              sb_cache.insert(sb);
               }
+              
+              // apply the filters (TEMPORARY)
+              applyFilters();
               });
 }
 
@@ -71,7 +74,7 @@ aladin.on('select', function(selection) {
           
           for(var i = 0; i < selection.length; i++) {
             var s = selection[i];
-            s.isSelected = true;
+            s.select();
             console.log(s);
           }
           
@@ -100,16 +103,35 @@ function deselectFacets() {
     //$('#year-label').hide();
 }
 
-// activates/deactivates filter "filter"
-function setFilter(filter) {
+function applyFilters() {
     
-    console.log(filter);
+    sb_cache().each(function (sb) {
+                    sb.footprints[0].deselect();
+                    });
     
-    for(var i = 0; i < sb_cache.length; i++) {
-        
+    var filterArray = [];
+    
+    for(var key in filters) {
+        var f = filters[key];
+        filterArray.push(f);
     }
     
-    aladin.select();
+    sb_cache.apply(null, filterArray).each(function (sb) {
+                    sb.footprints[0].select();
+                    });
+}
+
+// activates/deactivates filter "filter"
+function setFilter(filter, id) {
+    
+    if(filters[id]) {
+        filters[id] = null;
+    }
+    else {
+        filters[id] = filter;
+    }
+    
+    applyFilters();
 }
 
 // Code that should be activated once document has loaded
@@ -149,8 +171,10 @@ $(function() {
                             $(this).blur();
                             
                             var json = $(this).attr('href');
-                            var obj = JSON.parse(json);
-                            setFilter(obj);
+                            var id = $(this).attr('id');
+                            var filter = JSON.parse(json);
+                                 
+                            setFilter(filter, id);
                             });
   
   $('#facet-list a').click(function(e) {

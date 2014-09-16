@@ -112,9 +112,9 @@
                 
                 <!-- When time to start filtering actual surveys, these buttons should be generated automatically based on the JSON files -->
                 <span id="survey-list">
-                    <button href='{"id":"WALLABY"}' type="button" class="btn" data-toggle="button">WALLABY</button>
-                    <button href='{"id":"DINGO_A"}' type="button" class="btn" data-toggle="button">DINGO_A</button>
-                    <button href='{"id":"DINGO_B"}' type="button" class="btn" data-toggle="button">DINGO_B</button>
+                    <button id="f1" href='{"project":{"!is":"WALLABY"}}' type="button" class="btn active" data-toggle="button">WALLABY</button>
+                    <button id="f2" href='{"project":{"!is":"DINGO_A"}}' type="button" class="btn active" data-toggle="button">DINGO_A</button>
+                    <button id="f3" href='{"project":{"!is":"DINGO_B"}}' type="button" class="btn active" data-toggle="button">DINGO_B</button>
                 </span>
                 
             </div>
@@ -130,6 +130,7 @@
         <div id="aladin-lite-div" style="width:700px;height:700px;" class="aladin-container aladin-fullscreen"></div>
         
         <script type="text/javascript" src="/file/aladin.min.js" charset="utf-8"></script>
+        <script src="/file/taffy-min.js"></script>
         <script src="/file/index.js"></script>
     </body>
 </html>
