@@ -1,10 +1,11 @@
-var aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:60});
+var aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:180});
 
 // Add SB footprint object to Aladin
-var SB_overlay = aladin.createOverlay({color: '#1a108b'});
+var SB_overlay = aladin.createOverlay({color: '#0066AA'});
 aladin.addOverlay(SB_overlay);
 
 // Add catalog object to Aladin
+// The catalog should only appear when selecting surveys/SBs
 var catalog = aladin.createCatalog({name: 'SBs'});
 aladin.addCatalog(catalog);
 
@@ -18,6 +19,11 @@ var survey_cache = TAFFY([]);
 var sb_cache = TAFFY([]);
 var filters = {};
 
+/*
+ *  Requests JSON survey/SB objects from the
+ *  back-end server. The requests are sent
+ *  in a RESTful form, and the replies are cached.
+ */
 function getJSONData() {
     
     /*$.getJSON("/survey/", function(survey_data) {
@@ -55,19 +61,25 @@ function getJSONData() {
               // NOTE: sb_footprints is an array!
               var sb_footprints = aladin.createFootprintsFromSTCS(sb_string);
               
-              // add footprint to Aladin, and to the cache
+              // add footprint to Aladin
               SB_overlay.addFootprints(sb_footprints);
+              
+              // link footprint(s) to SB
               sb.footprints = sb_footprints;
               
               // cache SB
               sb_cache.insert(sb);
               }
               
-              // apply the filters (TEMPORARY)
+              // apply the filters once SBs are loaded in
               applyFilters();
               });
 }
 
+/*
+ *  This function parses selected points after
+ *  using Aladin's selection tool.
+ */
 aladin.on('select', function(selection) {
           
           console.log(selection);
@@ -80,21 +92,25 @@ aladin.on('select', function(selection) {
           
           });
 
-// Hides the menu containing filters
+/*
+ *  Hides the main filter menu
+ */
 function hideFilterMenu() {
     $('#filter-container').hide(100);
     $('#toggle-filter-menu').removeClass('glyphicon-resize-small').addClass('glyphicon-resize-full');
     $('#facet-ui').addClass('collapsed');
 }
 
-// Shows the menu containing filters
+/*
+ *  Shows the main filter menu
+ */
 function showFilterMenu() {
     $('#filter-container').show(100);
     $('#toggle-filter-menu').removeClass('glyphicon-resize-full').addClass('glyphicon-resize-small');
     $('#facet-ui').removeClass('collapsed');
 }
 
-// deselects filters
+// deselects filters (DEPRECATED)
 function deselectFacets() {
     //update highlight
     $('#facet-list a').each(function(index) {
@@ -103,25 +119,32 @@ function deselectFacets() {
     //$('#year-label').hide();
 }
 
+/* 
+ *  Applies the current filters in variable "filters"
+ *  to all cached SBs
+ */
 function applyFilters() {
     
+    // deselect (or delete/hide later on) all SBs
     sb_cache().each(function (sb) {
-                    sb.footprints[0].deselect();
+                    sb.footprints[0].hide();
                     });
     
+    // Build up an array of the filters applied
     var filterArray = [];
-    
     for(var key in filters) {
-        var f = filters[key];
-        filterArray.push(f);
+        filterArray.push(filters[key]);
     }
     
     sb_cache.apply(null, filterArray).each(function (sb) {
-                    sb.footprints[0].select();
+                    sb.footprints[0].show();
                     });
 }
 
-// activates/deactivates filter "filter"
+/*
+ *  activates/deactivates filter "filter"
+ *  with id "id" (for identifying the filter).
+ */
 function setFilter(filter, id) {
     
     if(filters[id]) {
@@ -131,15 +154,26 @@ function setFilter(filter, id) {
         filters[id] = filter;
     }
     
+    // Apply all filters
     applyFilters();
 }
 
-// Code that should be activated once document has loaded
+/*
+ *  Code that should be activated once document has loaded
+ */
 $(function() {
   
+  hideFilterMenu();
   getJSONData();
-  //$('.aladin-fullscreenControl').hide();
   
+  /*
+   *    Listeners
+   */
+  
+  /*
+   *    When a filter heading is clicked,
+   *    the filters are minimised.
+   */
   $('.well-title').click(function(e) {
                            e.preventDefault();
                            var url = $(this).attr('href');
@@ -154,10 +188,14 @@ $(function() {
                          }
                            });
   
+  /*
+   *    Toggle list functionality
+   *    (might be useful if toggle lists are needed)
+   */
   $('#toggle-list a').click(function(e) {
                             e.preventDefault();
                             var url = $(this).attr('href');
-                            setFilter(url);
+                            //setFilter(url);
                             
                             //update highlight
                             $('#toggle-list a').each(function(index) {
@@ -166,6 +204,10 @@ $(function() {
                             $(this).attr('class', 'label label-default');
                             });
 
+  /*
+   *    Survey filters.
+   *    Will set filters based on "href" and "id" attributes.
+   */
     $('#survey-list .btn').click(function(e) {
                             e.preventDefault();
                             $(this).blur();
@@ -177,6 +219,21 @@ $(function() {
                             setFilter(filter, id);
                             });
   
+  /*
+   *    The selection tool button
+   */
+  $('#selection-tool').click(function(e) {
+                               e.preventDefault();
+                               $(this).blur();
+                             
+                                hideFilterMenu();
+                                aladin.select();
+                               });
+  
+  /*
+   *    Some crappy facet-list that has its own function "deselectFacets()".
+   *    This one was grabbed from ADSASS WWT.
+   */
   $('#facet-list a').click(function(e) {
                            e.preventDefault();
                            var url = $(this).attr('href');
@@ -185,6 +242,10 @@ $(function() {
                            $(this).attr('class', 'label label-default');
                            });
   
+  /*
+   *    The button that shows/hides the
+   *    main filter menu!
+   */
   $('#toggle-filter-menu').click(function(e) {
                                  e.preventDefault();
                                  if ($('#filter-container').is(':visible')) {
