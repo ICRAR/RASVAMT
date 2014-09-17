@@ -568,15 +568,15 @@ def postfix_config():
     sudo('service postfix start')
 
     sudo('''echo "relayhost = [smtp.gmail.com]:587
-smtp_sasl_auth_enable = yes
-smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
-smtp_sasl_security_options = noanonymous
-smtp_tls_CAfile = /etc/postfix/cacert.pem
-smtp_use_tls = yes
-
-# smtp_generic_maps
-smtp_generic_maps = hash:/etc/postfix/generic
-default_destination_concurrency_limit = 1" >> /etc/postfix/main.cf''')
+	smtp_sasl_auth_enable = yes
+	smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+	smtp_sasl_security_options = noanonymous
+	smtp_tls_CAfile = /etc/postfix/cacert.pem
+	smtp_use_tls = yes
+	
+	# smtp_generic_maps
+	smtp_generic_maps = hash:/etc/postfix/generic
+	default_destination_concurrency_limit = 1" >> /etc/postfix/main.cf''')
 
     sudo('echo "[smtp.gmail.com]:587 {0}@gmail.com:{1}" > /etc/postfix/sasl_passwd'.format(env.gmail_account, env.gmail_password))
     sudo('chmod 400 /etc/postfix/sasl_passwd')
@@ -611,7 +611,7 @@ def user_setup():
     #TODO current structure has redundancies
     sudo('mkdir -p {0}'.format(env.APP_DIR_ABS))
     #Probably turn this back on
-    #sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
+    sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
     
     #These lines are unnecessary i think
     #sudo('mkdir -p {0}/../RASVAMT'.format(env.APP_DIR_ABS))
@@ -783,8 +783,13 @@ def init_deploy():
 @task(alias='run')
 def deploy():
     """Runs deployment"""
+    set_env()
     print(red("Beginning Deploy:"))
     #might need setenv 
+
+    sudo(virtualenv('supervisorctl restart RASVAMT'))
+    #virtualenv('supervisorctl')
+
     print(blue("Deploy finished check server {}".format(env.host_string)))
 
 
@@ -796,7 +801,7 @@ def update_deploy():
 	TODO: maybe use zc.buildout
 	"""
 	set_env()
-	#sudo(virtualenv('supervisorctl restart RASVAMT'))
+	//sudo(virtualenv('supervisorctl restart RASVAMT'))
 	git_pull()
     	with cd(env.APP_DIR_ABS+'/RASVAMT'):
 	    sudo('cp nginx.conf /etc/nginx/')

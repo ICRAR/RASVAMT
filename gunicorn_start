@@ -26,5 +26,5 @@ exec gunicorn main:app -b 127.0.0.1:5000 \
   --workers $NUM_WORKERS \
   --user=$USER --group=$GROUP \
   --log-level=debug
-# Testing with out socks file
+# This requires supo Testing with out socks file
 #  --bind=unix:$SOCKFILE
