@@ -2,22 +2,22 @@
 <html>
     
     <head>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
             
-        <link rel="stylesheet" href="/file/bootstrap/css/bootstrap.min.dark.css"/>
-        <link rel="stylesheet" href="/file/aladin.min.css" />
-        <link rel="stylesheet" href="/file/index.css"/>
+        <link rel="stylesheet" href="/file/bootstrap/css/bootstrap.min.dark.css">
+        <link rel="stylesheet" href="/file/index.css">
         
         <script src="/file/jquery-1.11.1.min.js"></script>
+        <script src="/file/wwtsdk.aspx"></script>
         <script src="/file/bootstrap/js/bootstrap.min.js"></script>
         
         <title>Rasvamt</title>
-        <link rel="icon" href="/file/favicon.ico"/>
+        <link rel="icon" href="/file/favicon.ico">
     </head>
     
-    <body>
+    <body onload="initialize()" onresize="resize_canvas()">
         
         <!-- The top navbar -->
         <nav class="navbar navbar-default" role="navigation" id='navigation'>
@@ -51,11 +51,11 @@
                 
                 <!-- Filter box title -->
                 <div class="well-title">
-                    <span style="color:grey;">FILTER BY:</span>
+                    <span>FILTER BY:</span>
                 </div>
                 
                 <!-- SURVEY FILTER -->
-                <div class="well-title" href="facet-list">
+                <div class="well-title">
                     <span>FACETS ACROSS COLUMNS</span>
                 </div>
                 
@@ -84,7 +84,7 @@
                 </div>
                 
                 <!-- OTHER FILTER -->
-                <div class="well-title" href="base-list">
+                <div style="margin-top:10px" class="well-title">
                     <span>EASY FACET ROW</span>
                 </div>
                 
@@ -106,51 +106,35 @@
                 <!-- PUT MORE FILTERS HERE -->
                 
                 <!-- OTHER FILTER -->
-                <div class="well-title" href="survey-list">
-                    <span>SURVEYS</span>
+                <div style="margin-top:10px" class="well-title">
+                    <span>CHECKBOXES</span>
                 </div>
                 
                 <!-- When time to start filtering actual surveys, these buttons should be generated automatically based on the JSON files -->
                 <span id="survey-list">
-                    <button id="f1" href='{"project":{"!is":"WALLABY"}}' type="button" class="btn active" data-toggle="button">WALLABY</button>
-                    <button id="f2" href='{"project":{"!is":"DINGO_A"}}' type="button" class="btn active" data-toggle="button">DINGO_A</button>
-                    <button id="f3" href='{"project":{"!is":"DINGO_B"}}' type="button" class="btn active" data-toggle="button">DINGO_B</button>
-                    <button id="f4" href='{"project":{"!is":"DINGO_C"}}' type="button" class="btn active" data-toggle="button">DINGO_C</button>
-                    <button id="f5" href='{"project":{"!is":"DINGO_D"}}' type="button" class="btn active" data-toggle="button">DINGO_D</button>
-                    <button id="f6" href='{"project":{"!is":"DINGO_E"}}' type="button" class="btn active" data-toggle="button">DINGO_E</button>
-                    <button id="f7" href='{"project":{"!is":"DINGO_F"}}' type="button" class="btn active" data-toggle="button">DINGO_F</button>
-                    <button id="f8" href='{"project":{"!is":"DINGO_O"}}' type="button" class="btn active" data-toggle="button">DINGO_O</button>
-                    <button id="f9" href='{"project":{"!is":"DINGO_P"}}' type="button" class="btn active" data-toggle="button">DINGO_P</button>
-                    <button id="f10" href='{"project":{"!is":"DINGO_X"}}' type="button" class="btn active" data-toggle="button">DINGO_X</button>
-                    <button id="f11" href='{"project":{"!is":"GAMA09"}}' type="button" class="btn active" data-toggle="button">GAMA09</button>
-                    <button id="f12" href='{"project":{"!is":"GAMA12"}}' type="button" class="btn active" data-toggle="button">GAMA12</button>
-                    <button id="f13" href='{"project":{"!is":"GAMA15"}}' type="button" class="btn active" data-toggle="button">GAMA15</button>
-                    <button id="f14" href='{"project":{"!is":"GAMA02"}}' type="button" class="btn active" data-toggle="button">GAMA02</button>
-                    <button id="f15" href='{"project":{"!is":"GAMA23"}}' type="button" class="btn active" data-toggle="button">GAMA23</button>
+                    <button href='{"id":"WALLABY"}' type="button" class="btn" data-toggle="button">WALLABY</button>
+                    <button href='{"id":"DINGO_A"}' type="button" class="btn" data-toggle="button">DINGO_A</button>
+                    <button href='{"id":"DINGO_B"}' type="button" class="btn" data-toggle="button">DINGO_B</button>
                 </span>
-                
-                <!-- Select_Region tool -->
-                <div class="well-title">
-                    <span>SELECT REGION</span>
-                </div>
-                
-                <!-- Select_Region tool -->
-                <button id="selection-tool" type="button" class="btn">SELECT</button>
                 
             </div>
             
-            
+            <br>
             
             <!-- Filter expand/contract button -->
             <a id="toggle-filter-menu" class="pull-right glyphicon glyphicon-resize-small" role="button" href="#"></a>
             
         </div>
+
+        <!-- WWT window -->
+        <div id="WorldWideTelescopeControlHost">
+            <div id="WWTCanvas" style="width: 500px; height: 518px; border-style: none; border-width: 0px;">
+            </div>
+        </div>
         
-        <!-- Aladin window -->
-        <div id="aladin-lite-div" style="width:700px;height:700px;" class="aladin-container aladin-fullscreen"></div>
+        <!-- sky coordinates -->
+        <span id="sky-coordinates"></span>
         
-        <script type="text/javascript" src="/file/aladin.min.js" charset="utf-8"></script>
-        <script src="/file/taffy-min.js"></script>
         <script src="/file/index.js"></script>
     </body>
 </html>

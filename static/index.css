@@ -5,12 +5,18 @@ body {
 .btn {
     background-color: rgba(179, 197, 255, 0.14);
     border-color: #1f79a3;
+    padding: 2px 6px;
 }
 
 .btn.active {
     color: #ffffff;
     background-color: rgba(0, 153, 255, 0.64);
     border-color: #1f79a3;
+}
+
+#selection-tool {
+    background-color: rgba(255, 255, 0, 0.2);
+    border-color: rgba(127, 127, 0, 1.0);
 }
 
 .well-title {
@@ -20,36 +26,63 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 5px;
-    margin-top: -7px;
-}
-
-#WorldWideTelescopeControlHost {
-    height: 100%;
+    margin-top: 5px;
 }
 
 #toggle-filter-menu {
     position: relative;
-    right: 10px;
-    top: -15px;
     font-size: 20px;
     text-decoration: none;
+    padding: 0px;
 }
 
 #facet-ui {
     position: absolute;
-    margin-top: 10px;
-    margin-left: 10px;
-    margin-bottom: 0px;
+    padding: 10px;
+    margin-top: 5px;
+    margin-left: 40px;
     background-color: rgba(0,0,0,.5);
-    padding-bottom: 0px;
     border:none;
-    
+    z-index:10;
+    max-width:450px;
 }
 
-#sky-coordinates {
-    position: absolute;
-    padding: .2em 10px;
-    
+.aladin-fullscreen {
+    z-index:-1;
+}
+
+.aladin-fov {
+    display: none;
+}
+
+.aladin-location {
+    bottom: 0px;
+    background-color: rgba(0,0,0,0);
+}
+
+.aladin-location-text {
+    color: #FFFFFF;
+}
+
+.aladin-fullscreenControl {
+    display: none;
+}
+
+.aladin-layersControl-container {
+    top: 60px;
+}
+
+.aladin-layerBox {
+    top: 60px;
+    z-index: 20;
+}
+
+.aladin-gotoControl {
+    display: none;
+}
+
+.aladin-frameChoice {
+    display: none;
 }
 
 .collapsed {
@@ -58,6 +91,11 @@ body {
 
 .navbar {
     margin: 0px;
+}
+
+.navbar-default {
+    background-color: rgba(0,0,0,0);
+    border-color: rgba(0,0,0,0);
 }
 
 .well a {

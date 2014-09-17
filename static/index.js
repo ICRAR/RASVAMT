@@ -1,143 +1,116 @@
-var wwt;
+var aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:180});
 
-var survey_cache = [];
-var sb_cache = [];
-var filters = [];
+// Add SB footprint object to Aladin
+var SB_overlay = aladin.createOverlay({color: '#0066AA'});
+aladin.addOverlay(SB_overlay);
 
-var bShowCrosshairs = false;
-var bShowUI = true;
-var bShowFigures = false;
+// Add catalog object to Aladin
+// The catalog should only appear when selecting surveys/SBs
+var catalog = aladin.createCatalog({name: 'SBs'});
+aladin.addCatalog(catalog);
 
-// Resize canvas to fit screen
-function resize_canvas() {
-    
-    div = document.getElementById("WWTCanvas");
-    
-    if (div.style.width != (window.innerWidth).toString() + "px") {
-        div.style.width = (window.innerWidth).toString() + "px";
-    }
-    
-    if (div.style.height != (window.innerHeight).toString() + "px") {
-        div.style.height = ((window.innerHeight)).toString() + "px";
-    }
-    
-    $('#sky-coordinates').css({
-                              'bottom': $('#footer').height() + 10 + 'px'
-                              });
-}
+// Adds a catalog entry
+sources = [];
+sources.push(aladin.createSource(0.0, 0.0));
+catalog.addSources(sources);
 
-// click function, that gives coordinates 'eventArgs.get_RA()' and 'eventArgs.get_dec()'
-// this may be needed to select surveys/SBs, because WWT sucks and can't do this on its own
-function clicked(obj, eventArgs) {
-    alert("Clicked on: " + eventArgs.get_RA().toString() + ", " + eventArgs.get_dec().toString());
-}
+// Cache
+var survey_cache = TAFFY([]);
+var sb_cache = TAFFY([]);
+var filters = {};
 
-// called when the page loads
-function initialize() {
-    wwt = wwtlib.WWTControl.initControl("WWTCanvas");
-    wwt.add_ready(wwtReady);
-    wwt.add_clicked(clicked);
-    resize_canvas();
-    wwt.endInit();
-}
-
-// Code that should be activated once wwt has loaded
-function wwtReady() {
+/*
+ *  Requests JSON survey/SB objects from the
+ *  back-end server. The requests are sent
+ *  in a RESTful form, and the replies are cached.
+ */
+function getJSONData() {
     
-    wwt.settings.set_showCrosshairs(bShowCrosshairs);
-    wwt.settings.set_showConstellationFigures(bShowFigures);
-    wwt.hideUI(!bShowUI);
-    wwt.settings.set_showConstellationBoundries(false);
-    
-    // custom WWT code below
-    
-    $('#WWTCanvas').mousemove(displayCoordinates);
-    $('#WWTCanvas').scroll(function(e) {
-                           e.preventDefault();
-                           });
-    $('#WWTCanvas').mouseout(function(e) {
-                             wwtlib.WWTControl.singleton.onMouseUp(e);
-                             });
-    
-    $.getJSON("/survey/", function(survey_data) {
+    /*$.getJSON("/survey/", function(survey_data) {
               for (var i = 0; i < survey_data.length; i++) {
-              
               var survey = survey_data[i];
-              survey.annotations = [];    // will store any WWT annotations of the the survey (GAMA looks like it has more than one!)
               
               // create a simple poly annotation, and store it
               var points = survey.characterization.spatialAxis.coverage;
               var center = survey.characterization.spatialAxis.centralPosition;
-              var poly = createWWTPolygon(true, "grey", "blue", 1, 0.1, points);
-              poly.set_center(center[0], center[1]);
-              poly.set_id(survey.id);
-              poly.set_label("Survey " + survey.id);
-              poly.set_showHoverLabel(true);  // Why doesn't this work??
               
-              survey.annotation = poly;  // Add poly annotation data to survey
-              survey.isShown = false;
+              // add SB overlay
+              SB_overlay.addFootprints(points);
               
               // cache survey
               survey_cache.push(survey);
-              
               }
-              });
+              });*/
     
     $.getJSON("/sb/", function(sb_data) {
               for(var i = 0; i < sb_data.length; i++) {
-              
               var sb = sb_data[i];
               
+              // Retrieve coordinates from the JSON object
               var points = sb.ESO.observationBlock.tileCoverage[0];
-              var poly = createWWTPolygon(true, "yellow", "yellow", 1, 0.1, points);
-              poly.set_id(sb.id);
-              poly.set_label(sb.id);
-              poly.set_showHoverLabel(true);
               
-              sb.annotation = poly;
-              sb.isShown = false;
+              // For Aladin to create a footprint, a string must be parsed with
+              // the format "Polygon J2000 X1 Y1 X2 Y2 .... Xn Yn"
+              var sb_string = 'Polygon J2000';
+              for(var p = 0; p < points.length; p++) {
+                sb_string += ' ' + points[p][0];
+                sb_string += ' ' + points[p][1];
+              }
+              
+              // Create the Aladin footprint(s) using the string
+              // NOTE: sb_footprints is an array!
+              var sb_footprints = aladin.createFootprintsFromSTCS(sb_string);
+              
+              // add footprint to Aladin
+              SB_overlay.addFootprints(sb_footprints);
+              
+              // link footprint(s) to SB
+              sb.footprints = sb_footprints;
               
               // cache SB
-              sb_cache.push(sb);
-              
+              sb_cache.insert(sb);
               }
+              
+              // apply the filters once SBs are loaded in
+              applyFilters();
               });
 }
 
-// Function to create a WWT poygon
-function createWWTPolygon(fill, lineColor, fillColor, lineWidth, opacity, points) {
-    var poly = wwt.createPolygon(fill);
-    poly.set_lineColor(lineColor);
-    poly.set_fillColor(fillColor);
-    poly.set_lineWidth(lineWidth);
-    poly.set_opacity(opacity);
-    for (var i in points) {
-        poly.addPoint(points[i][0], points[i][1]);
-    }
-    return poly;
-}
+/*
+ *  This function parses selected points after
+ *  using Aladin's selection tool.
+ */
+aladin.on('select', function(selection) {
+          
+          console.log(selection);
+          
+          for(var i = 0; i < selection.length; i++) {
+            var s = selection[i];
+            s.select();
+            console.log(s);
+          }
+          
+          });
 
-// Displays coordinates under the HTML object with id = "sky-coordinates"
-function displayCoordinates(event) {
-    var coords = '(α,δ)=' + (wwt.getRA() * 15).toFixed(2) + "°, " + wwt.getDec().toFixed(2) + "° FOV= " + wwt.get_fov().toFixed(0) + "°";
-    $('#sky-coordinates').text(coords);
-}
-
-// Hides the menu containing filters
+/*
+ *  Hides the main filter menu
+ */
 function hideFilterMenu() {
     $('#filter-container').hide(100);
     $('#toggle-filter-menu').removeClass('glyphicon-resize-small').addClass('glyphicon-resize-full');
     $('#facet-ui').addClass('collapsed');
 }
 
-// Shows the menu containing filters
+/*
+ *  Shows the main filter menu
+ */
 function showFilterMenu() {
     $('#filter-container').show(100);
     $('#toggle-filter-menu').removeClass('glyphicon-resize-full').addClass('glyphicon-resize-small');
     $('#facet-ui').removeClass('collapsed');
 }
 
-// deselects filters
+// deselects filters (DEPRECATED)
 function deselectFacets() {
     //update highlight
     $('#facet-list a').each(function(index) {
@@ -146,40 +119,83 @@ function deselectFacets() {
     //$('#year-label').hide();
 }
 
-// activates/deactivates filter "filter"
-function setFilter(filter) {
+/* 
+ *  Applies the current filters in variable "filters"
+ *  to all cached SBs
+ */
+function applyFilters() {
     
-    console.log(filter);
+    // deselect (or delete/hide later on) all SBs
+    sb_cache().each(function (sb) {
+                    sb.footprints[0].hide();
+                    });
     
-    for(var i = 0; i < sb_cache.length; i++) {
-        
-        if(sb_cache[i].project == filter.id) {
-        
-            if(!sb_cache[i].isShown) {
-                console.log("added SB");
-                sb_cache[i].isShown = true;
-                wwt.addAnnotation(sb_cache[i].annotation);
-            }
-            else {
-                console.log("removed SB");
-                sb_cache[i].isShown = false;
-                wwt.removeAnnotation(sb_cache[i].annotation);
-            }
-        }
+    // Build up an array of the filters applied
+    var filterArray = [];
+    for(var key in filters) {
+        filterArray.push(filters[key]);
     }
+    
+    sb_cache.apply(null, filterArray).each(function (sb) {
+                    sb.footprints[0].show();
+                    });
 }
 
-// Code that should be activated once document has loaded
+/*
+ *  activates/deactivates filter "filter"
+ *  with id "id" (for identifying the filter).
+ */
+function setFilter(filter, id) {
+    
+    if(filters[id]) {
+        filters[id] = null;
+    }
+    else {
+        filters[id] = filter;
+    }
+    
+    // Apply all filters
+    applyFilters();
+}
+
+/*
+ *  Code that should be activated once document has loaded
+ */
 $(function() {
   
-  $('#WWTCanvas').bind('mousewheel DOMMouseScroll', function(e) {
-                       e.preventDefault();
-                       });
+  hideFilterMenu();
+  getJSONData();
   
+  /*
+   *    Listeners
+   */
+  
+  /*
+   *    When a filter heading is clicked,
+   *    the filters are minimised.
+   */
+  $('.well-title').click(function(e) {
+                           e.preventDefault();
+                           var url = $(this).attr('href');
+                         //console.log(url);
+                         
+                         var filters = $('#' + url);
+                         if(filters.is(":visible")) {
+                            filters.hide();
+                         }
+                         else {
+                            filters.show();
+                         }
+                           });
+  
+  /*
+   *    Toggle list functionality
+   *    (might be useful if toggle lists are needed)
+   */
   $('#toggle-list a').click(function(e) {
                             e.preventDefault();
                             var url = $(this).attr('href');
-                            setFilter(url);
+                            //setFilter(url);
                             
                             //update highlight
                             $('#toggle-list a').each(function(index) {
@@ -188,15 +204,36 @@ $(function() {
                             $(this).attr('class', 'label label-default');
                             });
 
+  /*
+   *    Survey filters.
+   *    Will set filters based on "href" and "id" attributes.
+   */
     $('#survey-list .btn').click(function(e) {
                             e.preventDefault();
                             $(this).blur();
                             
                             var json = $(this).attr('href');
-                            var obj = JSON.parse(json);
-                            setFilter(obj);
+                            var id = $(this).attr('id');
+                            var filter = JSON.parse(json);
+                                 
+                            setFilter(filter, id);
                             });
   
+  /*
+   *    The selection tool button
+   */
+  $('#selection-tool').click(function(e) {
+                               e.preventDefault();
+                               $(this).blur();
+                             
+                                hideFilterMenu();
+                                aladin.select();
+                               });
+  
+  /*
+   *    Some crappy facet-list that has its own function "deselectFacets()".
+   *    This one was grabbed from ADSASS WWT.
+   */
   $('#facet-list a').click(function(e) {
                            e.preventDefault();
                            var url = $(this).attr('href');
@@ -205,6 +242,10 @@ $(function() {
                            $(this).attr('class', 'label label-default');
                            });
   
+  /*
+   *    The button that shows/hides the
+   *    main filter menu!
+   */
   $('#toggle-filter-menu').click(function(e) {
                                  e.preventDefault();
                                  if ($('#filter-container').is(':visible')) {
