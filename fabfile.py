@@ -182,6 +182,9 @@ def check_setup():
     """
     if not os.path.isfile(BOTO_CONFIG):
 	abort('Require boto config to create instance')
+    #Check if user can import Flask
+    #Check if user can import boto
+	
 
 @task
 def create_instance(names, use_elastic_ip, public_ips):
@@ -801,14 +804,15 @@ def update_deploy():
 	TODO: maybe use zc.buildout
 	"""
 	set_env()
-	//sudo(virtualenv('supervisorctl restart RASVAMT'))
+	#sudo(virtualenv('supervisorctl restart RASVAMT'))
 	git_pull()
     	with cd(env.APP_DIR_ABS+'/RASVAMT'):
 	    sudo('cp nginx.conf /etc/nginx/')
 	    sudo('cp conf.d /etc/supervisor/')
 	    sudo('chmod +x create_db.py')
 	    sudo('create_db.py')
-    	sudo('service nginx reload')
+    	    sudo('service nginx reload')
+	    sudo('gunicorn_start')
 
 @task
 @serial
