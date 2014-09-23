@@ -14,9 +14,15 @@ body {
     border-color: #1f79a3;
 }
 
-#selection-tool {
+.selection-tool {
     background-color: rgba(255, 255, 0, 0.2);
     border-color: rgba(127, 127, 0, 1.0);
+}
+
+#parameter-display {
+    position:absolute;
+    bottom:0px;
+    right:0px;
 }
 
 .well-title {
@@ -70,6 +76,15 @@ body {
 
 .aladin-layersControl-container {
     top: 60px;
+}
+
+.aladin-logo-container {
+    top: 60px;
+    bottom: auto;
+}
+
+.aladin-zoomControl {
+    top: 140px;
 }
 
 .aladin-layerBox {

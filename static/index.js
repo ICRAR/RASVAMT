@@ -6,18 +6,31 @@ aladin.addOverlay(SB_overlay);
 
 // Add catalog object to Aladin
 // The catalog should only appear when selecting surveys/SBs
-var catalog = aladin.createCatalog({name: 'SBs'});
-aladin.addCatalog(catalog);
-
-// Adds a catalog entry
-sources = [];
-sources.push(aladin.createSource(0.0, 0.0));
-catalog.addSources(sources);
+var SB_catalog = aladin.createCatalog({name: 'SBs'});
+aladin.addCatalog(SB_catalog);
 
 // Cache
 var survey_cache = TAFFY([]);
 var sb_cache = TAFFY([]);
+var sb_selected = [];
 var filters = {};
+
+function getAveragePoint(points) {
+    
+    var average = [0, 0];
+    
+    for(var i = 0; i < points.length; i++) {
+        var p = points[i];
+        
+        average[0] += p[0];
+        average[1] += p[1];
+    }
+    
+    average[0] /= points.length;
+    average[1] /= points.length;
+    
+    return average;
+}
 
 /*
  *  Requests JSON survey/SB objects from the
@@ -43,11 +56,16 @@ function getJSONData() {
               });*/
     
     $.getJSON("/sb/", function(sb_data) {
+              
+              var all_footprints = [];
+              var all_points = [];
+              
               for(var i = 0; i < sb_data.length; i++) {
               var sb = sb_data[i];
               
               // Retrieve coordinates from the JSON object
               var points = sb.ESO.observationBlock.tileCoverage[0];
+              var points_average = getAveragePoint(points);
               
               // For Aladin to create a footprint, a string must be parsed with
               // the format "Polygon J2000 X1 Y1 X2 Y2 .... Xn Yn"
@@ -57,19 +75,31 @@ function getJSONData() {
                 sb_string += ' ' + points[p][1];
               }
               
-              // Create the Aladin footprint(s) using the string
-              // NOTE: sb_footprints is an array!
-              var sb_footprints = aladin.createFootprintsFromSTCS(sb_string);
+              // Create the Aladin footprint & point
+              // NOTE: createFootprintsFromSTCS returns an array! useful if SBs have more than one footprint
+              var sb_footprint = aladin.createFootprintsFromSTCS(sb_string)[0];
+              var sb_point = aladin.createSource(points_average[0], points_average[1]);
               
-              // add footprint to Aladin
-              SB_overlay.addFootprints(sb_footprints);
+              all_footprints.push(sb_footprint);
+              all_points.push(sb_point);
               
-              // link footprint(s) to SB
-              sb.footprints = sb_footprints;
+              // link footprint & point to SB
+              sb.footprint = sb_footprint;
+              sb.point = sb_point;
+              sb_point.sb = sb;
+              sb_footprint.sb = sb;
+              
+              // whether or not is being filtered in or out.
+              sb_point.hide();
+              sb_footprint.hide();
               
               // cache SB
               sb_cache.insert(sb);
               }
+              
+              // add footprint & point to Aladin
+              SB_overlay.addFootprints(all_footprints);
+              SB_catalog.addSources(all_points);
               
               // apply the filters once SBs are loaded in
               applyFilters();
@@ -82,15 +112,45 @@ function getJSONData() {
  */
 aladin.on('select', function(selection) {
           
-          console.log(selection);
+          sb_cache().each(function (sb) {
+                          sb.point.hide();
+                          });
           
           for(var i = 0; i < selection.length; i++) {
-            var s = selection[i];
-            s.select();
-            console.log(s);
+            selection[i].sb.footprint.select();
+            selection[i].select();
+            sb_selected.push(selection[i]);
           }
           
+          applyFilters();
+          displayParameters();
+          
           });
+
+/*
+ *  display of parameters.
+ */
+function displayParameters() {
+    
+    var display = $('#parameter-display').empty();
+    var messages = [];
+    
+    if(sb_selected.length == 1) {
+        
+        messages.push($('<a>').text('Count: ' + sb_selected.length));
+        messages.push($('<a>').text('Total Area: ' + '???'));
+        
+    }
+    else if(sb_selected.length > 1) {
+        
+        messages.push($('<a>').text('Count: ' + sb_selected.length));
+        messages.push($('<a>').text('Total Area: ' + '???'));
+    }
+    
+    for(var i = 0; i < messages.length; i++) {
+        display.append($('<li>').append(messages[i]));
+    }
+}
 
 /*
  *  Hides the main filter menu
@@ -127,7 +187,9 @@ function applyFilters() {
     
     // deselect (or delete/hide later on) all SBs
     sb_cache().each(function (sb) {
-                    sb.footprints[0].hide();
+                    if(!sb.footprint.isSelected) {
+                        sb.footprint.hide();
+                    }
                     });
     
     // Build up an array of the filters applied
@@ -137,7 +199,7 @@ function applyFilters() {
     }
     
     sb_cache.apply(null, filterArray).each(function (sb) {
-                    sb.footprints[0].show();
+                    sb.footprint.show();
                     });
 }
 
@@ -227,8 +289,32 @@ $(function() {
                                $(this).blur();
                              
                                 hideFilterMenu();
+                                sb_selected = [];
+                                sb_cache().each(function (sb) {
+                                                if(sb.footprint.isShowing) {
+                                                    sb.point.show();
+                                                }
+                                                sb.footprint.deselect();
+                                                sb.point.deselect();
+                                             });
                                 aladin.select();
                                });
+  
+  /*
+   *    The Select More tool button
+   */
+  $('#selection-tool-more').click(function(e) {
+                             e.preventDefault();
+                             $(this).blur();
+                             
+                             hideFilterMenu();
+                             sb_cache().each(function (sb) {
+                                             if(sb.footprint.isShowing) {
+                                                sb.point.show();
+                                             }
+                                             });
+                             aladin.select();
+                             });
   
   /*
    *    Some crappy facet-list that has its own function "deselectFacets()".
