@@ -23,6 +23,12 @@ body {
     position:absolute;
     bottom:0px;
     right:0px;
+    padding: 2px;
+}
+
+table {
+    background-color: rgba(0,0,0,0.5);
+    color: inherit;
 }
 
 .well-title {

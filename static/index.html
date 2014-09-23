@@ -54,36 +54,7 @@
                     <span style="color:grey;">FILTER BY:</span>
                 </div>
                 
-                <!-- SURVEY FILTER -->
-                <div class="well-title" href="facet-list">
-                    <span>FACETS ACROSS COLUMNS</span>
-                </div>
-                
-                <div class="facets">
-                    
-                    <span id="facet-list">
-                        
-                        <span class="label label-info">SURVEY</span>
-                        <a href="allSources_512" class="label label-default">All</a>
-                        <a href="Star_512">Stars</a>
-                        <a href="Galaxy_512">Galaxies</a>
-                        <a href="HII-region_512">HII regions</a>
-                        <a href="Nebula_512">Nebulae</a>
-                        <a href="Other_512">Other</a>
-                        
-                        <br>
-                        
-                        <span class="label label-info">Band</span>
-                        <a data-step="9" data-intro="Facets also work for wavelength. For example, click on <b>Radio</b>, to see how the sky looks to radio astronomers (based on their scholarly output)." href="Radio_512">Radio</a>
-                        <a href="Infrared_512">Infrared</a>
-                        <a href="UV_512">Ultraviolet</a>
-                        <a href="X_512">X-ray</a>
-                        
-                    </span>
-                    
-                </div>
-                
-                <!-- OTHER FILTER -->
+                <!-- FACET ROW example -->
                 <div class="well-title" href="base-list">
                     <span>EASY FACET ROW</span>
                 </div>
@@ -103,41 +74,41 @@
                     </span>
                 </span>
                 
-                <!-- PUT MORE FILTERS HERE -->
-                
-                <!-- OTHER FILTER -->
+                <!-- SURVEY FILTERS -->
                 <div class="well-title" href="survey-list">
                     <span>SURVEYS</span>
                 </div>
                 
                 <!-- When time to start filtering actual surveys, these buttons should be generated automatically based on the JSON files -->
                 <span id="survey-list">
-                    <button id="f1" href='{"project":{"!is":"WALLABY"}}' type="button" class="btn active" data-toggle="button">WALLABY</button>
-                    <button id="f2" href='{"project":{"!is":"DINGO_A"}}' type="button" class="btn active" data-toggle="button">DINGO_A</button>
-                    <button id="f3" href='{"project":{"!is":"DINGO_B"}}' type="button" class="btn active" data-toggle="button">DINGO_B</button>
-                    <button id="f4" href='{"project":{"!is":"DINGO_C"}}' type="button" class="btn active" data-toggle="button">DINGO_C</button>
-                    <button id="f5" href='{"project":{"!is":"DINGO_D"}}' type="button" class="btn active" data-toggle="button">DINGO_D</button>
-                    <button id="f6" href='{"project":{"!is":"DINGO_E"}}' type="button" class="btn active" data-toggle="button">DINGO_E</button>
-                    <button id="f7" href='{"project":{"!is":"DINGO_F"}}' type="button" class="btn active" data-toggle="button">DINGO_F</button>
-                    <button id="f8" href='{"project":{"!is":"DINGO_O"}}' type="button" class="btn active" data-toggle="button">DINGO_O</button>
-                    <button id="f9" href='{"project":{"!is":"DINGO_P"}}' type="button" class="btn active" data-toggle="button">DINGO_P</button>
-                    <button id="f10" href='{"project":{"!is":"DINGO_X"}}' type="button" class="btn active" data-toggle="button">DINGO_X</button>
-                    <button id="f11" href='{"project":{"!is":"GAMA09"}}' type="button" class="btn active" data-toggle="button">GAMA09</button>
-                    <button id="f12" href='{"project":{"!is":"GAMA12"}}' type="button" class="btn active" data-toggle="button">GAMA12</button>
-                    <button id="f13" href='{"project":{"!is":"GAMA15"}}' type="button" class="btn active" data-toggle="button">GAMA15</button>
-                    <button id="f14" href='{"project":{"!is":"GAMA02"}}' type="button" class="btn active" data-toggle="button">GAMA02</button>
-                    <button id="f15" href='{"project":{"!is":"GAMA23"}}' type="button" class="btn active" data-toggle="button">GAMA23</button>
+                    <button id="f1" href='[/data/project!="WALLABY"]' type="button" class="btn active" data-toggle="button">WALLABY</button>
+                    <button id="f2" href='[/data/project!="DINGO_A"]' type="button" class="btn active" data-toggle="button">DINGO_A</button>
+                    <button id="f3" href='[/data/project!="DINGO_B"]' type="button" class="btn active" data-toggle="button">DINGO_B</button>
+                    <button id="f4" href='[/data/project!="DINGO_C"]' type="button" class="btn active" data-toggle="button">DINGO_C</button>
+                    <button id="f5" href='[/data/project!="DINGO_D"]' type="button" class="btn active" data-toggle="button">DINGO_D</button>
+                    <button id="f6" href='[/data/project!="DINGO_E"]' type="button" class="btn active" data-toggle="button">DINGO_E</button>
+                    <button id="f7" href='[/data/project!="DINGO_F"]' type="button" class="btn active" data-toggle="button">DINGO_F</button>
+                    <button id="f8" href='[/data/project!="DINGO_O"]' type="button" class="btn active" data-toggle="button">DINGO_O</button>
+                    <button id="f9" href='[/data/project!="DINGO_P"]' type="button" class="btn active" data-toggle="button">DINGO_P</button>
+                    <button id="f10" href='[/data/project!="DINGO_X"]' type="button" class="btn active" data-toggle="button">DINGO_X</button>
+                    <button id="f11" href='[/data/project!="GAMA09"]' type="button" class="btn active" data-toggle="button">GAMA09</button>
+                    <button id="f12" href='[/data/project!="GAMA12"]' type="button" class="btn active" data-toggle="button">GAMA12</button>
+                    <button id="f13" href='[/data/project!="GAMA15"]' type="button" class="btn active" data-toggle="button">GAMA15</button>
+                    <button id="f14" href='[/data/project!="GAMA02"]' type="button" class="btn active" data-toggle="button">GAMA02</button>
+                    <button id="f15" href='[/data/project!="GAMA23"]' type="button" class="btn active" data-toggle="button">GAMA23</button>
                 </span>
                 
-                <!-- Select_Region tool -->
-                <div class="well-title">
+                <!-- Selection tools -->
+                <div class="well-title" href="selection-tool-list">
                     <span>SELECT REGION</span>
                 </div>
                 
-                <!-- Select_Region tool -->
-                <button id="selection-tool" class="btn selection-tool" type="button" class="btn">SELECT</button>
-                <!-- Select More tool -->
-                <button id="selection-tool-more" class="btn selection-tool" type="button" class="btn">SELECT MORE</button>
+                <!-- Selection tools -->
+                <span id="selection-tool-list">
+                    <button id="selection-tool" class="btn selection-tool" type="button" class="btn">SELECT</button>
+                    <button id="deselection-tool" class="btn selection-tool" type="button" class="btn">DESELECT</button>
+                    <button id="clear-selection-tool" class="btn selection-tool" type="button" class="btn">CLEAR</button>
+                </span>
                 
             </div>
             
@@ -156,8 +127,10 @@
             
         </div>
         
-        <script type="text/javascript" src="/file/aladin.min.js" charset="utf-8"></script>
-        <script src="/file/taffy-min.js"></script>
+        <script src="/file/aladin.min.js"></script>
+        <script src="/file/spahql-min.js"></script>
+        <script src="/file/crel.js"></script>
+        <script src="/file/json.human.js"></script>
         <script src="/file/index.js"></script>
     </body>
 </html>
