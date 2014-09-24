@@ -19,7 +19,6 @@ fab -u `whoami` -H <IP address> -f machine-setup/deploy.py user_deploy
 # 1 : Create DB/dir
 # 2 : Get Supervisor working
 # 3 : Local installation
-# 4 : Remove redundant RASVAMT directory
 # 5 : Work out users situation
 import glob
 
@@ -592,6 +591,7 @@ def user_setup():
     setup rasvamt users.
 
     TODO: sort out the ssh keys
+    TODO: User permissions
     """
 
     set_env()
@@ -790,7 +790,9 @@ def deploy():
     print(red("Beginning Deploy:"))
     #might need setenv 
 
-    sudo(virtualenv('supervisorctl restart RASVAMT'))
+    #sudo(virtualenv('supervisorctl restart RASVAMT'))
+    with cd(env.APP_DIR_ABS+'/RASVAMT'):
+    	run('gunicorn_start')
     #virtualenv('supervisorctl')
 
     print(blue("Deploy finished check server {}".format(env.host_string)))
