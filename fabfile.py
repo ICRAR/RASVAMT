@@ -592,6 +592,8 @@ def user_setup():
 
     TODO: sort out the ssh keys
     TODO: User permissions
+    TODO: ec2-user can't access rasvamt_portal
+    TODO: rasvamt can't sudo without passwd
     """
 
     set_env()

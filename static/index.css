@@ -80,22 +80,18 @@ table {
     display: none;
 }
 
-.aladin-layersControl-container {
-    top: 60px;
-}
 
-.aladin-logo-container {
-    top: 60px;
-    bottom: auto;
-}
-
-.aladin-zoomControl {
-    top: 140px;
-}
 
 .aladin-layerBox {
     top: 60px;
     z-index: 20;
+}
+
+.aladin-layersControl {
+    top: 60px;
+}
+.aladin-layersControl-container {
+    top: 60px;
 }
 
 .aladin-gotoControl {
