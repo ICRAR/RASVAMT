@@ -1,23 +1,41 @@
 var aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:180});
 
-// Add SB footprint object to Aladin
-var SB_overlay = aladin.createOverlay({color: '#0066AA'});
-aladin.addOverlay(SB_overlay);
+// Add footprint (polygon overlay) object to Aladin
+var overlay = aladin.createOverlay({color: '#0066AA'});
+aladin.addOverlay(overlay);
 
-// Add catalog object to Aladin
+// Add catalog (points overlay) object to Aladin
 // The catalog should only appear when selecting surveys/SBs
-var catalog = aladin.createCatalog({name: 'SBs'});
+var catalog = aladin.createCatalog({name: 'Catalog'});
 aladin.addCatalog(catalog);
 
-// Adds a catalog entry
-sources = [];
-sources.push(aladin.createSource(0.0, 0.0));
-catalog.addSources(sources);
+// main object cache, and variable to query objects
+var obj_cache = [];
+var obj_query = SpahQL.db(obj_cache);
 
-// Cache
-var survey_cache = TAFFY([]);
-var sb_cache = TAFFY([]);
+// selected objects stuff
+var selected = [];
+var selecting = true;
+
+// filters cache
 var filters = {};
+
+function getAveragePoint(points) {
+    
+    var average = [0, 0];
+    
+    for(var i = 0; i < points.length; i++) {
+        var p = points[i];
+        
+        average[0] += p[0];
+        average[1] += p[1];
+    }
+    
+    average[0] /= points.length;
+    average[1] /= points.length;
+    
+    return average;
+}
 
 /*
  *  Requests JSON survey/SB objects from the
@@ -43,11 +61,16 @@ function getJSONData() {
               });*/
     
     $.getJSON("/sb/", function(sb_data) {
+              
+              var all_footprints = [];
+              var all_points = [];
+              
               for(var i = 0; i < sb_data.length; i++) {
               var sb = sb_data[i];
               
               // Retrieve coordinates from the JSON object
               var points = sb.ESO.observationBlock.tileCoverage[0];
+              var points_average = getAveragePoint(points);
               
               // For Aladin to create a footprint, a string must be parsed with
               // the format "Polygon J2000 X1 Y1 X2 Y2 .... Xn Yn"
@@ -57,22 +80,40 @@ function getJSONData() {
                 sb_string += ' ' + points[p][1];
               }
               
-              // Create the Aladin footprint(s) using the string
-              // NOTE: sb_footprints is an array!
-              var sb_footprints = aladin.createFootprintsFromSTCS(sb_string);
+              // Create the Aladin footprint & point
+              // NOTE: createFootprintsFromSTCS returns an array! useful if SBs have more than one footprint
+              var sb_footprint = aladin.createFootprintsFromSTCS(sb_string)[0];
+              var sb_point = aladin.createSource(points_average[0], points_average[1]);
               
-              // add footprint to Aladin
-              SB_overlay.addFootprints(sb_footprints);
+              // adds the overlays to an array, to later
+              // give to Aladin
+              all_footprints.push(sb_footprint);
+              all_points.push(sb_point);
               
-              // link footprint(s) to SB
-              sb.footprints = sb_footprints;
+              // link data to object
+              var obj = {};
+              obj.footprint = sb_footprint;
+              obj.point = sb_point;
+              obj.data = sb;
+              
+              // link selectable point to object
+              sb_point.obj = obj;
+              
+              // hides the overlays by default
+              sb_point.hide();
+              sb_footprint.hide();
               
               // cache SB
-              sb_cache.insert(sb);
+              obj_cache.push(obj);
               }
               
-              // apply the filters once SBs are loaded in
+              // add overlays to Aladin
+              overlay.addFootprints(all_footprints);
+              catalog.addSources(all_points);
+              
+              // apply the filters once objects are loaded in, and display parameters
               applyFilters();
+              displayParameters();
               });
 }
 
@@ -82,15 +123,83 @@ function getJSONData() {
  */
 aladin.on('select', function(selection) {
           
-          console.log(selection);
-          
-          for(var i = 0; i < selection.length; i++) {
-            var s = selection[i];
-            s.select();
-            console.log(s);
+          // Hide all points, as the selection is done
+          for (var i = 0; i < obj_cache.length; i++) {
+                obj_cache[i].point.hide();
           }
           
+          // Iterates through selection, either
+          // selecting or deselecting points
+          for(var i = 0; i < selection.length; i++) {
+          
+            var obj = selection[i].obj;
+          
+            if(selecting) {
+          
+                // select all unselected points, and add to "selected" array
+                if(!selection[i].isSelected) {
+          
+                    obj.footprint.select();
+                    obj.point.select();
+                    selected.push(obj);
+                }
+          
+            }
+            else {
+          
+                // deselect all selected points
+                if(selection[i].isSelected) {
+          
+                    obj.footprint.deselect();
+                    obj.point.deselect();
+          
+                    // delete from "selected" array
+                    var index = selected.indexOf(obj);
+                    if (index > -1) {
+                        selected.splice(index, 1);
+                    }
+                }
+          
+            }
+          }
+          
+          // if deselecting, deselected SBs may need to be
+          // removed based on active filters
+          if(!selecting) {
+            applyFilters();
+          }
+          
+          displayParameters();
+          
           });
+
+/*
+ *  display of parameters in "selected" array.
+ */
+function displayParameters() {
+    
+    var display = $('#parameter-display').empty();
+    var count = selected.length;
+    
+    if(count == 1) {
+        
+        var obj = selected[0];
+        console.log(obj);
+        var node = JsonHuman.format(obj.data);
+        
+        display.append(node);
+        
+    }
+    else if(count > 1) {
+        
+        display.append($('<p>ScheduleBlocks</p>'));
+        display.append($('<p>Count: ' + count + '</p>'));
+        display.append($('<p>Total Area: </p>'));
+    }
+    else {
+        // display parameters of Everything, here
+    }
+}
 
 /*
  *  Hides the main filter menu
@@ -110,15 +219,6 @@ function showFilterMenu() {
     $('#facet-ui').removeClass('collapsed');
 }
 
-// deselects filters (DEPRECATED)
-function deselectFacets() {
-    //update highlight
-    $('#facet-list a').each(function(index) {
-                            $(this).attr('class', '');
-                            });
-    //$('#year-label').hide();
-}
-
 /* 
  *  Applies the current filters in variable "filters"
  *  to all cached SBs
@@ -126,19 +226,23 @@ function deselectFacets() {
 function applyFilters() {
     
     // deselect (or delete/hide later on) all SBs
-    sb_cache().each(function (sb) {
-                    sb.footprints[0].hide();
-                    });
+    for (var i = 0; i < obj_cache.length; i++) {
+        if(!obj_cache[i].footprint.isSelected) {
+            obj_cache[i].footprint.hide();
+        }
+    };
     
     // Build up an array of the filters applied
-    var filterArray = [];
+    var filterString = "/*";
     for(var key in filters) {
-        filterArray.push(filters[key]);
+        filterString += filters[key];
     }
     
-    sb_cache.apply(null, filterArray).each(function (sb) {
-                    sb.footprints[0].show();
-                    });
+    // apply filters TaffyDB-style
+    var result = obj_query.select(filterString);
+    for (var i = 0; i < result.length; i++) {
+        result[i].value.footprint.show();
+    };
 }
 
 /*
@@ -212,23 +316,74 @@ $(function() {
                             e.preventDefault();
                             $(this).blur();
                             
-                            var json = $(this).attr('href');
+                            var filter_string = $(this).attr('href');
                             var id = $(this).attr('id');
-                            var filter = JSON.parse(json);
                                  
-                            setFilter(filter, id);
+                            setFilter(filter_string, id);
                             });
   
   /*
    *    The selection tool button
    */
-  $('#selection-tool').click(function(e) {
+  $('#clear-selection-tool').click(function(e) {
+                               e.preventDefault();
+                               $(this).blur();
+                               
+                               hideFilterMenu();
+                                   
+                                   // deselect all SBs
+                                   for (var i = 0; i < selected.length; i++) {
+                                        selected[i].footprint.deselect();
+                                        selected[i].point.deselect();
+                                   };
+                                   
+                                   // remove SBs from selection
+                                   selected = [];
+                                   
+                                   // empty parameter display
+                                   $('#parameter-display').empty();
+                                   
+                                   // apply filters
+                                   applyFilters();
+                               });
+  
+  /*
+   *    The selection tool button
+   */
+  $('#deselection-tool').click(function(e) {
                                e.preventDefault();
                                $(this).blur();
                              
                                 hideFilterMenu();
+                               
+                                selecting = false;
+                                // show all points of visible SBs
+                                for (var i = 0; i < obj_cache.length; i++) {
+                                        if(obj_cache[i].footprint.isShowing) {
+                                            obj_cache[i].point.show();
+                                        }
+                                };
                                 aladin.select();
                                });
+  
+  /*
+   *    The Select More tool button
+   */
+  $('#selection-tool').click(function(e) {
+                             e.preventDefault();
+                             $(this).blur();
+                             
+                             hideFilterMenu();
+                             
+                             selecting = true;
+                             // show all points of visible SBs
+                             for (var i = 0; i < obj_cache.length; i++) {
+                                if(obj_cache[i].footprint.isShowing) {
+                                    obj_cache[i].point.show();
+                                }
+                             };
+                             aladin.select();
+                             });
   
   /*
    *    Some crappy facet-list that has its own function "deselectFacets()".

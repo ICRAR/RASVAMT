@@ -1,5 +1,5 @@
 from flask import Flask, url_for, redirect, render_template, request, g
-#from werkzeug.contrib.fixers import ProxyFix   (UNCOMMENT FOR DEPLOYMENT WITH GUNICORN/NGINX)
+#from werkzeug.contrib.fixers import ProxyFix   #(UNCOMMENT FOR DEPLOYMENT WITH GUNICORN/NGINX)
 import json
 import sqlite3
 #http://flask.pocoo.org/docs/0.10/patterns/sqlite3/
@@ -73,7 +73,7 @@ def get_data():
     message=request.args.get('myParam')
     return ('you wrote ' + message)
 
-#app.wsgi_app = ProxyFix(app.wsgi_app)  (UNCOMMENT FOR DEPLOYMENT WITH GUNICORN/NGINX)
+#app.wsgi_app = ProxyFix(app.wsgi_app)  #(UNCOMMENT FOR DEPLOYMENT WITH GUNICORN/NGINX)
 
 def get_db():
     db = getattr(g, '_database', None)
