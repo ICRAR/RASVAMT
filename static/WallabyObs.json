@@ -1,12 +1,12 @@
 [
    {
-      "project": "WALLABY", 
+      "project": "WALLABY",
       "ESO": {
-         "metadataType": "OB", 
+         "metadataType": "OB",
          "observationBlock": {
-            "telescope": "ASKAP", 
-            "executionTime": 28800, 
-            "programID": "WALLABY", 
+            "telescope": "ASKAP",
+            "executionTime": 28800,
+            "programID": "WALLABY",
             "nbPawprints": 6, 
             "period": 1, 
             "tileCoverage": [
@@ -58847,5 +58847,108 @@
          "Staveley-Smith, L.", 
          "Meyer, M."
       ]
-   }
+   },
+ {
+ "project": "WALLABY",
+ "date": 40,
+ "status": "o",
+ "ESO": {
+ "metadataType": "OB",
+ "observationBlock": {
+ "telescope": "ASKAP",
+ "executionTime": 28800,
+ "programID": "WALLABY",
+ "nbPawprints": 6,
+ "period": 1,
+ "tileCoverage": [
+                  [
+                   [
+                    10.24224772740737648,
+                    79.996950963911132
+                    ],
+                   [
+                    20.9565277274073777,
+                    79.996950963911125
+                    ],
+                   [
+                    20.8186310273524903,
+                    74.80375170636243
+                    ],
+                   [
+                    10.2043510273524902101,
+                    74.803751706362434
+                    ]
+                   ]
+                  ],
+ "instrument": "BETA",
+ "currentQCStatus": "WIP",
+ "historyStatus": {
+ "2012-01-09T10:47:31": "+"
+ },
+ "userPriority": 1,
+ "currentStatus": "+",
+ "tilePattern": "Tile6z",
+ "id": 1202,
+ "runID": "1"
+ }
+ },
+ "creator": "COOL_GUYS",
+ "id": "TEST00001",
+ "investigators": [
+                   "Dunne, J.",
+                   "Poole, C."
+                   ]
+ },
+ {
+ "project": "WALLABY",
+ "date": 50,
+ "status": "no",
+ "ESO": {
+ "metadataType": "OB",
+ "observationBlock": {
+ "telescope": "ASKAP",
+ "executionTime": 28800,
+ "programID": "WALLABY",
+ "nbPawprints": 6,
+ "period": 1,
+ "tileCoverage": [
+                  [
+                   [
+                    -0.04224772740737648,
+                    79.996950963911132
+                    ],
+                   [
+                    10.7565277274073777,
+                    79.996950963911125
+                    ],
+                   [
+                    10.6186310273524903,
+                    74.80375170636243
+                    ],
+                   [
+                    -0.1043510273524902101,
+                    74.803751706362434
+                    ]
+                   ]
+                  ],
+ "instrument": "BETA",
+ "currentQCStatus": "WIP",
+ "historyStatus": {
+ "2012-01-09T10:47:31": "+"
+ },
+ "userPriority": 1,
+ "currentStatus": "+",
+ "tilePattern": "Tile6z",
+ "id": 1203,
+ "runID": "1"
+ }
+ },
+ "creator": "COOL_GUYS",
+ "id": "TEST00002",
+ "investigators": [
+                   "Dunne, J.",
+                   "Poole, C.",
+                   "Drygala, L."
+                   ]
+ }
 ]
