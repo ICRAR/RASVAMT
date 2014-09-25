@@ -438,7 +438,7 @@ $(function() {
                                                 //console.log(obj);
                                                 obj.fromNumber;
                                                 obj.toNumber;
-                                                setFilter('[/data/date>'+obj.fromNumber+'][/data/date<'+obj.toNumber+']', 'date-filter');
+                                                setFilter('[/data/date>='+obj.fromNumber+'][/data/date<='+obj.toNumber+']', 'date-filter');
                                             }
                                             });
   

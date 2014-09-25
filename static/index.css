@@ -6,6 +6,8 @@ body {
     background-color: rgba(179, 197, 255, 0.14);
     border-color: #1f79a3;
     padding: 2px 6px;
+    margin-top:1px;
+    margin-bottom:1px;
 }
 
 .btn.active {
