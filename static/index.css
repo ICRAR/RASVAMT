@@ -39,6 +39,7 @@ table {
     letter-spacing: 1px;
     margin-bottom: 5px;
     margin-top: 5px;
+    cursor:pointer;
 }
 
 #toggle-filter-menu {
@@ -51,12 +52,16 @@ table {
 #facet-ui {
     position: absolute;
     padding: 10px;
-    margin-top: 5px;
-    margin-left: 40px;
+    margin-top: 0px;
+    margin-left: 10px;
     background-color: rgba(0,0,0,.5);
     border:none;
     z-index:10;
     max-width:450px;
+}
+
+.irs-with-grid {
+    opacity:0.85;
 }
 
 .aladin-fullscreen {
