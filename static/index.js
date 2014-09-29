@@ -235,7 +235,9 @@ function applyFilters() {
     // Build up an array of the filters applied
     var filterString = "/*";
     for(var key in filters) {
-        filterString += filters[key];
+        if(filters[key] != null) {
+            filterString += filters[key];
+        }
     }
     
     // apply filters TaffyDB-style
@@ -251,12 +253,7 @@ function applyFilters() {
  */
 function setFilter(filter, id) {
     
-    if(filters[id]) {
-        filters[id] = null;
-    }
-    else {
-        filters[id] = filter;
-    }
+    filters[id] = filter;
     
     // Apply all filters
     applyFilters();
@@ -281,15 +278,9 @@ $(function() {
   $('.well-title').click(function(e) {
                            e.preventDefault();
                            var url = $(this).attr('href');
-                         //console.log(url);
                          
-                         var filters = $('#' + url);
-                         if(filters.is(":visible")) {
-                            filters.hide();
-                         }
-                         else {
-                            filters.show();
-                         }
+                            var filters = $('#' + url);
+                            filters.toggle();
                            });
   
   /*
@@ -316,8 +307,15 @@ $(function() {
                             e.preventDefault();
                             $(this).blur();
                             
-                            var filter_string = $(this).attr('href');
+                            var filter_string;
                             var id = $(this).attr('id');
+                                 
+                            if($(this).is('.active')) {
+                                filter_string = $(this).attr('href');
+                            }
+                            else {
+                               filter_string = null;
+                            }
                                  
                             setFilter(filter_string, id);
                             });
@@ -409,5 +407,39 @@ $(function() {
                                  showFilterMenu();
                                  }
                                  });
+  
+  /*
+   *    Date Slider bar
+   */
+  $('#date-tool-slider-bar').ionRangeSlider({
+                                            min: 10,                        // min value
+                                            max: 100,                       // max value
+                                            from: 10,                       // overwrite default FROM setting
+                                            to: 100,                         // overwrite default TO setting
+                                            type: "double",                 // slider type
+                                            step: 1,                       // slider step
+                                            //prefix: "$",                    // prefix value
+                                            //postfix: " €",                  // postfix value
+                                            //maxPostfix: "+",                // postfix to maximum value
+                                            hasGrid: true,                  // enable grid
+                                            gridMargin: 7,                  // margin between slider corner and grid
+                                            //hideMinMax: true,               // hide Min and Max fields
+                                            //hideFromTo: true,               // hide From and To fields
+                                            //prettify: true,                 // separate large numbers with space, eg. 10 000
+                                            disable: false,                 // disable slider
+                                            //values: ["a", "b", "c"],        // array of custom values
+                                            onLoad: function (obj) {        // callback is called after slider load and update
+                                                //console.log(obj);
+                                            },
+                                            onChange: function (obj) {      // callback is called on every slider change
+                                                //console.log(obj);
+                                            },
+                                            onFinish: function (obj) {      // callback is called on slider action is finished
+                                                //console.log(obj);
+                                                obj.fromNumber;
+                                                obj.toNumber;
+                                                setFilter('[/data/date>='+obj.fromNumber+'][/data/date<='+obj.toNumber+']', 'date-filter');
+                                            }
+                                            });
   
   });

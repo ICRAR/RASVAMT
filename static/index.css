@@ -6,6 +6,8 @@ body {
     background-color: rgba(179, 197, 255, 0.14);
     border-color: #1f79a3;
     padding: 2px 6px;
+    margin-top:1px;
+    margin-bottom:1px;
 }
 
 .btn.active {
@@ -39,6 +41,14 @@ table {
     letter-spacing: 1px;
     margin-bottom: 5px;
     margin-top: 5px;
+    
+    cursor:pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 #toggle-filter-menu {
@@ -51,12 +61,16 @@ table {
 #facet-ui {
     position: absolute;
     padding: 10px;
-    margin-top: 5px;
-    margin-left: 40px;
+    margin-top: 0px;
+    margin-left: 10px;
     background-color: rgba(0,0,0,.5);
     border:none;
     z-index:10;
     max-width:450px;
+}
+
+.irs-with-grid {
+    opacity:0.85;
 }
 
 .aladin-fullscreen {
