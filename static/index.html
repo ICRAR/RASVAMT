@@ -49,12 +49,12 @@
         </nav>
         
         <!-- The Filtering box -->
-        <div class="well" id="facet-ui">
+        <div class="well" id="filter-ui">
             <div id="filter-container">
                 
-                <!-- Filter box title -->
+                <!-- Title example -->
                 <div class="well-title">
-                    <span style="color:grey;">FILTER BY:</span>
+                    <span>FILTER BY:</span>
                 </div>
                 
                 <!-- FACET ROW example -->
@@ -77,13 +77,13 @@
                     </span>
                 </span>
                 
-                <!-- SURVEY FILTERS -->
-                <div class="well-title" href="survey-list">
+                <!-- Survey name filter -->
+                <div class="well-title" href="survey-name-filter">
                     <span>SURVEYS</span>
                 </div>
                 
-                <!-- When time to start filtering actual surveys, these buttons should be generated automatically based on the JSON files -->
-                <span id="survey-list">
+                <!-- these buttons may be generated automatically based on the JSON files -->
+                <span id="survey-name-filter">
                     <button id="f1" href='[/data/project!="WALLABY"]' type="button" class="btn active" data-toggle="button">WALLABY</button>
                     <button id="f2" href='[/data/project!="DINGO_A"]' type="button" class="btn active" data-toggle="button">DINGO_A</button>
                     <button id="f3" href='[/data/project!="DINGO_B"]' type="button" class="btn active" data-toggle="button">DINGO_B</button>
@@ -101,26 +101,39 @@
                     <button id="f15" href='[/data/project!="GAMA23"]' type="button" class="btn active" data-toggle="button">GAMA23</button>
                 </span>
                 
-                <!-- SURVEY FILTERS -->
-                <div class="well-title" href="date-tool">
+                <!-- Survey date filter -->
+                <div class="well-title" href="survey-date-filter">
                     <span>DATE FILTERING</span>
                 </div>
                 
-                <!-- date slider bar -->
-                <span id="date-tool">
+                <!-- Survey date filter -->
+                <span id="survey-date-filter">
                     <input type="text" id="date-tool-slider-bar" name="date-tool-slider-bar" value="" />
                 </span>
                 
-                <!-- Selection tools -->
-                <div class="well-title" href="selection-tool-list">
+                <!-- Survey status filter -->
+                <div class="well-title" href="survey-status-filter">
+                    <span>STATUS FILTERING</span>
+                </div>
+                
+                <!-- Survey status filter -->
+                <span id="survey-status-filter">
+                    <button id="s1" href='[/data/status!="n"]' type="button" class="btn active" data-toggle="button">PLANNED</button>
+                    <button id="s2" href='[/data/status!="o"]' type="button" class="btn active" data-toggle="button">OBSERVED</button>
+                    <button id="s3" href='[/data/status!="q"]' type="button" class="btn active" data-toggle="button">QUALITY CONTROL</button>
+                    <button id="s4" href='[/data/status!="p"]' type="button" class="btn active" data-toggle="button">PROCESSED</button>
+                </span>
+                
+                <!-- Survey selection tool -->
+                <div class="well-title" href="survey-selection-tool">
                     <span>SELECT REGION</span>
                 </div>
                 
-                <!-- Selection tools -->
-                <span id="selection-tool-list">
-                    <button id="selection-tool" title="Select surveys to display statistics, right mouse click and drag" class="btn selection-tool" type="button" class="btn">SELECT</button>
-                    <button id="deselection-tool" title="Same as deselect use mouse to drag, and deselect surveys" class="btn selection-tool" type="button" class="btn">DESELECT</button>
-                    <button id="clear-selection-tool" title="Clears all selection area" class="btn selection-tool" type="button" class="btn">CLEAR</button>
+                <!-- Survey selection tool -->
+                <span id="survey-selection-tool">
+                    <button id="selection-tool" title="Select surveys to display statistics, right mouse click and drag" class="btn" type="button" class="btn">SELECT</button>
+                    <button id="deselection-tool" title="Same as deselect use mouse to drag, and deselect surveys" class="btn" type="button" class="btn">DESELECT</button>
+                    <button id="clear-selection-tool" title="Clears all selection area" class="btn" type="button" class="btn">CLEAR</button>
                 </span>
                 
             </div>
