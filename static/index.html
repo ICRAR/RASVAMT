@@ -7,10 +7,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
             
         <link rel="stylesheet" href="/file/aladin.min.css" />
+        <link rel="stylesheet" href="/file/jQRangeSlider-5.7.0/css/iThing-min.css" />
         <link rel="stylesheet" href="/file/bootstrap/css/bootstrap.min.dark.css"/>
-        <link rel="stylesheet" href="/file/ion.rangeSlider-1.9.3/css/normalize.min.css"/>
-        <link rel="stylesheet" href="/file/ion.rangeSlider-1.9.3/css/ion.rangeSlider.css"/>
-        <link rel="stylesheet" href="/file/ion.rangeSlider-1.9.3/css/ion.rangeSlider.skinFlat.css"/>
         <link rel="stylesheet" href="/file/index.css"/>
         
         <script src="/file/jquery-1.11.1.min.js"></script>
@@ -107,8 +105,8 @@
                 </div>
                 
                 <span id="survey-date-filter">
-                    <input type="text" id="date-tool-slider-bar" name="date-tool-slider-bar" value="" />
-	        </span>
+                    <div id="survey-date-slider"></div>
+                </span>
 
                 <!-- Survey status filter -->
                 <div class="well-title" href="survey-status-filter">
@@ -121,7 +119,7 @@
                     <button id="s2" href='[/data/status!="OBSERVED"]' type="button" class="btn active" data-toggle="button">OBSERVED</button>
                     <button id="s3" href='[/data/status!="QUALITY CONTROL"]' type="button" class="btn active" data-toggle="button">QUALITY CONTROL</button>
                     <button id="s4" href='[/data/status!="PROCESSED"]' type="button" class="btn active" data-toggle="button">PROCESSED</button>
-
+                </span>
                 
                 <!-- Survey selection tool -->
                 <div class="well-title" href="survey-selection-tool">
@@ -152,11 +150,12 @@
             
         </div>
         
+        <script src="/file/jquery-ui.min.js"></script>
         <script src="/file/aladin.min.js"></script>
         <script src="/file/spahql-min.js"></script>
         <script src="/file/crel.js"></script>
         <script src="/file/json.human.js"></script>
-        <script src="/file/ion.rangeSlider-1.9.3/js/ion.rangeSlider.min.js"></script>
+        <script src="/file/jQRangeSlider-5.7.0/jQDateRangeSlider-min.js"></script>
         <script src="/file/index.js"></script>
     </body>
 </html>

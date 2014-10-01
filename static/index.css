@@ -149,3 +149,28 @@ table {
     background-color: rgba(0,0,0,0);
     border-color: rgba(0,0,0,0);
 }
+
+#survey-date-slider {
+    opacity:0.9;
+}
+
+.ui-rangeSlider-container {
+    border-color:#1f79a3;
+}
+
+.ui-rangeSlider-arrow {
+    border-color:#1f79a3;
+}
+
+.ui-rangeSlider-innerBar {
+    background:rgba(0,0,0,0.5);
+}
+
+.ui-rangeSlider-label {
+    background:rgba(127,127,127,0.5);
+    box-shadow:none;
+}
+
+.ui-rangeSlider-label-inner {
+    border-top-color:rgba(127,127,127,0.5);
+}
