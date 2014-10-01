@@ -58850,8 +58850,8 @@
    },
  {
  "project": "WALLABY",
- "date": 40,
- "status": "o",
+ "date": "1 July 2012",
+ "status": "n",
  "ESO": {
  "metadataType": "OB",
  "observationBlock": {
@@ -58901,8 +58901,8 @@
  },
  {
  "project": "WALLABY",
- "date": 50,
- "status": "no",
+ "date": "10 July 2012",
+ "status": "o",
  "ESO": {
  "metadataType": "OB",
  "observationBlock": {
@@ -58940,6 +58940,110 @@
  "currentStatus": "+",
  "tilePattern": "Tile6z",
  "id": 1203,
+ "runID": "1"
+ }
+ },
+ "creator": "COOL_GUYS",
+ "id": "TEST00002",
+ "investigators": [
+                   "Dunne, J.",
+                   "Poole, C.",
+                   "Drygala, L."
+                   ]
+ },
+ {
+ "project": "WALLABY",
+ "date": "15 July 2012",
+ "status": "q",
+ "ESO": {
+ "metadataType": "OB",
+ "observationBlock": {
+ "telescope": "ASKAP",
+ "executionTime": 28800,
+ "programID": "WALLABY",
+ "nbPawprints": 6,
+ "period": 1,
+ "tileCoverage": [
+                  [
+                   [
+                    -10.04224772740737648,
+                    79.996950963911132
+                    ],
+                   [
+                    0.7565277274073777,
+                    79.996950963911125
+                    ],
+                   [
+                    0.6186310273524903,
+                    74.80375170636243
+                    ],
+                   [
+                    -10.1043510273524902101,
+                    74.803751706362434
+                    ]
+                   ]
+                  ],
+ "instrument": "BETA",
+ "currentQCStatus": "WIP",
+ "historyStatus": {
+ "2012-01-09T10:47:31": "+"
+ },
+ "userPriority": 1,
+ "currentStatus": "+",
+ "tilePattern": "Tile6z",
+ "id": 1204,
+ "runID": "1"
+ }
+ },
+ "creator": "COOL_GUYS",
+ "id": "TEST00002",
+ "investigators": [
+                   "Dunne, J.",
+                   "Poole, C.",
+                   "Drygala, L."
+                   ]
+ },
+ {
+ "project": "WALLABY",
+ "date": "25 July 2012",
+ "status": "p",
+ "ESO": {
+ "metadataType": "OB",
+ "observationBlock": {
+ "telescope": "ASKAP",
+ "executionTime": 28800,
+ "programID": "WALLABY",
+ "nbPawprints": 6,
+ "period": 1,
+ "tileCoverage": [
+                  [
+                   [
+                    -20.04224772740737648,
+                    79.996950963911132
+                    ],
+                   [
+                    -10.7565277274073777,
+                    79.996950963911125
+                    ],
+                   [
+                    -10.6186310273524903,
+                    74.80375170636243
+                    ],
+                   [
+                    -20.1043510273524902101,
+                    74.803751706362434
+                    ]
+                   ]
+                  ],
+ "instrument": "BETA",
+ "currentQCStatus": "WIP",
+ "historyStatus": {
+ "2012-01-09T10:47:31": "+"
+ },
+ "userPriority": 1,
+ "currentStatus": "+",
+ "tilePattern": "Tile6z",
+ "id": 1205,
  "runID": "1"
  }
  },

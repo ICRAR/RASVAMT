@@ -95,6 +95,9 @@ function getJSONData() {
               obj.footprint = sb_footprint;
               obj.point = sb_point;
               obj.data = sb;
+              // TEST DATE FILTERING
+              obj.data.date = Math.round(Date.parse(sb.date)/(1000*60*60*24));
+              console.log(obj.data.date);
               
               // link selectable point to object
               sb_point.obj = obj;
@@ -207,7 +210,7 @@ function displayParameters() {
 function hideFilterMenu() {
     $('#filter-container').hide(100);
     $('#toggle-filter-menu').removeClass('glyphicon-resize-small').addClass('glyphicon-resize-full');
-    $('#facet-ui').addClass('collapsed');
+    $('#filter-ui').addClass('collapsed');
 }
 
 /*
@@ -216,7 +219,7 @@ function hideFilterMenu() {
 function showFilterMenu() {
     $('#filter-container').show(100);
     $('#toggle-filter-menu').removeClass('glyphicon-resize-full').addClass('glyphicon-resize-small');
-    $('#facet-ui').removeClass('collapsed');
+    $('#filter-ui').removeClass('collapsed');
 }
 
 /* 
@@ -303,7 +306,7 @@ $(function() {
    *    Survey filters.
    *    Will set filters based on "href" and "id" attributes.
    */
-    $('#survey-list .btn').click(function(e) {
+    $('#survey-name-filter .btn').click(function(e) {
                             e.preventDefault();
                             $(this).blur();
                             
@@ -319,6 +322,27 @@ $(function() {
                                  
                             setFilter(filter_string, id);
                             });
+  
+  /*
+   *    Survey filters.
+   *    Will set filters based on "href" and "id" attributes.
+   */
+  $('#survey-status-filter .btn').click(function(e) {
+                                      e.preventDefault();
+                                      $(this).blur();
+                                      
+                                      var filter_string;
+                                      var id = $(this).attr('id');
+                                      
+                                      if($(this).is('.active')) {
+                                      filter_string = $(this).attr('href');
+                                      }
+                                      else {
+                                      filter_string = null;
+                                      }
+                                      
+                                      setFilter(filter_string, id);
+                                      });
   
   /*
    *    The selection tool button
@@ -384,18 +408,6 @@ $(function() {
                              });
   
   /*
-   *    Some crappy facet-list that has its own function "deselectFacets()".
-   *    This one was grabbed from ADSASS WWT.
-   */
-  $('#facet-list a').click(function(e) {
-                           e.preventDefault();
-                           var url = $(this).attr('href');
-                           setFilter(url);
-                           deselectFacets();
-                           $(this).attr('class', 'label label-default');
-                           });
-  
-  /*
    *    The button that shows/hides the
    *    main filter menu!
    */
@@ -412,10 +424,10 @@ $(function() {
    *    Date Slider bar
    */
   $('#date-tool-slider-bar').ionRangeSlider({
-                                            min: 10,                        // min value
-                                            max: 100,                       // max value
-                                            from: 10,                       // overwrite default FROM setting
-                                            to: 100,                         // overwrite default TO setting
+                                            min: Math.round(Date.parse("1 July 2012")/(1000*60*60*24)),                        // min value
+                                            max: Math.round(Date.parse("31 July 2012")/(1000*60*60*24)),                       // max value
+                                            //from: 10,                       // overwrite default FROM setting
+                                            //to: 100,                         // overwrite default TO setting
                                             type: "double",                 // slider type
                                             step: 1,                       // slider step
                                             //prefix: "$",                    // prefix value
