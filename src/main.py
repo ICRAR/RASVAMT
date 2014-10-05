@@ -6,7 +6,7 @@ import sqlite3
 #Probably have a look at how to implement DB
 
 app = Flask(__name__)
-DATABASE = 'rasvamt.db'
+DATABASE = '../db/rasvamt.db'
 
 
 
@@ -90,7 +90,7 @@ def close_connection(exception):
 
 if __name__ == '__main__':
     # For Testing
-    app.debug = True
-    app.run()
+    #app.debug = True
+    #app.run()
     # For deployment
-    #app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8000)
