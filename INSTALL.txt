@@ -1,0 +1,22 @@
+Login name :
+Password   :
+
+
+Installation Instructions
+
+
+
+
+
+
+
+
+
+
+
+
+i.	How to built, install, run software, including running the acceptance tests
+ii.	Login name and passwords
+iii.	Other essential requirements e.g SBs
+iv.	Point form, at most half a page
+

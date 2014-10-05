@@ -1,0 +1,467 @@
+commit 8ebf77ed312fcd693547083d7f2a5a752961514a
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Oct 1 13:33:13 2014 +0800
+
+    Added strings for status
+
+commit a1588d58ad385ccc489ad48f6e849f241b89defc
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Oct 1 09:53:57 2014 +0800
+
+    Sample test data
+
+commit e3f1c91adfdddbcb699f06d7cb862dcd1645dd4d
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Oct 1 09:51:42 2014 +0800
+
+    Added sample data
+
+commit bbad4a0ca2f493d6b626bfdcff9124616794c663
+Merge: 2631d80 1cb9fe6
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Oct 1 09:13:39 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit 1cb9fe619a4427b6a00d8311260b080b1eba736f
+Author: Joseph Dunne <joe@Joe-Lappy.local>
+Date:   Tue Sep 30 22:22:43 2014 +0800
+
+    more date filtering, status buttons, css changes
+
+commit 2631d807ef4a1a24061a740cba1170967140fbfc
+Merge: c7451dc 06ad342
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Mon Sep 29 19:30:35 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit 06ad342d58178634731905c84993176544b7d0f5
+Author: Joseph Dunne <joe@Joe-Lappy.local>
+Date:   Thu Sep 25 15:34:12 2014 +0800
+
+    little fixes and neatening
+
+commit 6077a7316c0cf851b251a563d507c47d074a3e27
+Author: Joseph Dunne <joe@Joe-Lappy.local>
+Date:   Thu Sep 25 15:29:08 2014 +0800
+
+    prevent selecting well titles
+
+commit 04061e402b657b1cda36db23a703f20c63ce2f26
+Author: Joseph Dunne <joe@Joe-Lappy.local>
+Date:   Thu Sep 25 15:26:23 2014 +0800
+
+    prototype date filtering
+
+commit 8ef9d74b99212759c16057a1327878e09de7df3a
+Author: Joseph Dunne <joe@Joe-Lappy.local>
+Date:   Thu Sep 25 15:25:24 2014 +0800
+
+    added small test data
+
+commit c7451dca3c81e6ad9f7d927ad2d3ae8c4126bfd5
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Sep 25 10:19:20 2014 +0800
+
+    Added frame and projection. Not working though
+
+commit 5fdd86d7d706231f85f8593ce4edba4ba657d493
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Sep 24 10:05:52 2014 +0800
+
+    Added some tooltips and cosmetic changes
+
+commit c561ba5fe7634ac96a8d3afb16e01fdfbdc1ebfd
+Merge: 86abfe6 8716c14
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Sep 24 08:16:11 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit 86abfe64a57037bf94929af8e2dae1b91d9ad3db
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Sep 24 08:15:46 2014 +0800
+
+    Changing user permissions
+
+commit 8716c143d6c3db6e1a2ce466c2da3a50e6595668
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Tue Sep 23 22:22:16 2014 +0800
+
+    Delete taffy-min.js
+
+commit 7bfe569cd94d743810bd221103ea35457844971d
+Author: Joseph Dunne <joe@Joe-Lappy.local>
+Date:   Tue Sep 23 22:21:21 2014 +0800
+
+    object selecting, basic param display, filtering using spahql
+
+commit db935068e16a5a38d37f1191ab14409796da8e17
+Author: Joseph Dunne <joe@Joe-Lappy.local>
+Date:   Tue Sep 23 14:04:29 2014 +0800
+
+    selection of SBs, template for parameter display
+
+commit c079921cb61b8756b3ea02f9aca7cf9b0dd841a8
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Sep 21 20:55:29 2014 +0800
+
+    Removed use of supervisor
+
+commit 37baa5ba9207f3ac0098d4ee077e6a1b00f8ab4c
+Merge: dcb9237 03c6922
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Sep 17 20:23:25 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit dcb9237e8eaa6ca2e5bb47eb08605d581a5b20eb
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Sep 17 20:21:58 2014 +0800
+
+    Changed gunicorn call to create socket file
+
+commit 03c692286f94100e2c30a3c9bc119472dfa6c58f
+Author: Joseph Dunne <joe@Joe-Lappy.local>
+Date:   Tue Sep 16 22:56:20 2014 +0800
+
+    Select region tool, more CSS, more code commentary
+
+commit 6bc22c344bbd6efd5f419c747a55d4a05ec4522e
+Author: Joseph Dunne <joe@Joe-Lappy.local>
+Date:   Tue Sep 16 15:53:13 2014 +0800
+
+    added AND filtering with TaffyDB
+
+commit a7069379a2ff0e7e28816a7385105e2d822f35fd
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Mon Sep 15 13:11:26 2014 +0800
+
+    Delete indexA.js
+
+commit 8629a32ec5821fed8ddcf99ba711f33f89039fbc
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Mon Sep 15 13:11:15 2014 +0800
+
+    Delete indexA.html
+
+commit 098ffd7339d8390262678928348eeb08e4c8e25c
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Mon Sep 15 13:10:58 2014 +0800
+
+    Delete indexA.css
+
+commit c5156c737ae2eb6c12d2fe43505e031d0c043e21
+Author: Joseph Dunne <joe@Joe-Lappy.local>
+Date:   Mon Sep 15 13:09:56 2014 +0800
+
+    Aladin loading of SBs. CSS sstyling.
+
+commit e646e6dea308a916c83eaf8804504f118620d031
+Author: Joseph Dunne <joe@Joe-Lappy.local>
+Date:   Thu Sep 11 23:13:12 2014 +0800
+
+    Aladin testing
+
+commit 5dc0a42130c37a94a672bdc12ec1a60f872f2931
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Sep 11 12:24:12 2014 +0800
+
+    Removed socks file from gunicorn
+
+commit ca3e853056f6a20f8337da29023397ed79a58112
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Sep 11 11:31:06 2014 +0800
+
+    Made changes to app directory on ec2 deploy
+
+commit 3c9a2a3f4c25d7d1b54657dedcc1485b1375acf3
+Merge: b507294 c2d238f
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Sep 11 10:58:29 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit c2d238f55daad2a5ab40c11a96344a1ba008167e
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Sep 11 10:57:42 2014 +0800
+
+    added some items
+
+commit d8a2c5c4051516cd199acbcd973025eb5991817a
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Sep 11 10:52:26 2014 +0800
+
+    Create todo list
+
+commit b507294c69dd3a2d685632ee947e5d66a604e45e
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Sep 10 20:59:14 2014 +0800
+
+    Simple test script pulled from flask page
+
+commit d4a94362423fbe9cf0eb3a96a48db45996423701
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Sep 10 20:58:30 2014 +0800
+
+    Added database on deploy
+
+commit acf4672456a8194d003ce18495a1b75f03a5fa2b
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Sep 10 20:57:39 2014 +0800
+
+    Script for creating database
+
+commit 477ba9f1f9ad17bc599b9ffee2ed039ff1c103a0
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Sep 10 20:57:01 2014 +0800
+
+    Added database to main app
+
+commit 5498016ad15ead725a6ee06155fec6207d2090e4
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Sep 7 14:28:33 2014 +0800
+
+    Script to create database file
+
+commit 4a7080d0a85d210fb00150c9469b81a13b6f4a2f
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Sep 7 13:41:05 2014 +0800
+
+    Removed upstream from nginx conf
+
+commit 5bddbd6994e1e3048c26e70768a83a31a851bdfc
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Sep 3 10:42:42 2014 +0800
+
+    Added tests for fabfile
+
+commit d9b1273e83aa2bc4b4a38ba71b024542fa7ab460
+Author: joseph <mac@Josephs-iMac-2.local>
+Date:   Tue Sep 2 23:21:02 2014 +0800
+
+    basic filter buttons
+
+commit 269b0817166bccda9bc3cc1879ca607831f20a16
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Sat Aug 23 22:46:40 2014 +0800
+
+    Renamed to "index.js"
+
+commit 01fa9f71c9e98c87e6da750bf53c5ffa69c7f106
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Sat Aug 23 22:46:23 2014 +0800
+
+    renamed to "index.css"
+
+commit 42127e526e34f679c25fd4e09f73a2e16308f957
+Author: Home <Mary@Macintosh.local>
+Date:   Sat Aug 23 22:44:59 2014 +0800
+
+    files have html name, added contact and about pages
+
+commit fbb91b2067eb49bc00d44c077440e15ac06cbd5d
+Author: Home <Mary@Macintosh.local>
+Date:   Sat Aug 23 21:30:47 2014 +0800
+
+    bug fixes
+
+commit 4c16cf66b1c6a29d652d001657f2177764368b6a
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Aug 21 14:49:43 2014 +0800
+
+    Added in appservers
+
+commit 0dc7756e29c92a3ea7679b8e36b2894a1ff56f0d
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Aug 21 14:37:56 2014 +0800
+
+    Removing settings from nginx
+
+commit 7e77c819c57d1440a5630137f4bfebd6ab7a66ab
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Aug 21 13:05:58 2014 +0800
+
+    Replaced with file 'rasvamt.js'
+
+commit 07be409e0e55b79dbc4208dcf2d44d9302589d2a
+Merge: 999c765 0ab4192
+Author: Home <Mary@Macintosh.local>
+Date:   Thu Aug 21 13:03:33 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit 999c765ee7a1de5fec56b86e8f33e8c8f838c66a
+Author: Home <Mary@Macintosh.local>
+Date:   Thu Aug 21 13:02:12 2014 +0800
+
+    Functional HTML5 screen
+
+commit 0ab41923ac0a390a1c8fc285f065ce280c55b981
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Aug 21 12:59:16 2014 +0800
+
+    Fixed nginx conf
+
+commit ba77c9c2befc3c69db1156fd305efbf63b3bc57d
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Aug 21 12:10:14 2014 +0800
+
+    Fixed fabfile and groups in gunicorn
+
+commit 1d9256fb24b6c70ce368413aecd3d16f0f0bd26d
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Aug 21 10:01:59 2014 +0800
+
+    Fixed bad usermod stmt
+
+commit a92230900a80fb2a1efb84d6e38c530b17146024
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Aug 21 09:28:48 2014 +0800
+
+    Added print colours
+
+commit 855087f515f9b7502779c6be5d9aaab38e6ee989
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Aug 21 09:23:27 2014 +0800
+
+    Changed congig files; add print to fab
+
+commit d32fe5f6583bc0090093377b571a6a805fbb656c
+Merge: 6acb9a1 eaf22f3
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Aug 20 21:53:26 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+    Added some extra stuff to init_deploy
+
+commit 6acb9a1c7e402c2dd659198a8d8bc6e1eea98fd2
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Aug 20 21:53:06 2014 +0800
+
+    Fixed git clone and permissions in init_deploy
+
+commit eaf22f3ec282b0eda96638330477279f9ec5843c
+Author: EC2 Default User <ec2-user@ip-172-31-40-242.us-west-2.compute.internal>
+Date:   Wed Aug 20 09:47:46 2014 +0000
+
+    SB support
+
+commit b72fe40d6baabb0054a8835ac0f5d83c8cc5c7fe
+Author: Joseph Dunne <20939027@ecm-csse2114-x.uniwa.uwa.edu.au>
+Date:   Wed Aug 20 16:45:41 2014 +0800
+
+    RESTful design
+
+commit 9d36a86100d0e429f0b73353bfff02719fd144c8
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Aug 20 11:19:01 2014 +0800
+
+    Changes to init_deploy
+
+commit 754ff00846810104df9465c95338f40e12bff2dd
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Aug 20 10:14:45 2014 +0800
+
+    Changed proxy pass nginx
+
+commit 6255cab89136b571f6f24546baad0937a3b70468
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Aug 20 10:04:05 2014 +0800
+
+    Adding button for collapsible menu
+
+commit a0fd8d867538f48f3f102ba6ae920528ff945d83
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Aug 20 09:36:10 2014 +0800
+
+    Moved javascript for wwt out into it's own file.
+
+commit e28861b3a9328b4e98f82f54cbeb73c4e736025f
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Aug 20 01:14:29 2014 +0800
+
+    Change progam dir
+
+commit ed6d0a07e0ea379042afa5e2789db3ba2c654c17
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Aug 20 00:41:58 2014 +0800
+
+    Installation instructions for dev
+
+commit c8b0d8d4dec93b2126c4bfc2bff6e1b6ef7b0ddc
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Aug 20 00:41:30 2014 +0800
+
+    Extra packages for web server deploy
+
+commit 898bc725c894ed4e633e1025563608b90565655e
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Aug 20 00:40:54 2014 +0800
+
+    Sample config for nginx
+
+commit e456b2663be3dadb0610bf0a4d0398cfddb7b22b
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Aug 20 00:13:34 2014 +0800
+
+    Added packages for joe
+
+commit 9b3c1d8f86df697cfcf2952c382ca55350bb1c41
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Tue Aug 19 23:47:27 2014 +0800
+
+    Changed project parameters & start init_deploy
+
+commit 4740a0d30817bf59f12df311ac7301f461e66c19
+Author: joseph <mac@Josephs-iMac-2.local>
+Date:   Tue Aug 19 22:17:41 2014 +0800
+
+    server code, basic JSON communication
+
+commit fbee29a14758a93766645587fee4ed800c4e3718
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Aug 14 12:30:20 2014 +0800
+
+    Delete testfile
+    
+    Testing permissions works
+
+commit 9a54ee6e24476cfac03a98b3f930de001696e74a
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Aug 13 15:25:21 2014 +0800
+
+    Testing git for joe
+
+commit c61d1911f62b728ba2eea09045128e2a7e7ee299
+Author: awicenec <andreas.wicenec@icrar.org>
+Date:   Wed Aug 6 06:04:55 2014 +0100
+
+    added httpd package
+
+commit f694672786598d2ab1e6867a0a102b2779edb113
+Author: awicenec <andreas.wicenec@icrar.org>
+Date:   Wed Aug 6 05:07:32 2014 +0100
+
+    Several changes to update and make this more like a template fab file.
+
+commit 7cf87619e1c73cd115da0eda9be9ecebd30fc5d9
+Author: awicenec <andreas.wicenec@icrar.org>
+Date:   Mon Aug 4 17:13:13 2014 +0100
+
+    Initial commit of fabfile
+
+commit f338486c1c4e9e0a79bb5e3cfdf32a80a674ca48
+Author: awicenec <awicenec@gmail.com>
+Date:   Mon Aug 4 22:34:27 2014 +0800
+
+    Update README.md
+    
+    Initial README
+
+commit 3d24240e9ef54c6061f552f352f19255e6c92847
+Author: awicenec <awicenec@gmail.com>
+Date:   Mon Aug 4 22:29:07 2014 +0800
+
+    Initial commit
