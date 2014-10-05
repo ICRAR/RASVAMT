@@ -20,22 +20,51 @@ var selecting = true;
 // filters cache
 var filters = {};
 
+/*
+*	CALCULATION OF SELECTION POINT
+*/
 function getAveragePoint(points) {
-    
     var average = [0, 0];
     
-    for (var i = 0; i < points.length; i++) {
+    for(var i = 0; i < points.length; i++) {
         var p = points[i];
-        
-        average[0] += p[0];
-        average[1] += p[1];
+        average[0] += getDisplacement(average[0],p[0])/(i+1);//adds to the running average
+        average[1] += getDisplacement(average[1],p[1])/(i+1);
     }
     
-    average[0] /= points.length;
-    average[1] /= points.length;
+    //normalises angle between -180 -> 180
+    if(average[0]>180){
+        average[0]= average[0]-360;
+    }
+    else if (average[0]<(-180)){
+        average[0]+=360;
+    }
+    
+    if(average[1]>180){
+        average[1]+= -360;
+    }
+    else if (average[1]<(-180)){
+        average[1]+=360;
+    }
     
     return average;
 }
+//returns displacement between to angles (not distance)
+function getDisplacement(point0,point1){
+    if(Math.abs(point0 - point1)>180){
+        var x = Math.abs(point0)+ Math.abs(point1) -360;
+        if(point0<point1){
+            return x;
+        }
+        else {
+            return -x;
+        }
+    }
+    else {
+        return (point1-point0);
+    }
+}
+
 
 /*
  *  Requests JSON survey/SB objects from the
