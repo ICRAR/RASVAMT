@@ -96,8 +96,7 @@ function getJSONData() {
               obj.point = sb_point;
               obj.data = sb;
               // TEST DATE FILTERING
-	      obj.data.date = Math.round(Date.parse(sb.date)/(1000*60*60*24));
-              console.log(obj.data.date);
+              obj.data.date = Math.round(Date.parse(sb.date)/(1000*60*60*24));
               
               // link selectable point to object
               sb_point.obj = obj;
@@ -257,18 +256,12 @@ function applyFilters() {
 function setFilter(filter, id) {
     
     filters[id] = filter;
-    
-    // Apply all filters
-    applyFilters();
 }
 
 /*
  *  Code that should be activated once document has loaded
  */
 $(function() {
-  
-  hideFilterMenu();
-  getJSONData();
   
   /*
    *    Listeners
@@ -284,6 +277,8 @@ $(function() {
                          
                             var filters = $('#' + url);
                             filters.toggle();
+                         
+                            $('#survey-date-slider').resize();  //TEMPORARY FIX ON RESIZING THE SURVEY DATE SIDER
                            });
   
   /*
@@ -321,6 +316,7 @@ $(function() {
                             }
                                  
                             setFilter(filter_string, id);
+                            applyFilters();
                             });
   
   /*
@@ -342,6 +338,7 @@ $(function() {
                                       }
                                       
                                       setFilter(filter_string, id);
+                                        applyFilters();
                                       });
   
   /*
@@ -421,39 +418,44 @@ $(function() {
                                  });
   
   /*
-   *    Date Slider bar
+   *    min and max dates
    */
-  #('#date-tool-slider-bar').dateRangeSlider();
-
-    /*
-  $('#date-tool-slider-bar').ionRangeSlider({
-                                            min: Math.round(Date.parse("1 January 2011")/(1000*60*60*24)),                        // min value
-                                            max: Math.round(Date.parse("31 December 2013")/(1000*60*60*24)),                       // max value
-                                            //from: 10,                       // overwrite default FROM setting
-                                            //to: 100,                         // overwrite default TO setting
-                                            type: "double",                 // slider type
-                                            step: 1,                       // slider step
-                                            //prefix: "$",                    // prefix value
-                                            //postfix: " €",                  // postfix value
-                                            //maxPostfix: "+",                // postfix to maximum value
-                                            hasGrid: true,                  // enable grid
-                                            gridMargin: 7,                  // margin between slider corner and grid
-                                            //hideMinMax: true,               // hide Min and Max fields
-                                            //hideFromTo: true,               // hide From and To fields
-                                            //prettify: true,                 // separate large numbers with space, eg. 10 000
-                                            disable: false,                 // disable slider
-                                            //values: ["a", "b", "c"],        // array of custom values
-                                            onLoad: function (obj) {        // callback is called after slider load and update
-                                                //console.log(obj);
-                                            },
-                                            onChange: function (obj) {      // callback is called on every slider change
-                                                //console.log(obj);
-                                            },
-                                            onFinish: function (obj) {      // callback is called on slider action is finished
-                                                //console.log(obj);
-                                                obj.fromNumber;
-                                                obj.toNumber;
-                                                setFilter('[/data/date>='+obj.fromNumber+'][/data/date<='+obj.toNumber+']', 'date-filter');
-                                            }
-                                            });*/
+  
+  var minDate = new Date(2010, 0, 1);
+  var maxDate = new Date(2014, 11, 31);
+  
+  /*
+   *    Date Slider bar listener
+   */
+  $('#survey-date-slider').dateRangeSlider({
+                                           bounds:{
+                                           min: minDate,
+                                           max: maxDate
+                                           },
+                                           defaultValues:{
+                                           min: minDate,
+                                           max: maxDate
+                                           }
+                                           });
+  $('#survey-date-slider').on('valuesChanged', function(e, data){
+                  console.log('Date range changed. min: ' + data.values.min + ' max: ' + data.values.max);
+                              var minD = Math.round(Date.parse(data.values.min)/(1000*60*60*24));
+                              var maxD = Math.round(Date.parse(data.values.max)/(1000*60*60*24));
+                              setFilter('[/data/date>'+minD+'][/data/date<'+maxD+']', 'date-range');
+                              applyFilters();
+                  });
+  
+  /*
+   *    setting the date filter (not really required)
+   */
+  
+  setFilter('[/data/date>'+Math.round(minDate/(1000*60*60*24))+'][/data/date<'+Math.round(maxDate/(1000*60*60*24))+']', 'date-range');
+  
+  /*
+   *    Some final stuff to execute
+   */
+  
+  hideFilterMenu();
+  getJSONData();
+  
   });
