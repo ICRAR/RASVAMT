@@ -184,7 +184,6 @@ function displayParameters() {
     var count = selected.length;
    
     var scopeNames = [];
-    var telescopeStr = "";
     for (var i = 0; i<count; i++){
             for(var j = 0; j<scopeNames.length; j++){
 		if(selected[i].data.ESO.observationBlock.Telescope == scopeNames[j]){
@@ -192,7 +191,6 @@ function displayParameters() {
             	}
 	    }
             scopeNames.push(selected[i].data.ESO.observationBlock.Telescope);
-	    telescopeStr+= selected[i].data.ESO.observationBlock.Telescope;
     }
 
     if(count == 1) {
@@ -207,8 +205,8 @@ function displayParameters() {
     else if(count > 1) {
         
         display.append($('<p>ScheduleBlocks</p>'));
-	display.append($('<p>Telescope(s): </p>'));
-	console.log(telescopeStr);
+	display.append($('<p>Telescope(s):' + scopeNames.toString() +  '</p>'));
+	console.log(scopeNames.toString());
         display.append($('<p>Count: ' + count + '</p>'));
         display.append($('<p>Total Area: </p>'));
     }
