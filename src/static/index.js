@@ -1,8 +1,16 @@
 var aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:180});
 
 // Add footprint (polygon overlay) object to Aladin
-var overlay = aladin.createOverlay({color: '#0066AA'});
-aladin.addOverlay(overlay);
+var overlay_generic = aladin.createOverlay({color: '#6D848F'});
+aladin.addOverlay(overlay_generic);
+var overlay_planned = aladin.createOverlay({color: '#6D848F'});
+aladin.addOverlay(overlay_planned);
+var overlay_observed = aladin.createOverlay({color: '#0066AA'});
+aladin.addOverlay(overlay_observed);
+var overlay_qualityControl = aladin.createOverlay({color: '#3298AC'});
+aladin.addOverlay(overlay_qualityControl);
+var overlay_processed = aladin.createOverlay({color: '#32AC7B'});
+aladin.addOverlay(overlay_processed);
 
 // Add catalog (points overlay) object to Aladin
 // The catalog should only appear when selecting surveys/SBs
@@ -91,9 +99,6 @@ function getJSONData() {
     
     $.getJSON("/sb/", function(sb_data) {
               
-              var all_footprints = [];
-              var all_points = [];
-              
               for(var i = 0; i < sb_data.length; i++) {
               var sb = sb_data[i];
               
@@ -111,13 +116,30 @@ function getJSONData() {
               
               // Create the Aladin footprint & point
               // NOTE: createFootprintsFromSTCS returns an array! useful if SBs have more than one footprint
-              var sb_footprint = aladin.createFootprintsFromSTCS(sb_string)[0];
+              var sb_footprints = aladin.createFootprintsFromSTCS(sb_string);
+              var sb_footprint = sb_footprints[0];
+              var sb_points = [];   // Aladin likes arrays passed into 'addSources'
               var sb_point = aladin.createSource(points_average[0], points_average[1]);
+              sb_points.push(sb_point);
               
-              // adds the overlays to an array, to later
-              // give to Aladin
-              all_footprints.push(sb_footprint);
-              all_points.push(sb_point);
+              // adds the overlays to Aladin and colours them
+              // depending on the status
+              if(sb.status == "PLANNED") {
+                overlay_planned.addFootprints(sb_footprints);
+              }
+              else if(sb.status == "OBSERVED") {
+                overlay_observed.addFootprints(sb_footprints);
+              }
+              else if(sb.status == "QUALITY CONTROL") {
+                overlay_qualityControl.addFootprints(sb_footprints);
+              }
+              else if(sb.status == "PROCESSED") {
+                overlay_processed.addFootprints(sb_footprints);
+              }
+              else {
+                overlay_generic.addFootprints(sb_footprints);
+              }
+              catalog.addSources(sb_points);
               
               // link data to object
               var obj = {};
@@ -137,10 +159,6 @@ function getJSONData() {
               // cache SB
               obj_cache.push(obj);
               }
-              
-              // add overlays to Aladin
-              overlay.addFootprints(all_footprints);
-              catalog.addSources(all_points);
               
               // apply the filters once objects are loaded in, and display parameters
               applyFilters();
