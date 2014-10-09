@@ -1,16 +1,7 @@
 var aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:180});
 
-// Add footprint (polygon overlay) object to Aladin
-var overlay_generic = aladin.createOverlay({color: '#6D848F'});
-aladin.addOverlay(overlay_generic);
-var overlay_planned = aladin.createOverlay({color: '#6D848F'});
-aladin.addOverlay(overlay_planned);
-var overlay_observed = aladin.createOverlay({color: '#0066AA'});
-aladin.addOverlay(overlay_observed);
-var overlay_qualityControl = aladin.createOverlay({color: '#3298AC'});
-aladin.addOverlay(overlay_qualityControl);
-var overlay_processed = aladin.createOverlay({color: '#32AC7B'});
-aladin.addOverlay(overlay_processed);
+// cache of overlays (each one represents an entire survey)
+var overlays = {};
 
 // Add catalog (points overlay) object to Aladin
 // The catalog should only appear when selecting surveys/SBs
@@ -75,6 +66,26 @@ function getDisplacement(point0,point1){
 
 
 /*
+ For calculating a colour based on the project name
+ */
+
+function hashCode(str) { // java String#hashCode
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash;
+}
+
+function intToARGB(i){
+    return ((i>>24)&0xFF).toString(16) +
+    ((i>>16)&0xFF).toString(16) +
+    ((i>>8)&0xFF).toString(16) +
+    (i&0xFF).toString(16);
+}
+
+
+/*
  *  Requests JSON survey/SB objects from the
  *  back-end server. The requests are sent
  *  in a RESTful form, and the replies are cached.
@@ -99,6 +110,10 @@ function getJSONData() {
     
     $.getJSON("/sb/", function(sb_data) {
               
+              // min and max numbers for calculating date filter
+              var minDate = null;
+              var maxDate = null;
+              
               for(var i = 0; i < sb_data.length; i++) {
               var sb = sb_data[i];
               
@@ -122,23 +137,22 @@ function getJSONData() {
               var sb_point = aladin.createSource(points_average[0], points_average[1]);
               sb_points.push(sb_point);
               
-              // adds the overlays to Aladin and colours them
-              // depending on the status
-              if(sb.status == "PLANNED") {
-                overlay_planned.addFootprints(sb_footprints);
+              // Check if the project exists
+              // If it doesnt, add the button
+              if(!overlays[sb.project]) {
+                $('#survey-name-filter').append($('<button id="'+sb.project+'" href=\'[/data/project!="'+sb.project+'"]\' type="button" class="btn active" data-toggle="button">'+sb.project+'</button>'));
+                overlays[sb.project] = {};
               }
-              else if(sb.status == "OBSERVED") {
-                overlay_observed.addFootprints(sb_footprints);
+              // Check if the project/status combo exists
+              // If it doesnt, add the overlay
+              if(!overlays[sb.project][sb.status]) {
+                var overlay = aladin.createOverlay({color: intToARGB(hashCode(sb.project+sb.status))});
+                aladin.addOverlay(overlay);
+                overlays[sb.project][sb.status] = overlay;
               }
-              else if(sb.status == "QUALITY CONTROL") {
-                overlay_qualityControl.addFootprints(sb_footprints);
-              }
-              else if(sb.status == "PROCESSED") {
-                overlay_processed.addFootprints(sb_footprints);
-              }
-              else {
-                overlay_generic.addFootprints(sb_footprints);
-              }
+              
+              // Add footprint/point to aladin for display
+              overlays[sb.project][sb.status].addFootprints(sb_footprints);
               catalog.addSources(sb_points);
               
               // link data to object
@@ -146,7 +160,16 @@ function getJSONData() {
               obj.footprint = sb_footprint;
               obj.point = sb_point;
               obj.data = sb;
+              
               // TEST DATE FILTERING
+              // Date filter, update ranges if new date is outside range
+              var date = Date.parse(sb.date);
+              if(minDate == null || minDate > date) {
+                minDate = date;
+              }
+              if(maxDate == null || maxDate < date) {
+                maxDate = date;
+              }
               obj.data.date = Math.round(Date.parse(sb.date)/(1000*60*60*24));
               
               // link selectable point to object
@@ -160,7 +183,11 @@ function getJSONData() {
               obj_cache.push(obj);
               }
               
+              // update date filter range
+              $('#survey-date-slider').dateRangeSlider("bounds", minDate, maxDate);
+              
               // apply the filters once objects are loaded in, and display parameters
+              setFilter('[/data/date>='+Math.round(minDate/(1000*60*60*24))+'][/data/date<='+Math.round(maxDate/(1000*60*60*24))+']', 'date-range');
               applyFilters();
               displayParameters();
               });
@@ -360,7 +387,7 @@ $(function() {
    *    Survey filters.
    *    Will set filters based on "href" and "id" attributes.
    */
-    $('#survey-name-filter .btn').click(function(e) {
+    $('#survey-name-filter').on('click', '.btn', function(e) {
                             e.preventDefault();
                             $(this).blur();
                             
@@ -477,38 +504,16 @@ $(function() {
                                  });
   
   /*
-   *    min and max dates
-   */
-  
-  var minDate = new Date(2010, 0, 1);
-  var maxDate = new Date(2014, 11, 31);
-  
-  /*
    *    Date Slider bar listener
    */
-  $('#survey-date-slider').dateRangeSlider({
-                                           bounds:{
-                                           min: minDate,
-                                           max: maxDate
-                                           },
-                                           defaultValues:{
-                                           min: minDate,
-                                           max: maxDate
-                                           }
-                                           });
+  $('#survey-date-slider').dateRangeSlider();
   $('#survey-date-slider').on('valuesChanged', function(e, data){
                   console.log('Date range changed. min: ' + data.values.min + ' max: ' + data.values.max);
                               var minD = Math.round(Date.parse(data.values.min)/(1000*60*60*24));
                               var maxD = Math.round(Date.parse(data.values.max)/(1000*60*60*24));
-                              setFilter('[/data/date>'+minD+'][/data/date<'+maxD+']', 'date-range');
+                              setFilter('[/data/date>='+minD+'][/data/date<='+maxD+']', 'date-range');
                               applyFilters();
                   });
-  
-  /*
-   *    setting the date filter (not really required)
-   */
-  
-  setFilter('[/data/date>'+Math.round(minDate/(1000*60*60*24))+'][/data/date<'+Math.round(maxDate/(1000*60*60*24))+']', 'date-range');
   
   /*
    *    Some final stuff to execute
