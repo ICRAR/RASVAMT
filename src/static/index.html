@@ -55,35 +55,14 @@
                     <span>FILTER BY:</span>
                 </div>
                 
-                <!-- FACET ROW example -->
-                <div class="well-title" href="base-list">
-                    <span>EASY FACET ROW</span>
-                </div>
-                
-                <span id="base-list">
-                    <span id="toggle-list">
-                        <a href="Digitized Sky Survey (Color)" data-toggle="tooltip" title="Digitized Sky Survey"> Optical </a>
-                        <a href="2MASS: Catalog (Synthetic, Near Infrared)" data-toggle="tooltip" title="2 Micron All-Sky Survey"> 2MASS </a>
-                        <a href="WISE All Sky (Infrared)" class="label label-default" data-toggle="tooltip" title="WISE All Sky Infrared Survey"> WISE </a>
-                        <a href="SFD Dust Map (Infrared)" data-toggle="tooltip" title="Infrared dust map"> SFD </a>
-                        <a href="IRIS: Improved Reprocessing of IRAS Survey (Infrared)" data-toggle="tooltip" title="Improved IRAS Infrared Map"> IRIS </a>
-                        <a href="GLIMPSE/MIPSGAL" data-toggle="tooltip" title="Infrared Survey of the Galactic Midplane"> GLIMPSE </a>
-                        <a data-step="13" data-intro="Click on these surveys to change the background image." href="Hydrogen Alpha Full Sky Map" data-toggle="tooltip" title="Hydrogen alpha Map"> H-alpha </a>
-                        <a href="RASS: ROSAT All Sky Survey (X-ray)" data-toggle="tooltip" title="ROSAT All Sky Survey"> ROSAT  </a>
-                        <a href="Fermi (Gamma)" data-toggle="tooltip" title="Fermi Gamma Ray Map"> Fermi </a>
-                        <a href="VLSS: VLA Low-frequency Sky Survey (Radio)" data-toggle="tooltip" title="VLA Low-Frequency Sky Survey"> VLSS </a>
-                    </span>
-                </span>
-                
                 <!-- Survey name filter -->
                 <div class="well-title" href="survey-name-filter">
                     <span>SURVEYS</span>
                 </div>
                 
-                <!-- these buttons may be generated automatically based on the JSON files -->
+                <!-- these buttons are generated automatically based on the JSON files -->
                 <span id="survey-name-filter">
-                    <button id="TEMPLATE" href='[/data/project!="TEMPLATE"]' type="button" class="btn active" data-toggle="button">TEMPLATE</button>
-                    <button id="TEMPLATE" href='[/data/project!="TEMPLATE"]' type="button" class="btn active" data-toggle="button">TEMPLATE</button>
+                    
                 </span>
                 
                 <!-- Survey date filter -->
@@ -102,10 +81,20 @@
                 
                 <!-- Survey status filter -->
                 <span id="survey-status-filter">
-                    <button id="s1" href='[/data/status!="PLANNED"]' type="button" class="btn active" data-toggle="button">PLANNED</button>
-                    <button id="s2" href='[/data/status!="OBSERVED"]' type="button" class="btn active" data-toggle="button">OBSERVED</button>
-                    <button id="s3" href='[/data/status!="QUALITY CONTROL"]' type="button" class="btn active" data-toggle="button">QUALITY CONTROL</button>
-                    <button id="s4" href='[/data/status!="PROCESSED"]' type="button" class="btn active" data-toggle="button">PROCESSED</button>
+                    <button id="status_1" href='[/data/status!="PLANNED"]' type="button" class="btn active" data-toggle="button">PLANNED</button>
+                    <button id="status_2" href='[/data/status!="OBSERVED"]' type="button" class="btn active" data-toggle="button">OBSERVED</button>
+                    <button id="status_3" href='[/data/status!="QUALITY CONTROL"]' type="button" class="btn active" data-toggle="button">QUALITY CONTROL</button>
+                    <button id="status_4" href='[/data/status!="PROCESSED"]' type="button" class="btn active" data-toggle="button">PROCESSED</button>
+                </span>
+                
+                <!-- Survey organization filter -->
+                <div class="well-title" href="survey-creator-filter">
+                    <span>CREATOR</span>
+                </div>
+                
+                <!-- Survey organization filter -->
+                <span id="survey-creator-filter">
+                    
                 </span>
                 
                 <!-- Survey selection tool -->

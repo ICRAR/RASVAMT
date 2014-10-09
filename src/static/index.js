@@ -1,8 +1,5 @@
 var aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:180});
 
-// cache of overlays (each one represents an entire survey)
-var overlays = {};
-
 // Add catalog (points overlay) object to Aladin
 // The catalog should only appear when selecting surveys/SBs
 var catalog = aladin.createCatalog({name: 'Catalog'});
@@ -64,26 +61,43 @@ function getDisplacement(point0,point1){
     }
 }
 
-
 /*
- For calculating a colour based on the project name
+ *  Generates unique colour from a string seed.
+ *  'mod' will increase the brightness.
  */
-
-function hashCode(str) { // java String#hashCode
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+var stringToColor = function(str, mod) {
+    
+    // str to hash
+    for (var i = 0, hash = 0; i < str.length; hash = str.charCodeAt(i++) + ((hash << 5) - hash));
+    
+    // int/hash to hex
+    for (var i = 0, colour = "#"; i < 3; ) {
+        var c = ((hash >> i++ * 8) & 0xFF);
+        c += mod * 40;
+        if(c > 255) {
+            c = 255;
+        }
+        colour += ("00" + c.toString(16)).slice(-2);
     }
-    return hash;
+    
+    return colour;
 }
-
-function intToARGB(i){
-    return ((i>>24)&0xFF).toString(16) +
-    ((i>>16)&0xFF).toString(16) +
-    ((i>>8)&0xFF).toString(16) +
-    (i&0xFF).toString(16);
+function statusIndex(status) {
+    
+    if(status == "PLANNED") {
+        return 0;
+    }
+    else if(status == "OBSERVED") {
+        return 1;
+    }
+    else if(status == "QUALITY CONTROL") {
+        return 2;
+    }
+    else if(status == "PROCESSED") {
+        return 3;
+    }
+    return 0;
 }
-
 
 /*
  *  Requests JSON survey/SB objects from the
@@ -114,6 +128,11 @@ function getJSONData() {
               var minDate = null;
               var maxDate = null;
               
+              // items to determine what color surveys are,
+              // and to see if filter buttons need to be created
+              var overlays = {};
+              var creators = {};
+              
               for(var i = 0; i < sb_data.length; i++) {
               var sb = sb_data[i];
               
@@ -140,13 +159,19 @@ function getJSONData() {
               // Check if the project exists
               // If it doesnt, add the button
               if(!overlays[sb.project]) {
-                $('#survey-name-filter').append($('<button id="'+sb.project+'" href=\'[/data/project!="'+sb.project+'"]\' type="button" class="btn active" data-toggle="button">'+sb.project+'</button>'));
+                var button = $('<button id="project:'+sb.project+'" href=\'[/data/project!="'+sb.project+'"]\' type="button" class="btn active" data-toggle="button">'+sb.project+'</button>');
+                var buttonColor = stringToColor(sb.project, 0);
+                button.css({'background-color':buttonColor,'border-color':buttonColor});
+                $('#survey-name-filter').append(button);
                 overlays[sb.project] = {};
               }
               // Check if the project/status combo exists
               // If it doesnt, add the overlay
               if(!overlays[sb.project][sb.status]) {
-                var overlay = aladin.createOverlay({color: intToARGB(hashCode(sb.project+sb.status))});
+              
+                var b = statusIndex(sb.status);
+                var overlayColor = stringToColor(sb.project, b);
+                var overlay = aladin.createOverlay({color: overlayColor});
                 aladin.addOverlay(overlay);
                 overlays[sb.project][sb.status] = overlay;
               }
@@ -155,22 +180,34 @@ function getJSONData() {
               overlays[sb.project][sb.status].addFootprints(sb_footprints);
               catalog.addSources(sb_points);
               
+              // TEMPORARY, converting dd/mm/yy to mm/dd/yy (javascript's Date format)
+              var dateTemp = sb.date.split("/");
+              var dateF = "" + dateTemp[1] + "/" + dateTemp[0] + "/" + dateTemp[2];
+              
+              // Date filter, update ranges if new date is outside range
+              var date = Date.parse(dateF);
+              if(minDate == null || minDate > date) {
+              minDate = date;
+              }
+              if(maxDate == null || maxDate < date) {
+              maxDate = date;
+              }
+              
+              // Used for filtering
+              sb.date_days = Math.round(date/(1000*60*60*24));
+              
+              // Creator filter button
+              if(!creators[sb.creator]) {
+                var button = $('<button id="creator:'+sb.creator+'" href=\'[/data/creator!="'+sb.creator+'"]\' type="button" class="btn active" data-toggle="button">'+sb.creator+'</button>');
+                $('#survey-creator-filter').append(button);
+                creators[sb.creator] = {};
+              }
+              
               // link data to object
               var obj = {};
               obj.footprint = sb_footprint;
               obj.point = sb_point;
               obj.data = sb;
-              
-              // TEST DATE FILTERING
-              // Date filter, update ranges if new date is outside range
-              var date = Date.parse(sb.date);
-              if(minDate == null || minDate > date) {
-                minDate = date;
-              }
-              if(maxDate == null || maxDate < date) {
-                maxDate = date;
-              }
-              obj.data.date = Math.round(Date.parse(sb.date)/(1000*60*60*24));
               
               // link selectable point to object
               sb_point.obj = obj;
@@ -185,9 +222,9 @@ function getJSONData() {
               
               // update date filter range
               $('#survey-date-slider').dateRangeSlider("bounds", minDate, maxDate);
+              $('#survey-date-slider').dateRangeSlider("values", minDate, maxDate);
               
               // apply the filters once objects are loaded in, and display parameters
-              setFilter('[/data/date>='+Math.round(minDate/(1000*60*60*24))+'][/data/date<='+Math.round(maxDate/(1000*60*60*24))+']', 'date-range');
               applyFilters();
               displayParameters();
               });
@@ -302,7 +339,9 @@ function hideFilterMenu() {
  *  Shows the main filter menu
  */
 function showFilterMenu() {
-    $('#filter-container').show(100);
+    $('#filter-container').show(100, function() {
+                                $('#survey-date-slider').resize();
+                                });
     $('#toggle-filter-menu').removeClass('glyphicon-resize-full').addClass('glyphicon-resize-small');
     $('#filter-ui').removeClass('collapsed');
 }
@@ -395,9 +434,11 @@ $(function() {
                             var id = $(this).attr('id');
                                  
                             if($(this).is('.active')) {
+                                $(this).addClass('blank');
                                 filter_string = $(this).attr('href');
                             }
                             else {
+                                $(this).removeClass('blank');
                                filter_string = null;
                             }
                                  
@@ -426,6 +467,28 @@ $(function() {
                                       setFilter(filter_string, id);
                                         applyFilters();
                                       });
+  
+  /*
+   *    Survey creator filter.
+   *    Will set filters based on "href" and "id" attributes.
+   */
+  $('#survey-creator-filter').on('click', '.btn', function(e) {
+                                        e.preventDefault();
+                                        $(this).blur();
+                                        
+                                        var filter_string;
+                                        var id = $(this).attr('id');
+                                        
+                                        if($(this).is('.active')) {
+                                        filter_string = $(this).attr('href');
+                                        }
+                                        else {
+                                        filter_string = null;
+                                        }
+                                        
+                                        setFilter(filter_string, id);
+                                        applyFilters();
+                                        });
   
   /*
    *    The selection tool button
@@ -502,7 +565,6 @@ $(function() {
                                  showFilterMenu();
                                  }
                                  });
-  
   /*
    *    Date Slider bar listener
    */
@@ -511,7 +573,7 @@ $(function() {
                   console.log('Date range changed. min: ' + data.values.min + ' max: ' + data.values.max);
                               var minD = Math.round(Date.parse(data.values.min)/(1000*60*60*24));
                               var maxD = Math.round(Date.parse(data.values.max)/(1000*60*60*24));
-                              setFilter('[/data/date>='+minD+'][/data/date<='+maxD+']', 'date-range');
+                              setFilter('[/data/date_days>='+minD+'][/data/date_days<='+maxD+']', 'date-range');
                               applyFilters();
                   });
   

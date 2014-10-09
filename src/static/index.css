@@ -14,48 +14,51 @@ body {
     color: #DDDDDD;
 }
 
-#survey-name-filter .btn {
-    background-color: rgba(179, 197, 255, 0.14);
-    border-color: #1f79a3;
-}
-
-#survey-name-filter .btn.active {
-    background-color: rgba(0, 153, 255, 0.7);
-    border-color: #1f79a3;
+#survey-name-filter .btn.blank {
+    background-color: rgba(0,0,0,0.0) !important;
 }
 
 #survey-status-filter .btn {
-    background-color: rgba(179, 197, 255, 0.14);
+    background-color: rgba(179, 197, 255, 0.0);
 }
 
-#survey-status-filter #s1 {
+#survey-status-filter #status_1 {
+    border-color: #5C6A71;
+}
+#survey-status-filter #status_2 {
+    border-color: #64757E;
+}
+#survey-status-filter #status_3 {
     border-color: #6D848F;
 }
-#survey-status-filter #s2 {
-    border-color: #0066AA;
-}
-#survey-status-filter #s3 {
-    border-color: #3298AC;
-}
-#survey-status-filter #s4 {
-    border-color: #32AC7B;
+#survey-status-filter #status_4 {
+    border-color: #6B90A1;
 }
 
-#survey-status-filter #s1.active {
+#survey-status-filter #status_1.active {
+    background-color: #5C6A71;
+}
+#survey-status-filter #status_2.active {
+    background-color: #64757E;
+}
+#survey-status-filter #status_3.active {
     background-color: #6D848F;
 }
-#survey-status-filter #s2.active {
-    background-color: #0066AA;
+#survey-status-filter #status_4.active {
+    background-color: #6B90A1;
 }
-#survey-status-filter #s3.active {
-    background-color: #3298AC;
+
+#survey-creator-filter .btn {
+    background-color: rgba(0,0,0,0.0);
+    border-color: #1f79a3;
 }
-#survey-status-filter #s4.active {
-    background-color: #32AC7B;
+#survey-creator-filter .btn.active {
+    background-color: rgba(0,153,255,0.7);
+    border-color: #1f79a3;
 }
 
 #survey-selection-tool .btn {
-    background-color: rgba(255, 255, 0, 0.14);
+    background-color: rgba(0,0,0,0.0);
     border-color: rgba(127, 127, 0, 1.0);
 }
 
@@ -101,7 +104,7 @@ table {
     padding: 10px;
     margin-top: 0px;
     margin-left: 10px;
-    background-color: rgba(0,0,0,.5);
+    background-color: rgba(0,0,0,.8);
     border:none;
     z-index:10;
     max-width:450px;
@@ -185,7 +188,7 @@ table {
 }
 
 .ui-rangeSlider-innerBar {
-    background:rgba(0,0,0,0.5);
+    background:rgba(0,0,0,0.9);
 }
 
 .ui-rangeSlider-label {
