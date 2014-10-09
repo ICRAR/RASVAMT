@@ -174,3 +174,11 @@ table {
 .ui-rangeSlider-label-inner {
     border-top-color:rgba(127,127,127,0.5);
 }
+
+.ui-tooltip {
+    padding: 10px 20px;
+    color: grey;
+    border-radius: 20px;
+    font: bold 14px "Helvetica Neue", Sans-Serif;
+    box-shadow: 0 0 7px black;
+  }
