@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAME="RASVAMT"
-FLASKDIR=/home/rasvamt/rasvamt_portal/RASVAMT/
+FLASKDIR=/home/rasvamt/rasvamt_portal/RASVAMT/src
 VENVDIR=/home/rasvamt/rasvamt_portal/
 SOCKFILE=/home/rasvamt/rasvamt_portal/RASVAMT/sock
 USER=rasvamt
@@ -23,8 +23,9 @@ test -d $RUNDIR || mkdir -p $RUNDIR
 # Start your unicorn
 exec gunicorn main:app -b 127.0.0.1:5000 \
   --name $NAME \
-  --workers $NUM_WORKERS \
   --user=$USER --group=$GROUP \
+  #No idea why number of workers isnt't working
+  #--workers $NUM_WORKERS \
+# This requires sudo currently not working #  
+  --bind=unix:$SOCKFILE \
   --log-level=debug
-# This requires supo Testing with out socks file
-#  --bind=unix:$SOCKFILE
