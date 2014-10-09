@@ -30,8 +30,27 @@ It relies on a few extra packages to do this.
 4. Run RASVAMA.sh deploy or fab test_deploy
 
 
+AWS installation
+================
+If logged in go to aws https://console.aws.amazon.com/iam/home?#users 
+Create new key and download credentials
+Create group adminsitrator
+Add user to group
+Configuring Boto Credentials
+http://boto.readthedocs.org/en/latest/boto_config_tut.html
+Create instance
+download security key
+make sure add http to security rules
+Next you will need a security key-pair which matches the US region east and a security group
+called RASVAMT.pem maybe you might get that off him
+cp this key into ~/.ssh/
 
+You may also need github ssh keys 
+https://help.github.com/articles/generating-ssh-keys
 
+[Credentials]
+aws_access_key_id = YOURACCESSKEY
+aws_secret_access_key = YOURSECRETKEY
 
 
 
