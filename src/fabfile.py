@@ -16,10 +16,9 @@ For a local installation under a normal user without sudo access
 fab -u `whoami` -H <IP address> -f machine-setup/deploy.py user_deploy
 """
 #TODO:
-# 1 : Create DB/dir
-# 2 : Get Supervisor working
-# 3 : Local installation
-# 5 : Work out users situation
+# 1 : Get Supervisor working
+# 2 : Local installation
+# 3 : Work out users situation
 import glob
 
 import boto
@@ -70,8 +69,11 @@ APP_DEF_DB = '/home/rasvamt/rasvamt_portal/RASVAMT/rasvamt.db'
 GITUSER = 'pooli3'
 GITREPO = 'github.com/ICRAR/RASVAMT'
 
+#Keep track of hosts
+HOSTS_FILE = '../logs/hosts_file'
+
 #Keep log of process
-ssh.util.log_to_file('setup.log',10)
+ssh.util.log_to_file('../logs/setup.log',10)
 
 #Check Boto 
 BOTO_CONFIG = os.path.expanduser('~/.boto')
@@ -134,6 +136,9 @@ def set_env():
     if not env.has_key('src_dir') or not env.src_dir:
         env.src_dir = thisDir + '/../'
     require('hosts', provided_by=[test_env])
+    #Maybe load hosts from host file
+    #if not env.has_key('host_string'):
+	    #open hosts file and attempt to load host from that
     if not env.has_key('HOME') or env.HOME[0] == '~' or not env.HOME:
         env.HOME = run("echo ~{0}".format(USERS[0]))
     if not env.has_key('PREFIX') or env.PREFIX[0] == '~' or not env.PREFIX:
@@ -262,7 +267,11 @@ def create_instance(names, use_elastic_ip, public_ips):
         fastprint('.')
         time.sleep(5)
     puts('.')
-
+    
+    #Keep track of hosts
+    with open(HOSTS_FILE,'a') as hostfile:
+	    for name in host_names:
+		    hostfile.write(name+"\n")
     return host_names
 
 @task
@@ -610,10 +619,9 @@ def user_setup():
         sudo('chmod 600 /home/{0}/.ssh/authorized_keys'.format(user))
         sudo('chown {0}:{1} /home/{0}/.ssh/authorized_keys'.format(user, GROUP))
 	#change to allow group permissions to acces home
-        #sudo('chmod 770 /home/{0}/'.format(user))
+        #sudo('chmod g+rwx /home/{0}/'.format(user))
         
     # create RASVAMT directories and chown to correct user and group
-    #TODO current structure has redundancies
     sudo('mkdir -p {0}'.format(env.APP_DIR_ABS))
     #Probably turn this back on
     sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
@@ -775,10 +783,11 @@ def init_deploy():
     
     sudo('mkdir /etc/supervisor/')
     #Having trouble with 
-    with cd(env.APP_DIR_ABS+'/RASVAMT'):
+    with cd(env.APP_DIR_ABS+'/RASVAMT/src/'):
 	sudo('cp nginx.conf /etc/nginx/')
     	sudo('cp conf.d /etc/supervisor/')
     	sudo('chmod +x gunicorn_start')
+    	sudo('chmod +x tmp_Start')
 
     #check if nginx is running else
     sudo('service nginx start')
@@ -789,12 +798,16 @@ def init_deploy():
 def deploy():
     """Runs deployment"""
     set_env()
+    env.user ='ec2-user'
     print(red("Beginning Deploy:"))
     #might need setenv 
 
     #sudo(virtualenv('supervisorctl restart RASVAMT'))
-    with cd(env.APP_DIR_ABS+'/RASVAMT'):
-    	run('gunicorn_start')
+    with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
+	#Currently socks and workers not working
+	#Something to do with permissions file
+    	#sudo('gunicorn_start')
+    	run('tmp_Start')
     #virtualenv('supervisorctl')
 
     print(blue("Deploy finished check server {}".format(env.host_string)))
@@ -867,7 +880,8 @@ def install(standalone=0):
     print(green("Setting up home directory might require chmod"))
     if env.PREFIX != env.HOME: # generate non-standard directory
         sudo('mkdir -p {0}'.format(env.PREFIX))
-        sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.PREFIX))
+	#Removing this for the moment so we can use ec2-user to deploy with root permissions
+        #sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.PREFIX))
     print(green("Setting up virtual env"))
     with settings(user=env.USERS[0]):
         virtualenv_setup()
