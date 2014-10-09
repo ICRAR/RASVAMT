@@ -21,7 +21,7 @@ RUNDIR=$(dirname $SOCKFILE)
 test -d $RUNDIR || mkdir -p $RUNDIR
 
 # Start your unicorn
-exec gunicorn main:app -b 127.0.0.1:5000 \
+gunicorn main:app -b 127.0.0.1:5000 \
   --name $NAME \
   --user=$USER --group=$GROUP \
   #No idea why number of workers isnt't working

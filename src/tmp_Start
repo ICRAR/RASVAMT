@@ -13,4 +13,4 @@ source bin/activate
 export PYTHONPATH=$FLASKDIR:$PYTHONPATH
 
 #Start app in daemon mode
-exec gunicorn main:app -b 127.0.0.1:5000 -D
+gunicorn main:app -b 127.0.0.1:5000 -D
