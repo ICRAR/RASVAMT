@@ -24,12 +24,32 @@ body {
 
 #survey-status-filter .btn {
     background-color: rgba(179, 197, 255, 0.14);
-    border-color: #1f79a3;
 }
 
-#survey-status-filter .btn.active {
-    background-color: rgba(0, 122, 255, 0.7);
-    border-color: #1f79a3;
+#survey-status-filter #s1 {
+    border-color: #6D848F;
+}
+#survey-status-filter #s2 {
+    border-color: #0066AA;
+}
+#survey-status-filter #s3 {
+    border-color: #3298AC;
+}
+#survey-status-filter #s4 {
+    border-color: #32AC7B;
+}
+
+#survey-status-filter #s1.active {
+    background-color: #6D848F;
+}
+#survey-status-filter #s2.active {
+    background-color: #0066AA;
+}
+#survey-status-filter #s3.active {
+    background-color: #3298AC;
+}
+#survey-status-filter #s4.active {
+    background-color: #32AC7B;
 }
 
 #survey-selection-tool .btn {
