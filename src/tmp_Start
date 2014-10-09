@@ -1,0 +1,16 @@
+#!/bin/bash
+
+NAME="RASVAMT"
+FLASKDIR=/home/rasvamt/rasvamt_portal/RASVAMT/
+VENVDIR=/home/rasvamt/rasvamt_portal/
+SOCKFILE=/home/rasvamt/rasvamt_portal/RASVAMT/sock
+USER=rasvamt
+GROUP=rasvamt_user
+
+cd $VENVDIR
+source bin/activate
+
+export PYTHONPATH=$FLASKDIR:$PYTHONPATH
+
+#Start app in daemon mode
+exec gunicorn main:app -b 127.0.0.1:5000 -D 

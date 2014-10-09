@@ -24,9 +24,10 @@ It relies on a few extra packages to do this.
 2. Get the python package boto:
 	- Boto essentially allows you to connect and run stuff with AWS
 3. Set up AWS essentials:
-	- Need a key
+	- Need a secret/key pair called RASVAMT.pem
+	- Need secrurity group RASVAMT
 	- Need IAM
-4. Run RASVAMA.sh deploy
+4. Run RASVAMA.sh deploy or fab test_deploy
 
 
 
