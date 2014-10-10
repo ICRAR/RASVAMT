@@ -73,9 +73,9 @@ var stringToColor = function(str, mod) {
     // int/hash to hex
     for (var i = 0, colour = "#"; i < 3; ) {
         var c = ((hash >> i++ * 8) & 0xFF);
-        c += mod * 40;
-        if(c > 255) {
-            c = 255;
+        c = c - (mod * 30) + 20;
+        if(c < 0) {
+            c = 0;
         }
         colour += ("00" + c.toString(16)).slice(-2);
     }
@@ -85,16 +85,16 @@ var stringToColor = function(str, mod) {
 function statusIndex(status) {
     
     if(status == "PLANNED") {
-        return 0;
+        return 3;
     }
     else if(status == "OBSERVED") {
-        return 1;
-    }
-    else if(status == "QUALITY CONTROL") {
         return 2;
     }
+    else if(status == "QUALITY CONTROL") {
+        return 1;
+    }
     else if(status == "PROCESSED") {
-        return 3;
+        return 0;
     }
     return 0;
 }
