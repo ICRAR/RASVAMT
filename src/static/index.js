@@ -100,6 +100,14 @@ function statusIndex(status) {
 }
 
 /*
+ *  Converts dd/mm/yyyy to mm/dd/yyyy and vice versa.
+ */
+function formatDateString(date_str) {
+    var dateArray = date_str.split("/");
+    return (dateArray[1] + "/" + dateArray[0] + "/" + dateArray[2]);
+}
+
+/*
  *  Requests JSON survey/SB objects from the
  *  back-end server. The requests are sent
  *  in a RESTful form, and the replies are cached.
@@ -180,12 +188,8 @@ function getJSONData() {
               overlays[sb.project][sb.status].addFootprints(sb_footprints);
               catalog.addSources(sb_points);
               
-              // TEMPORARY, converting dd/mm/yy to mm/dd/yy (javascript's Date format)
-              var dateTemp = sb.date.split("/");
-              var dateF = "" + dateTemp[1] + "/" + dateTemp[0] + "/" + dateTemp[2];
-              
               // Date filter, update ranges if new date is outside range
-              var date = Date.parse(dateF);
+              var date = Date.parse(formatDateString(sb.date));
               if(minDate == null || minDate > date) {
               minDate = date;
               }
@@ -194,7 +198,7 @@ function getJSONData() {
               }
               
               // Used for filtering
-              sb.date_days = Math.round(date/(1000*60*60*24));
+              sb.date_filter = date;
               
               // Creator filter button
               if(!creators[sb.creator]) {
@@ -221,8 +225,14 @@ function getJSONData() {
               }
               
               // update date filter range
-              $('#survey-date-slider').dateRangeSlider("bounds", minDate, maxDate);
-              $('#survey-date-slider').dateRangeSlider("values", minDate, maxDate);
+              // This will automatically call 'set' on the slider too
+              $('#survey-date-slider').noUiSlider({
+                                                  range: {
+                                                  min: minDate,
+                                                  max: maxDate
+                                                  },
+                                                  start: [ minDate, maxDate ]
+                                                  }, true);
               
               // apply the filters once objects are loaded in, and display parameters
               applyFilters();
@@ -307,7 +317,6 @@ function displayParameters() {
     if(count == 1) {
         
         var obj = selected[0];
-        console.log(obj);
         var node = JsonHuman.format(obj.data);
         
         display.append(node);
@@ -339,9 +348,7 @@ function hideFilterMenu() {
  *  Shows the main filter menu
  */
 function showFilterMenu() {
-    $('#filter-container').show(100, function() {
-                                $('#survey-date-slider').resize();
-                                });
+    $('#filter-container').show(100);
     $('#toggle-filter-menu').removeClass('glyphicon-resize-full').addClass('glyphicon-resize-small');
     $('#filter-ui').removeClass('collapsed');
 }
@@ -379,7 +386,7 @@ function applyFilters() {
  *  with id "id" (for identifying the filter).
  */
 function setFilter(filter, id) {
-    
+    console.log(filter);
     filters[id] = filter;
 }
 
@@ -402,8 +409,6 @@ $(function() {
                          
                             var filters = $('#' + url);
                             filters.toggle();
-                         
-                            $('#survey-date-slider').resize();  //TEMPORARY FIX ON RESIZING THE SURVEY DATE SIDER
                            });
   
   /*
@@ -565,22 +570,77 @@ $(function() {
                                  showFilterMenu();
                                  }
                                  });
+  
   /*
    *    Date Slider bar listener
    */
-  $('#survey-date-slider').dateRangeSlider();
-  $('#survey-date-slider').on('valuesChanged', function(e, data){
-                  console.log('Date range changed. min: ' + data.values.min + ' max: ' + data.values.max);
-                              var minD = Math.round(Date.parse(data.values.min)/(1000*60*60*24));
-                              var maxD = Math.round(Date.parse(data.values.max)/(1000*60*60*24));
-                              setFilter('[/data/date_days>='+minD+'][/data/date_days<='+maxD+']', 'date-range');
+  $('#survey-date-slider').noUiSlider({
+                                      range: {
+                                      min: Date.parse("10/06/2010 02:44 PM"),
+                                      max: Date.parse("10/06/2014 02:44 PM")
+                                      },
+                                      step: 24 * 60 * 60 * 1000,
+                                      start: [ Date.parse("10/06/2011 02:44 PM"), Date.parse("10/06/2013 02:44 PM") ]
+                                      });
+  $('#survey-date-slider').on('slide', function() {
+                              
+                              var range = $(this).val();
+                              var min = new Date(Math.round(range[0]));
+                              var max = new Date(Math.round(range[1]));
+                              
+                              $('#survey-date-slider-start').val(
+                                                                 ("0" + min.getDate()).slice(-2) +"/"+
+                                                                 ("0" + (min.getMonth()+1)).slice(-2) +"/"+
+                                                                 min.getFullYear()
+                                                                 );
+                              $('#survey-date-slider-end').val(
+                                                               ("0" + max.getDate()).slice(-2) +"/"+
+                                                               ("0" + (max.getMonth()+1)).slice(-2) +"/"+
+                                                               max.getFullYear()
+                                                               );
+                              });
+  $('#survey-date-slider').on('set', function() {
+                              
+                              var range = $(this).val();
+                              var min = new Date(Math.round(range[0]));
+                              var max = new Date(Math.round(range[1]));
+                              
+                              $('#survey-date-slider-start').val(
+                                                                    ("0" + min.getDate()).slice(-2) +"/"+
+                                                                    ("0" + (min.getMonth()+1)).slice(-2) +"/"+
+                                                                    min.getFullYear()
+                                                                    );
+                              $('#survey-date-slider-end').val(
+                                                                  ("0" + max.getDate()).slice(-2) +"/"+
+                                                                  ("0" + (max.getMonth()+1)).slice(-2) +"/"+
+                                                                  max.getFullYear()
+                                                                  );
+                              
+                              setFilter('[/data/date_filter>='+min.getTime()+']', 'date:min');
+                              setFilter('[/data/date_filter<='+max.getTime()+']', 'date:max');
                               applyFilters();
-                  });
+                              
+                              });
+  
+  $('#survey-date-slider-start').change(function() {
+                                        
+                                        var newMin = Date.parse(formatDateString($(this).val()));
+                                        if(newMin) {
+                                            $('#survey-date-slider').val([newMin, null]);
+                                        }
+                                        });
+  $('#survey-date-slider-end').change(function() {
+                                        
+                                        var newMax = Date.parse(formatDateString($(this).val()));
+                                        if(newMax) {
+                                            $('#survey-date-slider').val([null, newMax]);
+                                        }
+                                        });
+  
   
   /*
    *    Some final stuff to execute
    */
-  
   hideFilterMenu();
   getJSONData();
   

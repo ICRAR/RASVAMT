@@ -8,6 +8,7 @@ body {
     margin-bottom:1px;
     border: 1px outset buttonface;
     border-radius: 40px;
+    outline:none !important;
 }
 
 .btn.active {
@@ -55,6 +56,39 @@ body {
 #survey-creator-filter .btn.active {
     background-color: rgba(0,153,255,0.7);
     border-color: #1f79a3;
+}
+
+.noUi-target {
+    border-radius:20px;
+    background:rgba(0,0,0,0.0);
+    box-shadow:none;
+    min-width:300px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.noUi-handle {
+    border-radius:20px;
+    box-shadow:none;
+}
+
+#survey-date-filter-display {
+    position:relative;
+    margin-top:8px;
+}
+#survey-date-slider-start {
+    width:90px;
+    padding-left:5px;
+    border: 1px outset buttonface;
+    border-radius:20px;
+    outline:none;
+}
+#survey-date-slider-end {
+    width:90px;
+    padding-left:5px;
+    border: 1px outset buttonface;
+    border-radius:20px;
+    outline:none;
+    float:right;
 }
 
 #survey-selection-tool .btn {
@@ -173,10 +207,6 @@ table {
 .navbar-default {
     background-color: rgba(0,0,0,0);
     border-color: rgba(0,0,0,0);
-}
-
-#survey-date-slider {
-    opacity:0.9;
 }
 
 .ui-rangeSlider-container {
