@@ -1,0 +1,3 @@
+Not sure if we should use selenium or sst
+Selenium looks pretty good though
+looking at locustio
