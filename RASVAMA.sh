@@ -1,6 +1,12 @@
 #!/bin/bash
-#This script it just a wrapper to help n00bs and lazy peeps like myself 
+# This script it just a wrapper to help n00bs and lazy peeps like myself 
 # with deploying RASVAMA locally or connecting to an ec2-instance
+# Running the standard script will deploy to ec2 assuming everything is set up correctly
+# This uses the usual fabric stuff
+# If called with -l will run local instance
+# Makes -ssh slightly less tedious not really sure what is going on with identity file 
+# and why it must always be supplied
+# Cameron October 2014
 LOCALFLAG=''
 SSHFLAG=''
 RUNDIR=src
@@ -86,9 +92,16 @@ HOST=${HOSTS[$(($i-1))]}
 
 if [ $LOCALFLAG ]
 then 
-    sed 's/#app.run/app.run/' src/main.py > tmp1
+    #Automatically uncomment and run local version
+    echo "Deploying local install check 127.0.0.1:5000 in browser"
+    if [ ! -f locallock ]
+    then
+    sed 's/#app.run()/app.run/' src/main.py > tmp1
 	#comment line that usually runs
-	yes | sed 's/app.run\(0\.0/#&/' src/tmp > main.py
+	yes | sed 's/app.run(host/#&/' tmp1 > $RUNDIR/main.py
+    touch locallock
+    fi
+    cd $RUNDIR
 	python main.py
 elif [ $SSHFLAG ]
 then
@@ -96,7 +109,14 @@ then
 	echo "Using identity key $IDENTKEY and HOST=$HOST"
 	ssh -i $IDENTKEY $USER@$HOST
 else
-	cd $RUNDIR
+    echo "Creating new deployment"
+	if [ -f locallock ]
+    then
+	sed 's/[^#]app.run()/ #app.run()/' src/main.py > tmp1
+	yes | sed 's/\(#\)\(app.run(host\)/\2/' tmp1 > $RUNDIR/main.py
+    rm locallock
+    fi
+    cd $RUNDIR
 	fab test_deploy
 fi
 
