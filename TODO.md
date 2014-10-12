@@ -3,13 +3,13 @@
 ------------------
 ##Urgent:
   - [ ] Testing current system
-  - [ ] Getting supervisor and gunicorn working together auto
-  - [ ] Sorting out directory structure
+  - [ ] Filtering  selected items
   - [ ] Fix FRAME/Projection abilities
   - [ ] Fix search stuff
-  - [ ] Setup localhost deployment
-  - [ ] Install.txt
-  - [ ] Readme.txt
+  - [X] Sorting out directory structure
+  - [X] Setup localhost deployment
+  - [X] Install.txt
+  - [X] Readme.txt
   - [X] Decision on Aladin vs WWT
 
 ##Moderate:
@@ -18,6 +18,7 @@
 
 ##Least:
   - [ ] Loading/Landing page
+  - [ ] Supervisor working
   - [ ] HttpAuth 
   - [ ] User settings
   - [ ] Search and restful api
