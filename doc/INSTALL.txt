@@ -27,11 +27,10 @@ It relies on a few extra packages to do this.
 2. Get the python package boto:
 	- Boto essentially allows you to connect and run stuff with AWS
 3. Set up AWS essentials:
-	- First you’ll need an AWS account, 
-	- your AWS access key and AWS secret key ( 
-	- Need a secret/key pair called RASVAMT.pem
-	- Need secrurity group RASVAMT
-	- Need IAM
+	- First you’ll need an AWS account( https://aws.amazon.com/ )
+	- Need a secret/key pair called RASVAMT.pem (http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html ) 
+	- Need secrurity group RASVAMT (http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html)
+	- Need IAM ( your AWS access key and AWS secret key )
 	- (See AWS Installation for more advice
 4. Run RASVAMA.sh deploy or fab test_deploy in src directory 
 
@@ -58,15 +57,7 @@ https://help.github.com/articles/generating-ssh-keys
 aws_access_key_id = YOURACCESSKEY
 aws_secret_access_key = YOURSECRETKEY
 
-
-
-
-
-
-
-
-i.	How to built, install, run software, including running the acceptance tests
-ii.	Login name and passwords
-iii.	Other essential requirements e.g SBs
-iv.	Point form, at most half a page
+Testing
+=======
+Coming Sooon
 
