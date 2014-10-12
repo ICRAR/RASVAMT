@@ -624,7 +624,7 @@ def user_setup():
     # create RASVAMT directories and chown to correct user and group
     sudo('mkdir -p {0}'.format(env.APP_DIR_ABS))
     #Probably turn this back on
-    sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
+    sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
     
     #These lines are unnecessary i think
     #sudo('mkdir -p {0}/../RASVAMT'.format(env.APP_DIR_ABS))
@@ -786,7 +786,7 @@ def init_deploy():
     #Having trouble with 
     with cd(env.APP_DIR_ABS+'/RASVAMT/src/'):
 	sudo('cp nginx.conf /etc/nginx/')
-    	sudo('cp rasvama.conf /etc/supervisor/conf.d')
+    	sudo('cp rasvama.conf /etc/supervisor/conf.d/')
     	sudo('chmod +x gunicorn_start')
 
     #check if nginx is running else
@@ -802,9 +802,10 @@ def deploy():
     print(red("Beginning Deploy:"))
     #might need setenv 
 
-    sudo(virtualenv('supervisorctl restart RASVAMT'))
+    #sudo(virtualenv('supervisorctl restart RASVAMT'))
     with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
-    	sudo('gunicorn_start')
+    	sudo('./gunicorn_start')
+
 
     print(blue("Deploy finished check server {}".format(env.host_string)))
 
@@ -817,7 +818,7 @@ def update_deploy():
 	TODO: maybe use zc.buildout
 	"""
 	set_env()
-	sudo(virtualenv('supervisorctl restart RASVAMT'))
+	#sudo(virtualenv('supervisorctl restart RASVAMT'))
 	git_pull()
     	with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
 	    sudo('cp nginx.conf /etc/nginx/')
@@ -830,7 +831,7 @@ def update_deploy():
 	    except:
 		    sudo('service nginx start')
 	    sudo('chmod +x gunicorn_start')
-	    sudo('gunicorn_start')
+	    sudo('./gunicorn_start')
 
 @task
 @serial
@@ -882,7 +883,7 @@ def install(standalone=0):
     if env.PREFIX != env.HOME: # generate non-standard directory
         sudo('mkdir -p {0}'.format(env.PREFIX))
 	#Removing this for the moment so we can use ec2-user to deploy with root permissions
-        #sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.PREFIX))
+        sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.PREFIX))
     print(green("Setting up virtual env"))
     with settings(user=env.USERS[0]):
         virtualenv_setup()
