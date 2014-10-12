@@ -22,7 +22,7 @@ test -d $RUNDIR || mkdir -p $RUNDIR
 
 cd $FLASKDIR
 # Start your unicorn
-gunicorn main:app -b 127.0.0.1:5000 \
+gunicorn main:app -b 127.0.0.1:5000 -D\
   --name $NAME \
   --user=$USER --group=$GROUP \
   --bind=unix:$SOCKFILE \

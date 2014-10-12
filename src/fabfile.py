@@ -624,7 +624,7 @@ def user_setup():
     # create RASVAMT directories and chown to correct user and group
     sudo('mkdir -p {0}'.format(env.APP_DIR_ABS))
     #Probably turn this back on
-    sudo('chown {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
+    sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
     
     #These lines are unnecessary i think
     #sudo('mkdir -p {0}/../RASVAMT'.format(env.APP_DIR_ABS))
@@ -782,10 +782,11 @@ def init_deploy():
 	git_clone()
     
     sudo('mkdir /etc/supervisor/')
+    sudo('mkdir /etc/supervisor/conf.d/')
     #Having trouble with 
     with cd(env.APP_DIR_ABS+'/RASVAMT/src/'):
 	sudo('cp nginx.conf /etc/nginx/')
-    	sudo('cp conf.d /etc/supervisor/')
+    	sudo('cp rasvama.conf /etc/supervisor/conf.d/')
     	sudo('chmod +x gunicorn_start')
 
     #check if nginx is running else
@@ -803,10 +804,8 @@ def deploy():
 
     #sudo(virtualenv('supervisorctl restart RASVAMT'))
     with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
-	#Currently socks and workers not working
-	#Something to do with permissions file
-    	sudo('gunicorn_start')
-    #virtualenv('supervisorctl')
+    	sudo('./gunicorn_start')
+
 
     print(blue("Deploy finished check server {}".format(env.host_string)))
 
@@ -823,7 +822,7 @@ def update_deploy():
 	git_pull()
     	with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
 	    sudo('cp nginx.conf /etc/nginx/')
-	    sudo('cp conf.d /etc/supervisor/')
+	    sudo('cp rasvama.conf /etc/supervisor/conf.d/')
 	    #Removing create database stuff
 	    #sudo('chmod +x create_db.py')
 	    #sudo('create_db.py')
@@ -831,14 +830,8 @@ def update_deploy():
 		    sudo('service nginx reload')
 	    except:
 		    sudo('service nginx start')
-	    sudo('chmod +x tmp_Start')
-	    try:
-		#attempt normal way
-	    	run('tmp_Start')
-	    except:
-		#attempt gunicorn Start
-		#Would need to become root or something because sudo can't find command
-	    	sudo('gunicorn_start')
+	    sudo('chmod +x gunicorn_start')
+	    sudo('./gunicorn_start')
 
 @task
 @serial
@@ -890,7 +883,7 @@ def install(standalone=0):
     if env.PREFIX != env.HOME: # generate non-standard directory
         sudo('mkdir -p {0}'.format(env.PREFIX))
 	#Removing this for the moment so we can use ec2-user to deploy with root permissions
-        #sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.PREFIX))
+        sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.PREFIX))
     print(green("Setting up virtual env"))
     with settings(user=env.USERS[0]):
         virtualenv_setup()
