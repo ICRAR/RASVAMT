@@ -15,14 +15,29 @@ body {
     color: #DDDDDD;
 }
 
-#survey-name-filter .btn.blank {
-    background-color: rgba(0,0,0,0.0) !important;
+#layer-tabs .btn {
+    border-radius: 4px;
+}
+#layer-tabs .btn.inactive {
+    background-color: #000000 !important;
+}
+#layer-tabs #tab_0 {
+    background-color: #1f79a3;
+    border-color: #1f79a3;
+}
+
+#survey-name-filter .btn {
+    background-color: rgba(0,0,0,0.0);
+    border-color: #1f79a3;
+}
+#survey-name-filter .btn.active {
+    background-color: rgba(0,153,255,0.7);
+    border-color: #1f79a3;
 }
 
 #survey-status-filter .btn {
     background-color: rgba(179, 197, 255, 0.0);
 }
-
 #survey-status-filter #status_1 {
     border-color: #5C6A71;
 }
@@ -35,7 +50,6 @@ body {
 #survey-status-filter #status_4 {
     border-color: #6B90A1;
 }
-
 #survey-status-filter #status_1.active {
     background-color: #5C6A71;
 }
@@ -55,7 +69,6 @@ body {
 }
 #survey-creator-filter .btn.active {
     background-color: rgba(0,153,255,0.7);
-    border-color: #1f79a3;
 }
 
 .noUi-target {
@@ -94,6 +107,10 @@ body {
 #survey-selection-tool .btn {
     background-color: rgba(0,0,0,0.0);
     border-color: rgba(127, 127, 0, 1.0);
+}
+
+#survey-selection-tool #tab-tool {
+    border-color: rgba(0, 127, 127, 1.0);
 }
 
 #parameter-display {
