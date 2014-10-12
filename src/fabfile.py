@@ -787,7 +787,6 @@ def init_deploy():
 	sudo('cp nginx.conf /etc/nginx/')
     	sudo('cp conf.d /etc/supervisor/')
     	sudo('chmod +x gunicorn_start')
-    	sudo('chmod +x tmp_Start')
 
     #check if nginx is running else
     sudo('service nginx start')
@@ -806,8 +805,7 @@ def deploy():
     with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
 	#Currently socks and workers not working
 	#Something to do with permissions file
-    	#sudo('gunicorn_start')
-    	run('tmp_Start')
+    	sudo('gunicorn_start')
     #virtualenv('supervisorctl')
 
     print(blue("Deploy finished check server {}".format(env.host_string)))
@@ -823,13 +821,24 @@ def update_deploy():
 	set_env()
 	#sudo(virtualenv('supervisorctl restart RASVAMT'))
 	git_pull()
-    	with cd(env.APP_DIR_ABS+'/RASVAMT'):
+    	with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
 	    sudo('cp nginx.conf /etc/nginx/')
 	    sudo('cp conf.d /etc/supervisor/')
-	    sudo('chmod +x create_db.py')
-	    sudo('create_db.py')
-    	    sudo('service nginx reload')
-	    sudo('gunicorn_start')
+	    #Removing create database stuff
+	    #sudo('chmod +x create_db.py')
+	    #sudo('create_db.py')
+	    try:
+		    sudo('service nginx reload')
+	    except:
+		    sudo('service nginx start')
+	    sudo('chmod +x tmp_Start')
+	    try:
+		#attempt normal way
+	    	run('tmp_Start')
+	    except:
+		#attempt gunicorn Start
+		#Would need to become root or something because sudo can't find command
+	    	sudo('gunicorn_start')
 
 @task
 @serial

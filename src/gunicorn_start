@@ -20,12 +20,11 @@ export PYTHONPATH=$FLASKDIR:$PYTHONPATH
 RUNDIR=$(dirname $SOCKFILE)
 test -d $RUNDIR || mkdir -p $RUNDIR
 
+cd $FLASKDIR
 # Start your unicorn
 gunicorn main:app -b 127.0.0.1:5000 \
   --name $NAME \
   --user=$USER --group=$GROUP \
-  #No idea why number of workers isnt't working
-  #--workers $NUM_WORKERS \
-# This requires sudo currently not working #  
   --bind=unix:$SOCKFILE \
+  --workers=$NUM_WORKERS \
   --log-level=debug
