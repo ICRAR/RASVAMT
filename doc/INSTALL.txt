@@ -1,7 +1,10 @@
 Installation Instructions
 
 There are two type of installations feasible, the simplest is a local installation.
-The requirements for such are a installation of python2.7 and the python package flask.
+The local installation is for those investigating the functionality of RASVAMA.
+The second type creates a cloud instance using Amazon Web Services, this is used by ICRAR to host other software.
+
+The requirements for a local installation are python2.7 and the python package flask.
 Some additional packages make life much easier pip ( python package management ) and virtualenv ( keeps env the same for build/ not necessary ).
 NOTE: Most of the build was created using mac and linux.
 	- Python and it's packages struggle with windows but maybe try using cygwin
@@ -24,10 +27,12 @@ It relies on a few extra packages to do this.
 2. Get the python package boto:
 	- Boto essentially allows you to connect and run stuff with AWS
 3. Set up AWS essentials:
-	- Need a secret/key pair called RASVAMT.pem
-	- Need secrurity group RASVAMT
-	- Need IAM
-4. Run RASVAMA.sh deploy or fab test_deploy
+	- First you’ll need an AWS account( https://aws.amazon.com/ )
+	- Need a secret/key pair called RASVAMT.pem (http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html ) 
+	- Need secrurity group RASVAMT (http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html)
+	- Need IAM ( your AWS access key and AWS secret key )
+	- (See AWS Installation for more advice
+4. Run RASVAMA.sh deploy or fab test_deploy in src directory 
 
 
 AWS installation
@@ -52,15 +57,7 @@ https://help.github.com/articles/generating-ssh-keys
 aws_access_key_id = YOURACCESSKEY
 aws_secret_access_key = YOURSECRETKEY
 
-
-
-
-
-
-
-
-i.	How to built, install, run software, including running the acceptance tests
-ii.	Login name and passwords
-iii.	Other essential requirements e.g SBs
-iv.	Point form, at most half a page
+Testing
+=======
+Coming Sooon
 

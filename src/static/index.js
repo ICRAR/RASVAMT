@@ -1,4 +1,4 @@
-var aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:180});
+var aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:180, showReticle:false});
 
 // Add catalog (points overlay) object to Aladin
 // The catalog should only appear when selecting surveys/SBs
@@ -15,6 +15,9 @@ var selecting = true;
 
 // filters cache
 var filters = {};
+
+// overlays reference
+var overlays = [];
 
 /*
 *	CALCULATION OF SELECTION POINT
@@ -62,9 +65,10 @@ function getDisplacement(point0,point1){
 }
 
 /*
- *  Generates unique colour from a string seed.
+ *  Generates unique colour from a string seed. (DEPRECATED)
  *  'mod' will increase the brightness.
  */
+/*
 var stringToColor = function(str, mod) {
     
     // str to hash
@@ -98,6 +102,7 @@ function statusIndex(status) {
     }
     return 0;
 }
+ */
 
 /*
  *  Converts dd/mm/yyyy to mm/dd/yyyy and vice versa.
@@ -138,8 +143,13 @@ function getJSONData() {
               
               // items to determine what color surveys are,
               // and to see if filter buttons need to be created
-              var overlays = {};
+              var surveys = {};
               var creators = {};
+              
+              // create default overlay
+              var overlay = aladin.createOverlay({color: "#3793BE"});
+              overlays.push(overlay);
+              aladin.addOverlay(overlay);
               
               for(var i = 0; i < sb_data.length; i++) {
               var sb = sb_data[i];
@@ -159,33 +169,26 @@ function getJSONData() {
               // Create the Aladin footprint & point
               // NOTE: createFootprintsFromSTCS returns an array! useful if SBs have more than one footprint
               var sb_footprints = aladin.createFootprintsFromSTCS(sb_string);
-              var sb_footprint = sb_footprints[0];
-              var sb_points = [];   // Aladin likes arrays passed into 'addSources'
               var sb_point = aladin.createSource(points_average[0], points_average[1]);
+              var sb_points = [];
               sb_points.push(sb_point);
               
               // Check if the project exists
               // If it doesnt, add the button
-              if(!overlays[sb.project]) {
-                var button = $('<button id="project:'+sb.project+'" href=\'[/data/project!="'+sb.project+'"]\' type="button" class="btn active" data-toggle="button">'+sb.project+'</button>');
-                var buttonColor = stringToColor(sb.project, 0);
-                button.css({'background-color':buttonColor,'border-color':buttonColor});
+              if(!surveys[sb.project]) {
+                var button = $('<button id="project_'+sb.project+'" href=\'[/data/project!="'+sb.project+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+sb.project+'</button>');
                 $('#survey-name-filter').append(button);
-                overlays[sb.project] = {};
+                surveys[sb.project] = {};
               }
-              // Check if the project/status combo exists
-              // If it doesnt, add the overlay
-              if(!overlays[sb.project][sb.status]) {
-              
-                var b = statusIndex(sb.status);
-                var overlayColor = stringToColor(sb.project, b);
-                var overlay = aladin.createOverlay({color: overlayColor});
-                aladin.addOverlay(overlay);
-                overlays[sb.project][sb.status] = overlay;
+              // Creator filter button
+              if(!creators[sb.creator]) {
+              var button = $('<button id="creator_'+sb.creator+'" href=\'[/data/creator!="'+sb.creator+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+sb.creator+'</button>');
+              $('#survey-creator-filter').append(button);
+              creators[sb.creator] = {};
               }
               
               // Add footprint/point to aladin for display
-              overlays[sb.project][sb.status].addFootprints(sb_footprints);
+              overlay.addFootprints(sb_footprints);
               catalog.addSources(sb_points);
               
               // Date filter, update ranges if new date is outside range
@@ -197,28 +200,21 @@ function getJSONData() {
               maxDate = date;
               }
               
-              // Used for filtering
-              sb.date_filter = date;
-              
-              // Creator filter button
-              if(!creators[sb.creator]) {
-                var button = $('<button id="creator:'+sb.creator+'" href=\'[/data/creator!="'+sb.creator+'"]\' type="button" class="btn active" data-toggle="button">'+sb.creator+'</button>');
-                $('#survey-creator-filter').append(button);
-                creators[sb.creator] = {};
-              }
-              
               // link data to object
               var obj = {};
-              obj.footprint = sb_footprint;
+              obj.footprints = sb_footprints;
               obj.point = sb_point;
               obj.data = sb;
+              
+              // Used for filtering
+              obj.date_filter = date;
               
               // link selectable point to object
               sb_point.obj = obj;
               
               // hides the overlays by default
               sb_point.hide();
-              sb_footprint.hide();
+              hideFootprints(sb_footprints);
               
               // cache SB
               obj_cache.push(obj);
@@ -255,14 +251,15 @@ aladin.on('select', function(selection) {
           // selecting or deselecting points
           for(var i = 0; i < selection.length; i++) {
           
+            var point = selection[i];
             var obj = selection[i].obj;
           
             if(selecting) {
           
                 // select all unselected points, and add to "selected" array
-                if(!selection[i].isSelected) {
+                if(!point.isSelected) {
           
-                    obj.footprint.select();
+                    selectFootprints(obj.footprints);
                     obj.point.select();
                     selected.push(obj);
                 }
@@ -271,9 +268,9 @@ aladin.on('select', function(selection) {
             else {
           
                 // deselect all selected points
-                if(selection[i].isSelected) {
+                if(point.isSelected) {
           
-                    obj.footprint.deselect();
+                    deselectFootprints(obj.footprints);
                     obj.point.deselect();
           
                     // delete from "selected" array
@@ -303,17 +300,7 @@ function displayParameters() {
     
     var display = $('#parameter-display').empty();
     var count = selected.length;
-   
-    var scopeNames = [];
-    for (var i = 0; i<count; i++){
-            for(var j = 0; j<scopeNames.length; j++){
-		if(selected[i].data.ESO.observationBlock.Telescope == scopeNames[j]){
-                   break;
-            	}
-	    }
-            scopeNames.push(selected[i].data.ESO.observationBlock.Telescope);
-    }
-
+    
     if(count == 1) {
         
         var obj = selected[0];
@@ -323,11 +310,41 @@ function displayParameters() {
         
     }
     else if(count > 1) {
+        var QCStatus = []; //matrix of [QCStatus name, count of status]
+        var scopeNames = []; //array of scope names selected
+        for (var i = 0; i<count; i++){ //for all selected
+            foundName = 0;
+            for(var j = 0; j<scopeNames.length; j++){ //check if scope has been listed already
+                if(selected[i].data.ESO.observationBlock.telescope == scopeNames[j]){
+                    foundName = 1;
+                    j = scopeNames.length;
+                }
+            }
+            if(foundName == 0) //if not, add scope name to scope array
+                scopeNames.push(selected[i].data.ESO.observationBlock.telescope);
+            
+            var addedStatus = 0;
+            for(index in QCStatus){ //check if status has already been found, then add to count of that status
+                if(QCStatus[index][0] == selected[i].data.ESO.observationBlock.currentQCStatus){
+                    QCStatus[index][1]++;
+                    addedStatus = 1;
+                    break;
+                }
+            }
+            if(addedStatus == 0){ //status is new, needs new value with count = 1
+                QCStatus.push([selected[i].data.ESO.observationBlock.currentQCStatus, 1]);
+            }
+        }
+        
+        var QCStatusString =''; //create string out of quality control matrix
+        for(index in QCStatus){
+            QCStatusString += QCStatus[index][0] + ': ' + QCStatus[index][1] + '<br>';
+        }
         
         display.append($('<p>ScheduleBlocks</p>'));
-	display.append($('<p>Telescope(s):' + scopeNames.toString() +  '</p>'));
-	console.log(scopeNames.toString());
+        display.append($('<p>Telescope(s):' + scopeNames.toString() +  '</p>'));
         display.append($('<p>Count: ' + count + '</p>'));
+        display.append($('<p>QC Status:<br>'+ QCStatusString + '</p>'));
         display.append($('<p>Total Area: </p>'));
     }
     else {
@@ -353,6 +370,133 @@ function showFilterMenu() {
     $('#filter-ui').removeClass('collapsed');
 }
 
+function hideUnselectedFootprints(fps) {
+    
+    for(var i=0; i < fps.length; i++) {
+        if(!fps[i].isSelected) {
+            fps[i].hide();
+        }
+    }
+}
+function showFootprints(fps) {
+    
+    for(var i=0; i < fps.length; i++) {
+        fps[i].show();
+    }
+}
+function hideFootprints(fps) {
+    
+    for(var i=0; i < fps.length; i++) {
+        fps[i].hide();
+    }
+}
+function deselectFootprints(fps) {
+    
+    for(var i=0; i < fps.length; i++) {
+        fps[i].deselect();
+    }
+}
+function selectFootprints(fps) {
+    
+    for(var i=0; i < fps.length; i++) {
+        fps[i].select();
+    }
+}
+function hasVisibleFootprint(fps) {
+    
+    for(var i=0; i < fps.length; i++) {
+        if(fps[i].isShowing) {
+            return true;
+        }
+    }
+    return false;
+}
+function showOverlay(index) {
+    // show the overlay's footprints
+    var footprints = overlays[index].overlays;
+    for(var i = 0; i < footprints.length; i++) {
+        footprints[i].show();
+    }
+    
+    // Will find where to insert the overlay
+    var insertAt = 0;
+    for(var i = 0; i < aladin.view.overlays.length; i++) {
+        if(overlays.indexOf(aladin.view.overlays[i]) > index) {
+            break;
+        }
+        insertAt = i + 1;
+    }
+    
+    // add the overlay to Aladin in the correct position
+    aladin.view.overlays.splice(insertAt, 0, overlays[index]);
+    
+    // apply filters
+    applyFilters();
+}
+function hideOverlay(index) {
+    // hide the overlay's footprints
+    var footprints = overlays[index].overlays;
+    for(var i = 0; i < footprints.length; i++) {
+        footprints[i].hide();
+    }
+    
+    // removes the overlay from aladin
+    var removeFrom = aladin.view.overlays.indexOf(overlays[index]);
+    aladin.view.overlays.splice(removeFrom, 1);
+}
+function removeOverlay(index) {
+    hideOverlay(index);
+    overlays.splice(index, 1);
+}
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+function createNewTabUsingSelection() {
+    
+    if(selected.length > 0) {
+        
+        var overlayIndex = overlays.length;
+        var overlayColor = getRandomColor();
+        
+        // create new overlay
+        var overlay = aladin.createOverlay({color: overlayColor});
+        overlays.push(overlay);
+        aladin.addOverlay(overlay);
+        
+        for(var i = 0; i < selected.length; i++) {
+            
+            // Retrieve coordinates from the JSON object
+            var points = selected[i].data.ESO.observationBlock.tileCoverage[0];
+            var coord_string = 'Polygon J2000';
+            for(var p = 0; p < points.length; p++) {
+                coord_string += ' ' + points[p][0];
+                coord_string += ' ' + points[p][1];
+            }
+            var newFootprints = aladin.createFootprintsFromSTCS(coord_string);
+            var currentFootprints = selected[i].footprints;
+            
+            currentFootprints.push.apply(currentFootprints, newFootprints);
+            overlay.addFootprints(newFootprints);
+            selectFootprints(currentFootprints);
+        }
+        
+        var button = $('<button id="tab_'+overlayIndex+'" type="button" class="layer-tab btn active" data-toggle="button">'+(overlayIndex+1)+'</button>');
+        button.css('background-color', overlayColor);
+        button.css('border-color', overlayColor);
+        $('#layer-tabs').append(button);
+    }
+    else {
+        
+    }
+}
+
 /* 
  *  Applies the current filters in variable "filters"
  *  to all cached SBs
@@ -361,9 +505,7 @@ function applyFilters() {
     
     // deselect (or delete/hide later on) all SBs
     for (var i = 0; i < obj_cache.length; i++) {
-        if(!obj_cache[i].footprint.isSelected) {
-            obj_cache[i].footprint.hide();
-        }
+        hideUnselectedFootprints(obj_cache[i].footprints);
     };
     
     // Build up an array of the filters applied
@@ -374,10 +516,10 @@ function applyFilters() {
         }
     }
     
-    // apply filters TaffyDB-style
+    // apply filters
     var result = obj_query.select(filterString);
     for (var i = 0; i < result.length; i++) {
-        result[i].value.footprint.show();
+        showFootprints(result[i].value.footprints);
     };
 }
 
@@ -386,7 +528,6 @@ function applyFilters() {
  *  with id "id" (for identifying the filter).
  */
 function setFilter(filter, id) {
-    console.log(filter);
     filters[id] = filter;
 }
 
@@ -412,26 +553,29 @@ $(function() {
                            });
   
   /*
-   *    Toggle list functionality
-   *    (might be useful if toggle lists are needed)
+   *    Tab functionality
    */
-  $('#toggle-list a').click(function(e) {
-                            e.preventDefault();
-                            var url = $(this).attr('href');
-                            //setFilter(url);
-                            
-                            //update highlight
-                            $('#toggle-list a').each(function(index) {
-                                                     $(this).attr('class', '');
-                                                     });
-                            $(this).attr('class', 'label label-default');
-                            });
+  $('#layer-tabs').on('click', '.layer-tab', function(e) {
+                        e.preventDefault();
+                        $(this).blur();
+                      
+                        var index = $('.layer-tab').index(this);
+                        if($(this).is('.active')) {
+                            $(this).addClass('inactive');
+                            hideOverlay(index);
+                        }
+                        else {
+                            $(this).removeClass('inactive');
+                            showOverlay(index);
+                        }
+                        
+                        });
 
   /*
    *    Survey filters.
    *    Will set filters based on "href" and "id" attributes.
    */
-    $('#survey-name-filter').on('click', '.btn', function(e) {
+    $('#filter-container').on('click', '.simple-filter-button', function(e) {
                             e.preventDefault();
                             $(this).blur();
                             
@@ -439,11 +583,9 @@ $(function() {
                             var id = $(this).attr('id');
                                  
                             if($(this).is('.active')) {
-                                $(this).addClass('blank');
                                 filter_string = $(this).attr('href');
                             }
                             else {
-                                $(this).removeClass('blank');
                                filter_string = null;
                             }
                                  
@@ -452,61 +594,15 @@ $(function() {
                             });
   
   /*
-   *    Survey filters.
-   *    Will set filters based on "href" and "id" attributes.
-   */
-  $('#survey-status-filter .btn').click(function(e) {
-                                      e.preventDefault();
-                                      $(this).blur();
-                                      
-                                      var filter_string;
-                                      var id = $(this).attr('id');
-                                      
-                                      if($(this).is('.active')) {
-                                      filter_string = $(this).attr('href');
-                                      }
-                                      else {
-                                      filter_string = null;
-                                      }
-                                      
-                                      setFilter(filter_string, id);
-                                        applyFilters();
-                                      });
-  
-  /*
-   *    Survey creator filter.
-   *    Will set filters based on "href" and "id" attributes.
-   */
-  $('#survey-creator-filter').on('click', '.btn', function(e) {
-                                        e.preventDefault();
-                                        $(this).blur();
-                                        
-                                        var filter_string;
-                                        var id = $(this).attr('id');
-                                        
-                                        if($(this).is('.active')) {
-                                        filter_string = $(this).attr('href');
-                                        }
-                                        else {
-                                        filter_string = null;
-                                        }
-                                        
-                                        setFilter(filter_string, id);
-                                        applyFilters();
-                                        });
-  
-  /*
    *    The selection tool button
    */
   $('#clear-selection-tool').click(function(e) {
                                e.preventDefault();
                                $(this).blur();
-                               
-                               hideFilterMenu();
                                    
                                    // deselect all SBs
                                    for (var i = 0; i < selected.length; i++) {
-                                        selected[i].footprint.deselect();
+                                        deselectFootprints(selected[i].footprints);
                                         selected[i].point.deselect();
                                    };
                                    
@@ -532,9 +628,9 @@ $(function() {
                                 selecting = false;
                                 // show all points of visible SBs
                                 for (var i = 0; i < obj_cache.length; i++) {
-                                        if(obj_cache[i].footprint.isShowing) {
-                                            obj_cache[i].point.show();
-                                        }
+                                    if(hasVisibleFootprint(obj_cache[i].footprints)) {
+                                        obj_cache[i].point.show();
+                                    }
                                 };
                                 aladin.select();
                                });
@@ -551,11 +647,20 @@ $(function() {
                              selecting = true;
                              // show all points of visible SBs
                              for (var i = 0; i < obj_cache.length; i++) {
-                                if(obj_cache[i].footprint.isShowing) {
+                                if(hasVisibleFootprint(obj_cache[i].footprints)) {
                                     obj_cache[i].point.show();
                                 }
                              };
                              aladin.select();
+                             });
+  
+  /*
+   *    The Create Tab tool
+   */
+  $('#tab-tool').click(function(e) {
+                             e.preventDefault();
+                             $(this).blur();
+                            createNewTabUsingSelection();
                              });
   
   /*
@@ -616,8 +721,8 @@ $(function() {
                                                                   max.getFullYear()
                                                                   );
                               
-                              setFilter('[/data/date_filter>='+min.getTime()+']', 'date:min');
-                              setFilter('[/data/date_filter<='+max.getTime()+']', 'date:max');
+                              setFilter('[/date_filter>='+min.getTime()+']', 'date_min');
+                              setFilter('[/date_filter<='+max.getTime()+']', 'date_max');
                               applyFilters();
                               
                               });

@@ -51,8 +51,8 @@
             <div id="filter-container">
                 
                 <!-- Title example -->
-                <div class="well-title">
-                    <span>FILTER BY:</span>
+                <div id="layer-tabs">
+                    <button id="tab_0" type="button" class="layer-tab btn active" data-toggle="button">1</button>
                 </div>
                 
                 <!-- Survey name filter -->
@@ -70,6 +70,7 @@
                     <span>DATE FILTERING</span>
                 </div>
                 
+                <!-- Survey date filter -->
                 <span id="survey-date-filter">
                     <div id="survey-date-slider"></div>
                     <div id="survey-date-filter-display">
@@ -85,10 +86,10 @@
                 
                 <!-- Survey status filter -->
                 <span id="survey-status-filter">
-                    <button id="status_1" href='[/data/status!="PLANNED"]' type="button" class="btn active" data-toggle="button">PLANNED</button>
-                    <button id="status_2" href='[/data/status!="OBSERVED"]' type="button" class="btn active" data-toggle="button">OBSERVED</button>
-                    <button id="status_3" href='[/data/status!="QUALITY CONTROL"]' type="button" class="btn active" data-toggle="button">QUALITY CONTROL</button>
-                    <button id="status_4" href='[/data/status!="PROCESSED"]' type="button" class="btn active" data-toggle="button">PROCESSED</button>
+                    <button id="status_1" href='[/data/status!="PLANNED"]' type="button" class="simple-filter-button btn active" data-toggle="button">PLANNED</button>
+                    <button id="status_2" href='[/data/status!="OBSERVED"]' type="button" class="simple-filter-button btn active" data-toggle="button">OBSERVED</button>
+                    <button id="status_3" href='[/data/status!="QUALITY CONTROL"]' type="button" class="simple-filter-button btn active" data-toggle="button">QUALITY CONTROL</button>
+                    <button id="status_4" href='[/data/status!="PROCESSED"]' type="button" class="simple-filter-button btn active" data-toggle="button">PROCESSED</button>
                 </span>
                 
                 <!-- Survey organization filter -->
@@ -111,6 +112,7 @@
                     <button id="selection-tool" title="Select surveys to display statistics, right mouse click and drag" class="btn" type="button" class="btn">SELECT</button>
                     <button id="deselection-tool" title="Same as deselect use mouse to drag, and deselect surveys" class="btn" type="button" class="btn">DESELECT</button>
                     <button id="clear-selection-tool" title="Clears all selection area" class="btn" type="button" class="btn">CLEAR</button>
+                    <button id="tab-tool" title="Create a new tab using selected surveys" class="btn" type="button" class="btn">TAB</button>
                 </span>
                 
             </div>
