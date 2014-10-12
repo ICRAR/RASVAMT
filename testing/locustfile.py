@@ -10,6 +10,5 @@ class UserBehavior(TaskSet):
 
 class WebsiteUser(HttpLocust):
 	task_set = UserBehavior
-	host = "http://ec2-54-85-45-2.compute-1.amazonaws.com/"
 	min_wait=5000
 	max_wait=9000

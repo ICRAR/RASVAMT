@@ -9,10 +9,13 @@
 # Cameron October 2014
 LOCALFLAG=''
 SSHFLAG=''
+UPDATEFLAG=''
 RUNDIR=src
 LOGS=logs
+RUNTESTS=''
+TESTDIR=testing
 USER=rasvamt
-IDENTKEY=$RUNDIR/RASVAMT.pem
+IDENTKEY="RASVAMT.pem"
 declare -a HOSTS
 
 
@@ -27,9 +30,11 @@ while test $# -gt 0; do
                         echo "-h, --help                	show brief help"
                         echo "-l, local deployment      	Run local deployment"
                         echo "-s, ssh in deployed       	SSH into deployed server"
-                        echo "-i, identity key          	USES specified identity key"
+                        echo "-i, identity key          	Uses specified identity key"
                         echo "-H, use particular host   	Performs actions on host"
                         echo "-u, change user    	        Changes user from rasvamt"
+                        echo "-T load testing              Load test specific host with locust"
+                        echo "-U, Update deployment           Performs update on deployed app"
                         exit 0
                         ;;
                 -l)
@@ -75,6 +80,16 @@ while test $# -gt 0; do
 						echo "Attempting SSH"
 						SSHFLAG=1
 						;;
+                -U)
+                        shift
+                        echo "Attempting update"
+                        UPDATEFLAG=1
+                        ;;
+                -T)
+                        shift
+                        echo "Running locust"
+                        RUNTESTS=1
+                        ;;
                 *)
                         break
                         ;;
@@ -96,8 +111,8 @@ then
     echo "Deploying local install check 127.0.0.1:5000 in browser"
     if [ ! -f locallock ]
     then
+    #This seems like a dumb way of doing things atm
     sed 's/#app.run()/app.run/' src/main.py > tmp1
-	#comment line that usually runs
 	yes | sed 's/app.run(host/#&/' tmp1 > $RUNDIR/main.py
     touch locallock
     fi
@@ -106,8 +121,25 @@ then
 elif [ $SSHFLAG ]
 then
 	cd $RUNDIR
+    if [ ! -f $IDENTKEY ]; then
+        echo "No identity key what ???? "
+        exit 1
+    fi
 	echo "Using identity key $IDENTKEY and HOST=$HOST"
 	ssh -i $IDENTKEY $USER@$HOST
+elif [ $UPDATEFLAG ]
+then
+    cd $RUNDIR
+    if [ ! -f $IDENTKEY ]; then
+        echo "No identity key what ???? "
+        exit 1
+    fi
+    echo "Using identity key $IDENTKEY and HOST=$HOST"
+    fab update -i $IDENTKEY -H $HOST -u $USER
+elif [ $RUNTESTS ]
+then
+    cd $TESTDIR
+    locust -H "http://$HOST"
 else
     echo "Creating new deployment"
 	if [ -f locallock ]

@@ -16,6 +16,7 @@ For a local installation under a normal user without sudo access
 fab -u `whoami` -H <IP address> -f machine-setup/deploy.py user_deploy
 """
 #TODO:
+# 1 : APP DIRECTORY IS NOT CHANGING PERMISSIONS
 # 1 : Get Supervisor working
 # 2 : Local installation
 # 3 : Work out users situation
@@ -96,6 +97,7 @@ APT_PACKAGES = [
         'sqlite3',
         'libsqlite3-dev',
         'httpd24',
+        'supervisor'
         ]
 
 
@@ -405,7 +407,6 @@ def check_apt(package):
 
     NOTE: This requires sudo access
     """
-    # TODO
     with hide('stdout','running'):
         res = sudo('dpkg -L | grep {0}'.format(package))
     if res.find(package) > -1:
@@ -623,7 +624,7 @@ def user_setup():
         
     # create RASVAMT directories and chown to correct user and group
     sudo('mkdir -p {0}'.format(env.APP_DIR_ABS))
-    #Probably turn this back on
+    # This not working for some reason
     sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
     
     #These lines are unnecessary i think
@@ -892,6 +893,15 @@ def install(standalone=0):
         # more installation goes here
     print(red("\n\n******** INSTALLATION COMPLETED!********\n\n"))
 
+@task(alias='hotfix')
+def user_fix():
+    """
+    Fixing weird problem with app_dir_abs being root
+    """
+    set_env()
+    sudo('chown -R {0}:{1} {2}'.format(USERS[0], GROUP, env.APP_DIR_ABS))
+
+
 @task
 def uninstall():
     """
@@ -922,6 +932,7 @@ def test_deploy():
         postfix_config()
     install()
     init_deploy()
+    user_fix()
     deploy()
 
 
