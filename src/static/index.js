@@ -17,7 +17,7 @@ var selecting = true;
 var filters = {};
 
 // overlays reference
-var overlays = [];
+var overlays = aladin.view.overlays;
 
 /*
 *	CALCULATION OF SELECTION POINT
@@ -148,7 +148,6 @@ function getJSONData() {
               
               // create default overlay
               var overlay = aladin.createOverlay({color: "#3793BE"});
-              overlays.push(overlay);
               aladin.addOverlay(overlay);
               
               for(var i = 0; i < sb_data.length; i++) {
@@ -413,6 +412,7 @@ function deselectFootprints(fps) {
 function selectFootprints(fps) {
     
     for(var i=0; i < fps.length; i++) {
+        fps[i].show();
         fps[i].select();
     }
 }
@@ -426,7 +426,6 @@ function hasVisibleFootprint(fps) {
     return false;
 }
 function showOverlay(index) {
-    
     if(!overlays[index].isShowing) {
         // apply filters and show footprints
         overlays[index].isShowing = true;
@@ -434,7 +433,6 @@ function showOverlay(index) {
     }
 }
 function hideOverlay(index) {
-    
     if(overlays[index].isShowing) {
         
         // apply filters and show footprints
@@ -468,7 +466,6 @@ function createNewTabUsingSelection() {
         
         // create new overlay
         var overlay = aladin.createOverlay({color: overlayColor});
-        overlays.push(overlay);
         aladin.addOverlay(overlay);
         
         for(var i = 0; i < selected.length; i++) {
