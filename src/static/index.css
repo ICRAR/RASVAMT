@@ -193,7 +193,7 @@ table {
 }
 
 .aladin-layerBox {
-    top: 60px;
+    top: 110px;
     z-index: 20;
 }
 
@@ -201,16 +201,15 @@ table {
     top: 60px;
 }
 .aladin-layersControl-container {
-    top: 60px;
     background:rgba(250,250,250,0.3);
 }
 
 .aladin-gotoControl {
-    display: none;
+    bottom:40px;
 }
 
 .aladin-frameChoice {
-    display: none;
+    bottom:50px;
 }
 
 .collapsed {
