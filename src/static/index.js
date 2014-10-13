@@ -230,6 +230,9 @@ function getJSONData() {
                                                   start: [ minDate, maxDate ]
                                                   }, true);
               
+              // apply the tab filter
+              setFilter('[/footprints/*/overlay/isShowing }~{ {true}]', 'tab_filter');
+              
               // apply the filters once objects are loaded in, and display parameters
               applyFilters();
               displayParameters();
@@ -412,11 +415,6 @@ function hasVisibleFootprint(fps) {
     return false;
 }
 function showOverlay(index) {
-    // show the overlay's footprints
-    var footprints = overlays[index].overlays;
-    for(var i = 0; i < footprints.length; i++) {
-        footprints[i].show();
-    }
     
     // Will find where to insert the overlay
     var insertAt = 0;
@@ -427,10 +425,13 @@ function showOverlay(index) {
         insertAt = i + 1;
     }
     
+    // for filtering
+    overlays[index].isShowing = true;
+    
     // add the overlay to Aladin in the correct position
     aladin.view.overlays.splice(insertAt, 0, overlays[index]);
     
-    // apply filters
+    // apply filters and show footprints
     applyFilters();
 }
 function hideOverlay(index) {
@@ -439,6 +440,9 @@ function hideOverlay(index) {
     for(var i = 0; i < footprints.length; i++) {
         footprints[i].hide();
     }
+    
+    // for filtering
+    overlays[index].isShowing = false;
     
     // removes the overlay from aladin
     var removeFrom = aladin.view.overlays.indexOf(overlays[index]);
