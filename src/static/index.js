@@ -230,7 +230,7 @@ function getJSONData() {
                                                   start: [ minDate, maxDate ]
                                                   }, true);
               
-              // apply the tab filter
+              // apply the tab filter. "only get results that have a visible overlay".
               setFilter('[/footprints/*/overlay/isShowing }~{ {true}]', 'tab_filter');
               
               // apply the filters once objects are loaded in, and display parameters
@@ -384,7 +384,9 @@ function hideUnselectedFootprints(fps) {
 function showFootprints(fps) {
     
     for(var i=0; i < fps.length; i++) {
-        fps[i].show();
+        if(fps[i].overlay.isShowing) {
+            fps[i].show();
+        }
     }
 }
 function hideFootprints(fps) {
@@ -417,40 +419,18 @@ function hasVisibleFootprint(fps) {
 function showOverlay(index) {
     
     if(!overlays[index].isShowing) {
-        // Will find where to insert the overlay
-        var insertAt = 0;
-        for(var i = 0; i < aladin.view.overlays.length; i++) {
-            if(overlays.indexOf(aladin.view.overlays[i]) > index) {
-                break;
-            }
-            insertAt = i + 1;
-        }
-        
-        // for filtering
-        overlays[index].isShowing = true;
-        
-        // add the overlay to Aladin in the correct position
-        aladin.view.overlays.splice(insertAt, 0, overlays[index]);
-        
         // apply filters and show footprints
+        overlays[index].isShowing = true;
         applyFilters();
     }
 }
 function hideOverlay(index) {
     
     if(overlays[index].isShowing) {
-        // hide the overlay's footprints
-        var footprints = overlays[index].overlays;
-        for(var i = 0; i < footprints.length; i++) {
-            footprints[i].hide();
-        }
         
-        // for filtering
+        // apply filters and show footprints
         overlays[index].isShowing = false;
-        
-        // removes the overlay from aladin
-        var removeFrom = aladin.view.overlays.indexOf(overlays[index]);
-        aladin.view.overlays.splice(removeFrom, 1);
+        applyFilters();
     }
 }
 function removeOverlay(index) {
