@@ -235,7 +235,6 @@ function getJSONData() {
               
               // apply the filters once objects are loaded in, and display parameters
               applyFilters();
-              displayParameters();
               });
 }
 
@@ -291,8 +290,9 @@ aladin.on('select', function(selection) {
           if(!selecting) {
             applyFilters();
           }
-          
-          displayParameters();
+          else {
+            displayParameters();
+          }
           
           });
 
@@ -351,7 +351,16 @@ function displayParameters() {
         display.append($('<p>Total Area: </p>'));
     }
     else {
-        // display parameters of Everything, here
+        // display all visible objects here
+        var total = 0;
+        
+        for(var i = 0; i < obj_cache.length; i++) {
+            if(hasVisibleFootprint(obj_cache[i].footprints)) {
+                total++;
+            }
+        }
+        display.append('<p>ScheduleBlocks</p>');
+        display.append('<p>'+total+'</p>');
     }
 }
 
@@ -513,6 +522,9 @@ function applyFilters() {
     for (var i = 0; i < result.length; i++) {
         showFootprints(result[i].value.footprints);
     };
+    
+    // display the parameters
+    displayParameters();
 }
 
 /*
@@ -617,9 +629,6 @@ $(function() {
                                    
                                    // remove SBs from selection
                                    selected = [];
-                                   
-                                   // empty parameter display
-                                   $('#parameter-display').empty();
                                    
                                    // apply filters
                                    applyFilters();
