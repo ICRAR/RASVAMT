@@ -416,37 +416,42 @@ function hasVisibleFootprint(fps) {
 }
 function showOverlay(index) {
     
-    // Will find where to insert the overlay
-    var insertAt = 0;
-    for(var i = 0; i < aladin.view.overlays.length; i++) {
-        if(overlays.indexOf(aladin.view.overlays[i]) > index) {
-            break;
+    if(!overlays[index].isShowing) {
+        // Will find where to insert the overlay
+        var insertAt = 0;
+        for(var i = 0; i < aladin.view.overlays.length; i++) {
+            if(overlays.indexOf(aladin.view.overlays[i]) > index) {
+                break;
+            }
+            insertAt = i + 1;
         }
-        insertAt = i + 1;
+        
+        // for filtering
+        overlays[index].isShowing = true;
+        
+        // add the overlay to Aladin in the correct position
+        aladin.view.overlays.splice(insertAt, 0, overlays[index]);
+        
+        // apply filters and show footprints
+        applyFilters();
     }
-    
-    // for filtering
-    overlays[index].isShowing = true;
-    
-    // add the overlay to Aladin in the correct position
-    aladin.view.overlays.splice(insertAt, 0, overlays[index]);
-    
-    // apply filters and show footprints
-    applyFilters();
 }
 function hideOverlay(index) {
-    // hide the overlay's footprints
-    var footprints = overlays[index].overlays;
-    for(var i = 0; i < footprints.length; i++) {
-        footprints[i].hide();
+    
+    if(overlays[index].isShowing) {
+        // hide the overlay's footprints
+        var footprints = overlays[index].overlays;
+        for(var i = 0; i < footprints.length; i++) {
+            footprints[i].hide();
+        }
+        
+        // for filtering
+        overlays[index].isShowing = false;
+        
+        // removes the overlay from aladin
+        var removeFrom = aladin.view.overlays.indexOf(overlays[index]);
+        aladin.view.overlays.splice(removeFrom, 1);
     }
-    
-    // for filtering
-    overlays[index].isShowing = false;
-    
-    // removes the overlay from aladin
-    var removeFrom = aladin.view.overlays.indexOf(overlays[index]);
-    aladin.view.overlays.splice(removeFrom, 1);
 }
 function removeOverlay(index) {
     hideOverlay(index);
@@ -454,11 +459,14 @@ function removeOverlay(index) {
 }
 
 function getRandomColor() {
-    var letters = '0123456789ABCDEF'.split('');
+
     var color = '#';
-    for (var i = 0; i < 6; i++ ) {
-        color += letters[Math.floor(Math.random() * 16)];
+    for (var i = 0; i < 3; i++) {
+        var c = Math.floor(Math.random() * 128);
+        c += 64;
+        color += ("00" + c.toString(16)).slice(-2);
     }
+    
     return color;
 }
 
@@ -491,7 +499,7 @@ function createNewTabUsingSelection() {
             selectFootprints(currentFootprints);
         }
         
-        var button = $('<button id="tab_'+overlayIndex+'" type="button" class="layer-tab btn active" data-toggle="button">'+(overlayIndex+1)+'</button>');
+        var button = $('<button id="tab_'+overlayIndex+'" type="button" class="layer-tab btn active" data-toggle="button">'+(overlayIndex+1)+'  <span class="glyphicon glyphicon-remove"></span></button>');
         button.css('background-color', overlayColor);
         button.css('border-color', overlayColor);
         $('#layer-tabs').append(button);
@@ -574,6 +582,23 @@ $(function() {
                         }
                         
                         });
+  $('#layer-tabs').on('click', '.glyphicon-remove', function(e) {
+                      e.stopPropagation();
+                      
+                      var tab = $(this).parent();
+                      var index = $('.layer-tab').index(tab);
+                      removeOverlay(index);
+                      tab.remove();
+                      
+                      $('.layer-tab').each( function(i) {
+                                           
+                                           if(i > 0) {
+                                                $(this).html(i+1 + '  <span class="glyphicon glyphicon-remove"></span>');
+                                           }
+                                           
+                                           });
+                      
+                      });
 
   /*
    *    Survey filters.

@@ -15,6 +15,13 @@ body {
     color: #DDDDDD;
 }
 
+.glyphicon-remove {
+    font-size: 0.5em;
+    position:relative;
+    left:4px;
+    top:-8px;
+}
+
 #layer-tabs .btn {
     border-radius: 4px;
 }
