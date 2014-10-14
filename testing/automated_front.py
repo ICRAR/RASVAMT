@@ -32,7 +32,7 @@ class SeleniumTestCase(unittest.TestCase):
 		pass
 	def test_home_page(self):
 		self.client.get(LOCALHOST)
-		assert self.client.title = 'Rasvamt'
+		assert self.client.title == 'Rasvamt'
 
 
 if __name__ == '__main__':
