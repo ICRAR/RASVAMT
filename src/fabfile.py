@@ -25,6 +25,7 @@ import glob
 import boto
 import os
 import time
+import flask_test
 
 from fabric.api import run, sudo, put, env, require, local, task
 from fabric.context_managers import cd, hide, settings
@@ -35,7 +36,10 @@ from fabric.operations import prompt
 from fabric.network import ssh
 from fabric.utils import puts, abort, fastprint
 from fabric.colors import *
-
+try:
+    import urllib2
+except:
+    import urllib
 #Defaults
 #Defaults
 thisDir = os.path.dirname(os.path.realpath(__file__))
@@ -102,13 +106,13 @@ APT_PACKAGES = [
 
 
 PIP_PACKAGES = [
-                'fabric',
-                'boto',
-                'flask',
-		'gunicorn',
-		'pysendfile',
-   		'supervisor',
-                ]
+        'fabric',
+        'boto',
+        'flask',
+        'gunicorn',
+        'pysendfile',
+        'supervisor',
+        ]
 
 PUBLIC_KEYS = os.path.expanduser('~/.ssh')
 # WEB_HOST = 0
@@ -140,7 +144,7 @@ def set_env():
     require('hosts', provided_by=[test_env])
     #Maybe load hosts from host file
     #if not env.has_key('host_string'):
-	    #open hosts file and attempt to load host from that
+    #open hosts file and attempt to load host from that
     if not env.has_key('HOME') or env.HOME[0] == '~' or not env.HOME:
         env.HOME = run("echo ~{0}".format(USERS[0]))
     if not env.has_key('PREFIX') or env.PREFIX[0] == '~' or not env.PREFIX:
@@ -187,10 +191,10 @@ def check_setup():
     Security keys, possibly check permissions
     """
     if not os.path.isfile(BOTO_CONFIG):
-	abort('Require boto config to create instance')
+    	abort('Require boto config to create instance')
     #Check if user can import Flask
     #Check if user can import boto
-	
+    
 
 @task
 def create_instance(names, use_elastic_ip, public_ips):
@@ -213,8 +217,8 @@ def create_instance(names, use_elastic_ip, public_ips):
     conn = boto.connect_ec2()
     
 #    for sec,desc in SECURITY_GROUPS.iteritems():
-#	    if sec not in conn.get_all_security_groups():
-#		    conn.create_security_group(sec,desc).authorize('tcp', 80, 80, '0.0.0.0/0')
+#        if sec not in conn.get_all_security_groups():
+#            conn.create_security_group(sec,desc).authorize('tcp', 80, 80, '0.0.0.0/0')
 
     if use_elastic_ip:
         # Disassociate the public IP
@@ -272,8 +276,8 @@ def create_instance(names, use_elastic_ip, public_ips):
     
     #Keep track of hosts
     with open(HOSTS_FILE,'a') as hostfile:
-	    for name in host_names:
-		    hostfile.write(name+"\n")
+        for name in host_names:
+            hostfile.write(name+"\n")
     return host_names
 
 @task
@@ -445,11 +449,11 @@ def git_clone():
     print(green("Cloning from GitHub..."))
     copy_public_keys()
     with cd(env.APP_DIR_ABS):
-	try:
-	    sudo('git clone https://{1}.git'.format(env.GITUSER, env.GITREPO))
-	except:
-	    gituser = raw_input("Enter git user name")
-	    sudo('git clone https://{1}.git'.format(gituser,env.GITREPO))
+        try:
+            sudo('git clone https://{1}.git'.format(env.GITUSER, env.GITREPO))
+        except:
+            gituser = raw_input("Enter git user name")
+            sudo('git clone https://{1}.git'.format(gituser,env.GITREPO))
 
     print(green("Clone complete"))
 
@@ -460,7 +464,7 @@ def git_pull():
     """
     copy_public_keys()
     with cd(env.APP_DIR_ABS+'/RASVAMT'):
-	sudo('git pull')
+        sudo('git pull')
 
 @task
 def git_clone_tar():
@@ -580,15 +584,15 @@ def postfix_config():
     sudo('service postfix start')
 
     sudo('''echo "relayhost = [smtp.gmail.com]:587
-	smtp_sasl_auth_enable = yes
-	smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
-	smtp_sasl_security_options = noanonymous
-	smtp_tls_CAfile = /etc/postfix/cacert.pem
-	smtp_use_tls = yes
-	
-	# smtp_generic_maps
-	smtp_generic_maps = hash:/etc/postfix/generic
-	default_destination_concurrency_limit = 1" >> /etc/postfix/main.cf''')
+    smtp_sasl_auth_enable = yes
+    smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+    smtp_sasl_security_options = noanonymous
+    smtp_tls_CAfile = /etc/postfix/cacert.pem
+    smtp_use_tls = yes
+    
+    # smtp_generic_maps
+    smtp_generic_maps = hash:/etc/postfix/generic
+    default_destination_concurrency_limit = 1" >> /etc/postfix/main.cf''')
 
     sudo('echo "[smtp.gmail.com]:587 {0}@gmail.com:{1}" > /etc/postfix/sasl_passwd'.format(env.gmail_account, env.gmail_password))
     sudo('chmod 400 /etc/postfix/sasl_passwd')
@@ -619,7 +623,7 @@ def user_setup():
         sudo('cp {0}/.ssh/authorized_keys /home/{1}/.ssh/authorized_keys'.format(home, user))
         sudo('chmod 600 /home/{0}/.ssh/authorized_keys'.format(user))
         sudo('chown {0}:{1} /home/{0}/.ssh/authorized_keys'.format(user, GROUP))
-	#change to allow group permissions to acces home
+    #change to allow group permissions to acces home
         #sudo('chmod g+rwx /home/{0}/'.format(user))
         
     # create RASVAMT directories and chown to correct user and group
@@ -685,10 +689,10 @@ def package_install(all=True,package=''):
     Install required python packages.
     """
     if all:
-	for p in PIP_PACKAGES:
-	    virtualenv('pip install {}'.format(p))
+        for p in PIP_PACKAGES:
+            virtualenv('pip install {}'.format(p))
     else:
-	virtualenv('pip install {}'.format(package))
+        virtualenv('pip install {}'.format(package))
 
 @task
 def new_package(package):
@@ -747,6 +751,13 @@ def test_env():
     }
     print "\n\n******** EC2 ENVIRONMENT SETUP!********\n\n"
 
+@task
+def local_deploy():
+    """
+    Deploy to local system
+    """
+    local('../RASVAMT.sh -l')
+
 
 @task
 def user_deploy():
@@ -778,17 +789,17 @@ def init_deploy():
     print(red("Initialising deployment"))
     set_env()
     if check_dir(env.APP_DIR_ABS+'/RASVAMT'):
-	git_pull()
+        git_pull()
     else:
-	git_clone()
+        git_clone()
     
     sudo('mkdir /etc/supervisor/')
     sudo('mkdir /etc/supervisor/conf.d/')
     #Having trouble with 
     with cd(env.APP_DIR_ABS+'/RASVAMT/src/'):
-	sudo('cp nginx.conf /etc/nginx/')
-    	sudo('cp rasvama.conf /etc/supervisor/conf.d/')
-    	sudo('chmod +x gunicorn_start')
+        sudo('cp nginx.conf /etc/nginx/')
+        sudo('cp rasvama.conf /etc/supervisor/conf.d/')
+        sudo('chmod +x gunicorn_start')
 
     #check if nginx is running else
     sudo('service nginx start')
@@ -805,7 +816,7 @@ def deploy():
 
     #sudo(virtualenv('supervisorctl restart RASVAMT'))
     with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
-    	sudo('./gunicorn_start')
+        sudo('./gunicorn_start')
 
 
     print(blue("Deploy finished check server {}".format(env.host_string)))
@@ -813,26 +824,26 @@ def deploy():
 
 @task(alias='update')
 def update_deploy():
-	"""
-	Stop app running
-	Update git repository and db etc
-	TODO: maybe use zc.buildout
-	"""
-	set_env()
-	#sudo(virtualenv('supervisorctl restart RASVAMT'))
-	git_pull()
-    	with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
-	    sudo('cp nginx.conf /etc/nginx/')
-	    sudo('cp rasvama.conf /etc/supervisor/conf.d/')
-	    #Removing create database stuff
-	    #sudo('chmod +x create_db.py')
-	    #sudo('create_db.py')
-	    try:
-		    sudo('service nginx reload')
-	    except:
-		    sudo('service nginx start')
-	    sudo('chmod +x gunicorn_start')
-	    sudo('./gunicorn_start')
+    """
+    Stop app running
+    Update git repository and db etc
+    TODO: maybe use zc.buildout
+    """
+    set_env()
+    #sudo(virtualenv('supervisorctl restart RASVAMT'))
+    git_pull()
+    with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
+        sudo('cp nginx.conf /etc/nginx/')
+        sudo('cp rasvama.conf /etc/supervisor/conf.d/')
+        #Removing create database stuff
+        #sudo('chmod +x create_db.py')
+        #sudo('create_db.py')
+        try:
+            sudo('service nginx reload')
+        except:
+            sudo('service nginx start')
+        sudo('chmod +x gunicorn_start')
+        sudo('./gunicorn_start')
 
 @task
 @serial
@@ -883,13 +894,13 @@ def install(standalone=0):
     print(green("Setting up home directory might require chmod"))
     if env.PREFIX != env.HOME: # generate non-standard directory
         sudo('mkdir -p {0}'.format(env.PREFIX))
-	#Removing this for the moment so we can use ec2-user to deploy with root permissions
+    #Removing this for the moment so we can use ec2-user to deploy with root permissions
         sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.PREFIX))
     print(green("Setting up virtual env"))
     with settings(user=env.USERS[0]):
         virtualenv_setup()
-    	print(green("Installing python packages"))
-    	package_install()
+        print(green("Installing python packages"))
+        package_install()
         # more installation goes here
     print(red("\n\n******** INSTALLATION COMPLETED!********\n\n"))
 
@@ -938,39 +949,48 @@ def test_deploy():
 
 @task
 def test_server():
-	"""
-	Tests if server is up and running
-	"""
-	pass
+    """
+    Tests if server is up and running
+    """
+    set_env()
+    try:
+        response = urllib2.urlopen(env.host)
+    except:
+        response = urllib.urlopen(env.host)
+    assert response.code == 200
 
 @task
 def test_db():
-	"""
-	Tests if database is working
-	"""
-	pass
+    """
+    Tests if database is working
+    """
+    pass
+
 @task
 def test_flask_app():
-	"""
-	Runs flask tests
-	"""
-	pass
+    """
+    Runs flask tests
+    """
+    print(green("Testing flask application"))
+    local('python flask_test.py')
+    
 @task
 def test_front_end():
-	"""
-	Runs automated front end testing
-	"""
-	pass
+    """
+    Runs automated front end testing server must available
+    """
+    #local('../RASVAMT.sh -l')
+    local('python ../testing/automated_front.py')
 
 @task(alias='test')
 def test_all():
-	"""
-	Run all tests for given host
-	"""
-	check_setup()
-	test_db()
-	test_flask_app()
-	test_front_end()
+    """
+    Run all tests for given host
+    """
+    check_setup()
+    test_db()
+    test_flask_app()
+    test_front_end()
 
 @task
 def uninstall_user():
