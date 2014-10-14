@@ -934,7 +934,7 @@ def test_deploy():
     """
     ** MAIN TASK **: Deploy the full application EC2 test environment.
     """
-
+    test_flask_app()
     test_env()
     # set environment to default for EC2, if not specified otherwise.
     set_env()
@@ -972,7 +972,10 @@ def test_flask_app():
     Runs flask tests
     """
     print(green("Testing flask application"))
-    local('python flask_test.py')
+    with settings(warn_only=True):
+        result = local('python flask_test.py',capture=True)
+        if result.failed and not confirm("Tests failed. Continue anyway?"):
+            abort("Aborting at user request")
     
 @task
 def test_front_end():
