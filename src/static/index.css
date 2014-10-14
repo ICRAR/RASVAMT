@@ -15,7 +15,7 @@ body {
     color: #DDDDDD;
 }
 
-.glyphicon-remove {
+#layer-tabs .glyphicon-remove {
     font-size: 0.5em;
     position:relative;
     left:4px;
@@ -31,6 +31,18 @@ body {
 #layer-tabs #tab_0 {
     background-color: #1f79a3;
     border-color: #1f79a3;
+}
+#layer-tabs #add_tab {
+    background-color: #000000;
+    border-color: #AAAAAA;
+    height:20px;
+    width:20px;
+    opacity:0.8;
+    margin:2px;
+}
+#layer-tabs #add_tab .glyphicon-plus {
+    right: 3px;
+    top: -1px;
 }
 
 #survey-name-filter .btn {
@@ -82,7 +94,7 @@ body {
     border-radius:20px;
     background:rgba(0,0,0,0.0);
     box-shadow:none;
-    min-width:300px;
+    min-width:250px;
     margin-left: 10px;
     margin-right: 10px;
 }
@@ -113,11 +125,13 @@ body {
 
 #survey-selection-tool .btn {
     background-color: rgba(0,0,0,0.0);
-    border-color: rgba(127, 127, 0, 1.0);
+    border-color: #1f79a3;
 }
-
-#survey-selection-tool #tab-tool {
-    border-color: rgba(0, 127, 127, 1.0);
+#survey-selection-tool #add-selection-tool {
+    border-color: #81BD8B;
+}
+#survey-selection-tool #remove-selection-tool {
+    border-color: #81BD8B;
 }
 
 #parameter-display {
@@ -165,7 +179,7 @@ table {
     background-color: rgba(0,0,0,.8);
     border:none;
     z-index:10;
-    max-width:450px;
+    max-width:300px;
 }
 
 #filter-ui a {

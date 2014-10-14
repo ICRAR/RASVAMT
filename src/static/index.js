@@ -141,8 +141,7 @@ function getJSONData() {
               var minDate = null;
               var maxDate = null;
               
-              // items to determine what color surveys are,
-              // and to see if filter buttons need to be created
+              // items to determine what filter buttons need to be created
               var surveys = {};
               var creators = {};
               
@@ -245,42 +244,20 @@ aladin.on('select', function(selection) {
           
           // Hide all points, as the selection is done
           for (var i = 0; i < obj_cache.length; i++) {
-                obj_cache[i].point.hide();
+                hidePoint(obj_cache[i]);
           }
           
           // Iterates through selection, either
           // selecting or deselecting points
           for(var i = 0; i < selection.length; i++) {
           
-            var point = selection[i];
             var obj = selection[i].obj;
           
             if(selecting) {
-          
-                // select all unselected points, and add to "selected" array
-                if(!point.isSelected) {
-          
-                    selectFootprints(obj.footprints);
-                    obj.point.select();
-                    selected.push(obj);
-                }
-          
+                selectObject(obj);
             }
             else {
-          
-                // deselect all selected points
-                if(point.isSelected) {
-          
-                    deselectFootprints(obj.footprints);
-                    obj.point.deselect();
-          
-                    // delete from "selected" array
-                    var index = selected.indexOf(obj);
-                    if (index > -1) {
-                        selected.splice(index, 1);
-                    }
-                }
-          
+                deselectObject(obj);
             }
           }
           
@@ -290,7 +267,7 @@ aladin.on('select', function(selection) {
             applyFilters();
           }
           else {
-            displayParameters();
+            refreshParameterDisplay();
           }
           
           });
@@ -298,7 +275,7 @@ aladin.on('select', function(selection) {
 /*
  *  display of parameters in "selected" array.
  */
-function displayParameters() {
+function refreshParameterDisplay() {
     
     var display = $('#parameter-display').empty();
     var count = selected.length;
@@ -354,7 +331,7 @@ function displayParameters() {
         var total = 0;
         
         for(var i = 0; i < obj_cache.length; i++) {
-            if(hasVisibleFootprint(obj_cache[i].footprints)) {
+            if(isVisible(obj_cache[i])) {
                 total++;
             }
         }
@@ -381,21 +358,27 @@ function showFilterMenu() {
     $('#filter-ui').removeClass('collapsed');
 }
 
-function hideUnselectedFootprints(fps) {
+function hideObject(o) {
     
+    var fps = o.footprints;
     for(var i=0; i < fps.length; i++) {
-        if(!fps[i].isSelected) {
-            fps[i].hide();
-        }
+        fps[i].hide();
     }
 }
-function showFootprints(fps) {
+function showObject(o) {
     
+    var fps = o.footprints;
     for(var i=0; i < fps.length; i++) {
         if(fps[i].overlay.isShowing) {
             fps[i].show();
         }
     }
+}
+function showPoint(o) {
+    o.point.show();
+}
+function hidePoint(o) {
+    o.point.hide();
 }
 function hideFootprints(fps) {
     
@@ -403,21 +386,61 @@ function hideFootprints(fps) {
         fps[i].hide();
     }
 }
-function deselectFootprints(fps) {
+function isSelected(o) {
+    return o.point.isSelected;
+}
+function selectObject(o) {
     
-    for(var i=0; i < fps.length; i++) {
-        fps[i].deselect();
+    if(!isSelected(o)) {
+        var fps = o.footprints;
+        for (var i = 0; i < fps.length; i++) {
+            fps[i].select();
+        }
+        o.point.select();
+        
+        selected.push(o);
     }
 }
-function selectFootprints(fps) {
+function deselectObject(o) {
     
-    for(var i=0; i < fps.length; i++) {
-        fps[i].show();
-        fps[i].select();
+    if(isSelected(o)) {
+        var fps = o.footprints;
+        for (var i = 0; i < fps.length; i++) {
+            fps[i].deselect();
+        }
+        o.point.deselect();
+        
+        // delete from "selected" array
+        var index = selected.indexOf(o);
+        if (index > -1) {
+            selected.splice(index, 1);
+        }
     }
 }
-function hasVisibleFootprint(fps) {
+function selectAllVisibleObjects() {
     
+    for(var i = 0; i < obj_cache.length; i++) {
+        if(isVisible(obj_cache[i])) {
+            selectObject(obj_cache[i]);
+        }
+    }
+}
+function deselectAllObjects() {
+    
+    for(var i = 0; i < selected.length; i++) {
+        
+        var fps = selected[i].footprints;
+        for (var f = 0; f < fps.length; f++) {
+            fps[f].deselect();
+        }
+        selected[i].point.deselect();
+    }
+    
+    selected = [];
+}
+function isVisible(obj) {
+    
+    var fps = obj.footprints;
     for(var i=0; i < fps.length; i++) {
         if(fps[i].isShowing) {
             return true;
@@ -425,16 +448,18 @@ function hasVisibleFootprint(fps) {
     }
     return false;
 }
+function overlayIsVisible(index) {
+    return overlays[index].isShowing;
+}
 function showOverlay(index) {
-    if(!overlays[index].isShowing) {
+    if(!overlayIsVisible(index)) {
         // apply filters and show footprints
         overlays[index].isShowing = true;
         applyFilters();
     }
 }
 function hideOverlay(index) {
-    if(overlays[index].isShowing) {
-        
+    if(overlayIsVisible(index)) {
         // apply filters and show footprints
         overlays[index].isShowing = false;
         applyFilters();
@@ -456,57 +481,124 @@ function getRandomColor() {
     
     return color;
 }
-
-function createNewTabUsingSelection() {
+function objectHasOverlay(obj, overlay) {
     
-    if(selected.length > 0) {
+    var fps = obj.footprints
+    for (var i = 0; i < fps.length; i++) {
         
-        var overlayIndex = overlays.length;
-        var overlayColor = getRandomColor();
-        
-        // create new overlay
-        var overlay = aladin.createOverlay({color: overlayColor});
-        aladin.addOverlay(overlay);
-        
-        for(var i = 0; i < selected.length; i++) {
-            
-            // Retrieve coordinates from the JSON object
-            var points = selected[i].data.ESO.observationBlock.tileCoverage[0];
-            var coord_string = 'Polygon J2000';
-            for(var p = 0; p < points.length; p++) {
-                coord_string += ' ' + points[p][0];
-                coord_string += ' ' + points[p][1];
-            }
-            var newFootprints = aladin.createFootprintsFromSTCS(coord_string);
-            var currentFootprints = selected[i].footprints;
-            
-            currentFootprints.push.apply(currentFootprints, newFootprints);
-            overlay.addFootprints(newFootprints);
-            selectFootprints(currentFootprints);
+        if(fps[i].overlay == overlay) {
+            return true;
         }
-        
-        var button = $('<button id="tab_'+overlayIndex+'" type="button" class="layer-tab btn active" data-toggle="button">'+(overlayIndex+1)+'  <span class="glyphicon glyphicon-remove"></span></button>');
-        button.css('background-color', overlayColor);
-        button.css('border-color', overlayColor);
-        $('#layer-tabs').append(button);
     }
-    else {
+    return false;
+}
+
+function removeFootprint(obj, overlay) {
+    var fps = obj.footprints
+    for (var i = 0; i < fps.length; i++) {
         
+        if(fps[i].overlay == overlay) {
+            fps[i].hide();
+            fps.splice(i, 1);
+        }
     }
 }
 
-/* 
+function addSelectionToActiveOverlays() {
+    
+    if(selected.length > 0) {
+        
+        for (var i = 0; i < selected.length; i++) {
+            
+            for(var k = 1; k < overlays.length; k++) {
+                
+                if(overlayIsVisible(k) && !objectHasOverlay(selected[i], overlays[k])) {
+                    newFootprint(selected[i], overlays[k]);
+                }
+            }
+        }
+        deselectAllObjects();
+        refreshParameterDisplay();
+    }
+}
+
+function removeSelectionFromActiveOverlays() {
+    
+    if(selected.length > 0) {
+        
+        for (var i = 0; i < selected.length; i++) {
+            
+            for(var k = 1; k < overlays.length; k++) {
+                
+                if(overlayIsVisible(k)) {
+                    removeFootprint(selected[i], overlays[k]);
+                }
+            }
+        }
+        deselectAllObjects();
+        applyFilters();
+    }
+}
+           
+function newFootprint(obj, overlay) {
+    
+    var points = obj.data.ESO.observationBlock.tileCoverage[0];
+    var coord_string = 'Polygon J2000';
+    for(var p = 0; p < points.length; p++) {
+        coord_string += ' ' + points[p][0];
+        coord_string += ' ' + points[p][1];
+    }
+    var newFootprints = aladin.createFootprintsFromSTCS(coord_string);
+    var currentFootprints = obj.footprints;
+    
+    currentFootprints.push.apply(currentFootprints, newFootprints);
+    overlay.addFootprints(newFootprints);
+}
+
+function createNewTabUsingSelection() {
+    
+    var overlayIndex = overlays.length;
+    var overlayColor = getRandomColor();
+    
+    // create new overlay
+    var overlay = aladin.createOverlay({color: overlayColor});
+    aladin.addOverlay(overlay);
+    
+    if(selected.length > 0) {
+        
+        for(var i = 0; i < selected.length; i++) {
+            
+            if(isVisible(selected[i])) {
+                newFootprint(selected[i], overlay);
+            }
+        }
+        
+        deselectAllObjects();
+        refreshParameterDisplay();
+        
+    }
+    
+    var button = $('<button id="tab_'+overlayIndex+'" type="button" class="layer-tab btn active" data-toggle="button">'+(overlayIndex+1)+'  <span class="glyphicon glyphicon-remove"></span></button>');
+    button.css('background-color', overlayColor);
+    button.css('border-color', overlayColor);
+    //button.draggable({cancel:false, axis:"x"});
+    button.insertBefore('#add_tab');
+}
+
+/*
  *  Applies the current filters in variable "filters"
  *  to all cached SBs
  */
 function applyFilters() {
     
-    // deselect (or delete/hide later on) all SBs
+    // hide (or delete, if using server-side queries) all unselected SBs
     for (var i = 0; i < obj_cache.length; i++) {
-        hideUnselectedFootprints(obj_cache[i].footprints);
+        if(!isSelected(obj_cache[i])) {
+            hideObject(obj_cache[i]);
+        }
     };
     
-    // Build up an array of the filters applied
+    // Build up an array of the filters to apply
     var filterString = "/*";
     for(var key in filters) {
         if(filters[key] != null) {
@@ -517,11 +609,11 @@ function applyFilters() {
     // apply filters
     var result = obj_query.select(filterString);
     for (var i = 0; i < result.length; i++) {
-        showFootprints(result[i].value.footprints);
+        showObject(result[i].value);
     };
     
     // display the parameters
-    displayParameters();
+    refreshParameterDisplay();
 }
 
 /*
@@ -560,7 +652,7 @@ $(function() {
                         e.preventDefault();
                         $(this).blur();
                       
-                        var index = $('.layer-tab').index(this);
+                        var index = $('#layer-tabs .layer-tab').index($(this));
                         if($(this).is('.active')) {
                             $(this).addClass('inactive');
                             hideOverlay(index);
@@ -569,13 +661,13 @@ $(function() {
                             $(this).removeClass('inactive');
                             showOverlay(index);
                         }
-                        
+                      
                         });
   $('#layer-tabs').on('click', '.glyphicon-remove', function(e) {
                       e.stopPropagation();
                       
                       var tab = $(this).parent();
-                      var index = $('.layer-tab').index(tab);
+                      var index = $('#layer-tabs .layer-tab').index(tab);
                       removeOverlay(index);
                       tab.remove();
                       
@@ -619,17 +711,24 @@ $(function() {
                                $(this).blur();
                                    
                                    // deselect all SBs
-                                   for (var i = 0; i < selected.length; i++) {
-                                        deselectFootprints(selected[i].footprints);
-                                        selected[i].point.deselect();
-                                   };
-                                   
-                                   // remove SBs from selection
-                                   selected = [];
+                                   deselectAllObjects();
                                    
                                    // apply filters
                                    applyFilters();
                                });
+  /*
+   *    The selection tool button
+   */
+  $('#all-selection-tool').click(function(e) {
+                                   e.preventDefault();
+                                   $(this).blur();
+                                   
+                                   // select all SBs
+                                    selectAllVisibleObjects();
+                                 
+                                   // apply filters
+                                   applyFilters();
+                                   });
   
   /*
    *    The selection tool button
@@ -638,13 +737,13 @@ $(function() {
                                e.preventDefault();
                                $(this).blur();
                              
-                                hideFilterMenu();
+                                //hideFilterMenu();
                                
                                 selecting = false;
                                 // show all points of visible SBs
                                 for (var i = 0; i < obj_cache.length; i++) {
-                                    if(hasVisibleFootprint(obj_cache[i].footprints)) {
-                                        obj_cache[i].point.show();
+                                    if(isVisible(obj_cache[i])) {
+                                        showPoint(obj_cache[i]);
                                     }
                                 };
                                 aladin.select();
@@ -657,24 +756,39 @@ $(function() {
                              e.preventDefault();
                              $(this).blur();
                              
-                             hideFilterMenu();
+                             //hideFilterMenu();
                              
                              selecting = true;
                              // show all points of visible SBs
                              for (var i = 0; i < obj_cache.length; i++) {
-                                if(hasVisibleFootprint(obj_cache[i].footprints)) {
-                                    obj_cache[i].point.show();
+                                if(isVisible(obj_cache[i])) {
+                                    showPoint(obj_cache[i]);
                                 }
                              };
                              aladin.select();
                              });
   
+  $('#add-selection-tool').click(function(e) {
+                             e.preventDefault();
+                             $(this).blur();
+
+                                 addSelectionToActiveOverlays();
+                             });
+  
+  $('#remove-selection-tool').click(function(e) {
+                                 e.preventDefault();
+                                 $(this).blur();
+                                 
+                                    removeSelectionFromActiveOverlays();
+                                 });
+  
   /*
    *    The Create Tab tool
    */
-  $('#tab-tool').click(function(e) {
+  $('#add_tab').click(function(e) {
                              e.preventDefault();
                              $(this).blur();
+                            //$(this).toggleClass('active');
                             createNewTabUsingSelection();
                              });
   

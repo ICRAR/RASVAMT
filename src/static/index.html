@@ -52,6 +52,7 @@
             <!-- Title example -->
             <div id="layer-tabs">
                 <button id="tab_0" title="Toggle the surveys associated with this tab" type="button" class="layer-tab btn active" data-toggle="button">1</button>
+                <button id="add_tab" title="Add a new tab" type="button" class="btn" data-toggle="button"><span class="glyphicon glyphicon-plus"></span></button>
             </div>
             
             <div id="filter-container">
@@ -105,15 +106,17 @@
                 
                 <!-- Survey selection tool -->
                 <div class="well-title" href="survey-selection-tool">
-                    <span>SELECT REGION</span>
+                    <span>SELECT SURVEYS</span>
                 </div>
                 
                 <!-- Survey selection tool -->
                 <span id="survey-selection-tool">
-                    <button id="selection-tool" title="Select surveys to display statistics, right mouse click and drag" class="btn" type="button" class="btn">SELECT</button>
-                    <button id="deselection-tool" title="Same as deselect use mouse to drag, and deselect surveys" class="btn" type="button" class="btn">DESELECT</button>
-                    <button id="clear-selection-tool" title="Clears all selection area" class="btn" type="button" class="btn">CLEAR</button>
-                    <button id="tab-tool" title="Create a new tab using selected surveys" class="btn" type="button" class="btn">TAB</button>
+                    <button id="selection-tool" title="Select surveys to display statistics, right mouse click and drag" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-screenshot"></span></button>
+                    <button id="deselection-tool" title="Use mouse to drag and deselect surveys" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-minus"></span></button>
+                    <button id="all-selection-tool" title="Selects all surveys" class="btn" type="button" class="btn"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
+                    <button id="clear-selection-tool" title="Clears selection" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-ban-circle"></span></button>
+                    <button id="add-selection-tool" title="Adds selection to all active tabs" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                    <button id="remove-selection-tool" title="Removes selection from all active tabs" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-arrow-down"></span></button>
                 </span>
                 
             </div>
