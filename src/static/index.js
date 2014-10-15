@@ -1,3 +1,27 @@
+// Setting up tour page for loading
+var tour = new Tour({
+  steps: [
+  {
+    element: ".navbar-brand",
+    title: "Welcome to the ICRAR Rasvama",
+    content : "This is a tool made for monitoring radio astronomy surveys"
+  },
+  {
+    element: "#toggle-filter-menu",
+    title: "Filter Menu",
+    content: "You can filter surveys from here"
+  },
+  {
+    element: ".aladin-layersControl",
+    title: "Change layers",
+    content: "Here you can change the layers"
+  }
+  //Insert one for search
+  //Insert one for statistics
+  //Insert frame choice
+  //Insert stuff for tabs more filtering
+]});
+
 var aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:180, showReticle:false});
 
 // Add catalog (points overlay) object to Aladin
@@ -879,3 +903,9 @@ $(function() {
   getJSONData();
   
   });
+
+// Initialize the tour
+tour.init();
+
+// Start the tour
+tour.start();
