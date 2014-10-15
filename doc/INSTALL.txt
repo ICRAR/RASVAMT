@@ -15,7 +15,7 @@ NOTE: Most of the build was created using mac and linux.
 2. Get the Flask package. 
 	- Either use *<sudo> pip install Flask *You may have to use sudo
 	- Or visit http://flask.pocoo.org/ or clone from it's github
-3. Run RASVAMA.sh -l
+3. Run RASVAMA.sh -l or in src dir run python main.py 
 4. Visit localhost:5000 or 127.0.0.1:5000
 
 [Full deploy using AWS]
@@ -30,9 +30,11 @@ It relies on a few extra packages to do this.
 	- First you’ll need an AWS account( https://aws.amazon.com/ )
 	- Need a secret/key pair called RASVAMT.pem (http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html ) 
 	- Need secrurity group RASVAMT (http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html)
-	- Need IAM ( your AWS access key and AWS secret key )
-	- (See AWS Installation for more advice
-4. Run RASVAMA.sh deploy or fab test_deploy in src directory 
+	- Need IAM ( your AWS access key and AWS secret key and this to home directory in file called .boto)
+	- See AWS Installation for more advice
+4. Run RASVAMA.sh
+	or 
+	fab test_deploy in src directory 
 
 
 AWS installation
@@ -59,5 +61,5 @@ aws_secret_access_key = YOURSECRETKEY
 
 Testing
 =======
-Coming Sooon
+Run automatically during deploy but can test if server is deployed with `python liveserver_flask.py`
 
