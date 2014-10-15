@@ -18,6 +18,7 @@ var filters = {};
 
 // overlays reference
 var overlays = aladin.view.overlays;
+var lastTab = 0;
 
 /*
 *	CALCULATION OF SELECTION POINT
@@ -105,14 +106,6 @@ function statusIndex(status) {
  */
 
 /*
- *  Converts dd/mm/yyyy to mm/dd/yyyy and vice versa.
- */
-function formatDateString(date_str) {
-    var dateArray = date_str.split("/");
-    return (dateArray[1] + "/" + dateArray[0] + "/" + dateArray[2]);
-}
-
-/*
  *  Requests JSON survey/SB objects from the
  *  back-end server. The requests are sent
  *  in a RESTful form, and the replies are cached.
@@ -150,71 +143,46 @@ function getJSONData() {
               aladin.addOverlay(overlay);
               
               for(var i = 0; i < sb_data.length; i++) {
-              var sb = sb_data[i];
               
-              // Retrieve coordinates from the JSON object
-              var points = sb.ESO.observationBlock.tileCoverage[0];
-              var points_average = getAveragePoint(points);
+              // Define new SB object
+              var obj = {};
+              obj.footprints = [];
+              obj.data = sb_data[i];
               
-              // For Aladin to create a footprint, a string must be parsed with
-              // the format "Polygon J2000 X1 Y1 X2 Y2 .... Xn Yn"
-              var sb_string = 'Polygon J2000';
-              for(var p = 0; p < points.length; p++) {
-                sb_string += ' ' + points[p][0];
-                sb_string += ' ' + points[p][1];
-              }
-              
-              // Create the Aladin footprint & point
-              // NOTE: createFootprintsFromSTCS returns an array! useful if SBs have more than one footprint
-              var sb_footprints = aladin.createFootprintsFromSTCS(sb_string);
-              var sb_point = aladin.createSource(points_average[0], points_average[1]);
-              var sb_points = [];
-              sb_points.push(sb_point);
+              // Creat object's footprint(s) and point
+              newFootprint(obj, overlay);
+              newPoint(obj);
               
               // Check if the project exists
               // If it doesnt, add the button
-              if(!surveys[sb.project]) {
-                var button = $('<button id="project_'+sb.project+'" href=\'[/data/project!="'+sb.project+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+sb.project+'</button>');
+              var project = obj.data.project;
+              if(!surveys[project]) {
+                var button = $('<button id="project_'+project+'" href=\'[/data/project!="'+project+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+project+'</button>');
                 $('#survey-name-filter').append(button);
-                surveys[sb.project] = {};
+                surveys[project] = {};
               }
-              // Creator filter button
-              if(!creators[sb.creator]) {
-              var button = $('<button id="creator_'+sb.creator+'" href=\'[/data/creator!="'+sb.creator+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+sb.creator+'</button>');
+              // Check if the creator exists
+              // If it doesnt, add the button
+              var creator = obj.data.creator;
+              if(!creators[creator]) {
+              var button = $('<button id="creator_'+creator+'" href=\'[/data/creator!="'+creator+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+creator+'</button>');
               $('#survey-creator-filter').append(button);
-              creators[sb.creator] = {};
+              creators[creator] = {};
               }
-              
-              // Add footprint/point to aladin for display
-              overlay.addFootprints(sb_footprints);
-              catalog.addSources(sb_points);
               
               // Date filter, update ranges if new date is outside range
-              var date = Date.parse(formatDateString(sb.date));
+              var date = Date.parse(formatDateString(obj.data.date));
               if(minDate == null || minDate > date) {
-              minDate = date;
+                minDate = date;
               }
               if(maxDate == null || maxDate < date) {
-              maxDate = date;
+                maxDate = date;
               }
-              
-              // link data to object
-              var obj = {};
-              obj.footprints = sb_footprints;
-              obj.point = sb_point;
-              obj.data = sb;
               
               // Used for filtering
               obj.date_filter = date;
               
-              // link selectable point to object
-              sb_point.obj = obj;
-              
-              // hides the overlays by default
-              sb_point.hide();
-              hideFootprints(sb_footprints);
-              
-              // cache SB
+              // cache new SB object
               obj_cache.push(obj);
               }
               
@@ -231,9 +199,53 @@ function getJSONData() {
               // apply the tab filter. "only get results that have a visible overlay".
               setFilter('[/footprints/*/overlay/isShowing }~{ {true}]', 'tab_filter');
               
-              // apply the filters once objects are loaded in, and display parameters
+              // apply changes
+              $('#tab-options-filter-logo').css('color', overlays[0].color);
               applyFilters();
               });
+}
+
+/* HELPER FUNCTIONS */
+//////////////////////
+
+function newFootprint(obj, overlay) {
+    
+    var points = obj.data.ESO.observationBlock.tileCoverage[0];
+    var coord_string = 'Polygon J2000';
+    for(var p = 0; p < points.length; p++) {
+        coord_string += ' ' + points[p][0];
+        coord_string += ' ' + points[p][1];
+    }
+    var newFootprints = aladin.createFootprintsFromSTCS(coord_string);
+    var currentFootprints = obj.footprints;
+    
+    currentFootprints.push.apply(currentFootprints, newFootprints);
+    overlay.addFootprints(newFootprints);
+}
+
+function newPoint(obj) {
+    
+    // Create object's selection point
+    var points = obj.data.ESO.observationBlock.tileCoverage[0];
+    var points_average = getAveragePoint(points);
+    obj.point = aladin.createSource(points_average[0], points_average[1]);
+    obj.point.obj = obj;
+    
+    // add point to aladin's catalog (must be in an array)
+    var point_to_catalog = [];
+    point_to_catalog.push(obj.point);
+    catalog.addSources(point_to_catalog);
+    
+    // Hide point by default
+    hidePoint(obj);
+}
+
+/*
+ *  Converts dd/mm/yyyy to mm/dd/yyyy and vice versa.
+ */
+function formatDateString(date_str) {
+    var dateArray = date_str.split("/");
+    return (dateArray[1] + "/" + dateArray[0] + "/" + dateArray[2]);
 }
 
 /*
@@ -379,12 +391,6 @@ function showPoint(o) {
 }
 function hidePoint(o) {
     o.point.hide();
-}
-function hideFootprints(fps) {
-    
-    for(var i=0; i < fps.length; i++) {
-        fps[i].hide();
-    }
 }
 function isSelected(o) {
     return o.point.isSelected;
@@ -539,21 +545,6 @@ function removeSelectionFromActiveOverlays() {
         applyFilters();
     }
 }
-           
-function newFootprint(obj, overlay) {
-    
-    var points = obj.data.ESO.observationBlock.tileCoverage[0];
-    var coord_string = 'Polygon J2000';
-    for(var p = 0; p < points.length; p++) {
-        coord_string += ' ' + points[p][0];
-        coord_string += ' ' + points[p][1];
-    }
-    var newFootprints = aladin.createFootprintsFromSTCS(coord_string);
-    var currentFootprints = obj.footprints;
-    
-    currentFootprints.push.apply(currentFootprints, newFootprints);
-    overlay.addFootprints(newFootprints);
-}
 
 function createNewTabUsingSelection() {
     
@@ -578,11 +569,11 @@ function createNewTabUsingSelection() {
         
     }
     
-    var button = $('<button id="tab_'+overlayIndex+'" type="button" class="layer-tab btn active" data-toggle="button">'+(overlayIndex+1)+'  <span class="glyphicon glyphicon-remove"></span></button>');
+    var button = $('<button type="button" class="layer-tab btn active" data-toggle="button">'+(overlayIndex+1)+'  <span class="glyphicon glyphicon-remove"></span></button>');
     button.css('background-color', overlayColor);
     button.css('border-color', overlayColor);
     //button.draggable({cancel:false, axis:"x"});
-    button.insertBefore('#add_tab');
+    button.insertBefore('#add-tab');
 }
 
 /*
@@ -625,6 +616,73 @@ function setFilter(filter, id) {
 }
 
 /*
+ *  Changes the colour of a tab and its matching overlay
+ */
+function changeTabColor(color_str) {
+    
+    overlays[lastTab].color = color_str;
+    var tab = $($('#layer-tabs .layer-tab').get(lastTab));
+    tab.css('background-color', color_str);
+    tab.css('border-color', color_str);
+    $('#tab-options-filter-logo').css('color', color_str);
+    aladin.view.forceRedraw();
+}
+
+/*
+ *  Updates the tabs with numbers based on their position
+ */
+function updateTabs() {
+    
+    $('#layer-tabs .layer-tab').each( function(i) {
+                         
+                         if(i > 0) {
+                         $(this).html(i+1 + '  <span class="glyphicon glyphicon-remove"></span>');
+                         }
+                         
+                         });
+}
+
+/*
+ *  Moves a tab left, and its overlay towards the back
+ */
+function moveTabLeft() {
+    
+    if(lastTab > 1) {
+        
+        var temp = overlays[lastTab - 1];
+        overlays[lastTab-1] = overlays[lastTab];
+        overlays[lastTab] = temp;
+        
+        var tab = $($('#layer-tabs .layer-tab').get(lastTab));
+        tab.insertBefore($($('#layer-tabs .layer-tab').get(lastTab-1)));
+        updateTabs();
+        
+        lastTab = lastTab - 1;
+        aladin.view.forceRedraw();
+    }
+}
+
+/*
+ *  Moves a tab right, and its overlay towards the front
+ */
+function moveTabRight() {
+    
+    if(lastTab > 0 && lastTab < overlays.length - 1) {
+        
+        var temp = overlays[lastTab + 1];
+        overlays[lastTab + 1] = overlays[lastTab];
+        overlays[lastTab] = temp;
+        
+        var tab = $($('#layer-tabs .layer-tab').get(lastTab));
+        tab.insertAfter($($('#layer-tabs .layer-tab').get(lastTab+1)));
+        updateTabs();
+        
+        lastTab = lastTab + 1;
+        aladin.view.forceRedraw();
+    }
+}
+
+/*
  *  Code that should be activated once document has loaded
  */
 $(function() {
@@ -637,16 +695,28 @@ $(function() {
    *    When a filter heading is clicked,
    *    the filters are minimised.
    */
-  $('.well-title').click(function(e) {
+  $('#filter-ui .well-title').click(function(e) {
                            e.preventDefault();
                            var url = $(this).attr('href');
                          
-                            var filters = $('#' + url);
+                            var filters = $('#filter-ui #' + url);
                             filters.toggle();
                            });
   
   /*
-   *    Tab functionality
+   *    When "TAB OPTIONS" header is clicked, the small coloured
+   *    logo will appear/disappear
+   */
+  $('#tab-options-filter-header').click(function(e) {
+                                       e.preventDefault();
+                                       var logo = $('#tab-options-filter-logo');
+                                       logo.toggle();
+                                       });
+  
+  /*
+   *    When a tab is clicked, it will show/hide the overlay.
+   *    If the tab is being activated, the "TAB OPTIONS" tab will be
+   *    set to the tab.
    */
   $('#layer-tabs').on('click', '.layer-tab', function(e) {
                         e.preventDefault();
@@ -660,30 +730,99 @@ $(function() {
                         else {
                             $(this).removeClass('inactive');
                             showOverlay(index);
+                      
+                            lastTab = index;
+                            $('#tab-options-filter-logo').css('color', overlays[index].color);
                         }
                       
                         });
+  
+  /*
+   *    When the 'X' on a tab is clicked, the
+   *    tab and overlay is removed.
+   */
   $('#layer-tabs').on('click', '.glyphicon-remove', function(e) {
                       e.stopPropagation();
                       
                       var tab = $(this).parent();
                       var index = $('#layer-tabs .layer-tab').index(tab);
+                      
                       removeOverlay(index);
                       tab.remove();
+                      updateTabs();
                       
-                      $('.layer-tab').each( function(i) {
-                                           
-                                           if(i > 0) {
-                                                $(this).html(i+1 + '  <span class="glyphicon glyphicon-remove"></span>');
-                                           }
-                                           
-                                           });
+                      if(index == lastTab) {
+                        lastTab = 0;
+                      }
+                      $('#tab-options-filter-logo').css('color', overlays[0].color);
                       
                       });
+  /*
+   *    The "+" sign. When clicked, will create
+   *    a new tab and set the "TAB OPTIONS" to this tab.
+   */
+  $('#add-tab').click(function(e) {
+                      e.preventDefault();
+                      $(this).blur();
+                      $(this).toggleClass('active');
+                      
+                      createNewTabUsingSelection();
+                      
+                      lastTab = overlays.length - 1;
+                      $('#tab-options-filter-logo').css('color', overlays[lastTab].color);
+                      });
+  
+  /*
+   *    The buttons under "TAB OPTIONS" that will
+   *    change the colour of the current tab.
+   */
+  $('.tab-colour-button').click(function(e) {
+                                e.preventDefault();
+                                $(this).blur();
+                                $(this).toggleClass('active');
+                                
+                                changeTabColor($(this).attr('color-str'));
+                                });
+  
+  /*
+   *    The (?) button under "TAB OPTIONS" that
+   *    will set the tab to a random colour.
+   */
+  $('#tab-colour-button-random').click(function(e) {
+                                e.preventDefault();
+                                $(this).blur();
+                                $(this).toggleClass('active');
+                                
+                                changeTabColor(getRandomColor());
+                                });
+  
+  /*
+   *    Left button in "TAB OPTIONS" to
+   *     move a tab left
+   */
+  $('#move-tab-left').click(function(e) {
+                                       e.preventDefault();
+                                       $(this).blur();
+                                       $(this).toggleClass('active');
+                                       
+                                        moveTabLeft();
+                                       });
+  
+  /*
+   *    Right button in "TAB OPTIONS" to
+   *    move a tab right
+   */
+  $('#move-tab-right').click(function(e) {
+                            e.preventDefault();
+                            $(this).blur();
+                            $(this).toggleClass('active');
+                            
+                            moveTabRight();
+                            });
 
   /*
-   *    Survey filters.
-   *    Will set filters based on "href" and "id" attributes.
+   *    Simple filter button class. Will set a filter under 'id'
+   *    using filter string 'href'
    */
     $('#filter-container').on('click', '.simple-filter-button', function(e) {
                             e.preventDefault();
@@ -704,7 +843,7 @@ $(function() {
                             });
   
   /*
-   *    The selection tool button
+   *    The Clear Selection button
    */
   $('#clear-selection-tool').click(function(e) {
                                e.preventDefault();
@@ -717,7 +856,7 @@ $(function() {
                                    applyFilters();
                                });
   /*
-   *    The selection tool button
+   *    The Select All button
    */
   $('#all-selection-tool').click(function(e) {
                                    e.preventDefault();
@@ -731,7 +870,7 @@ $(function() {
                                    });
   
   /*
-   *    The selection tool button
+   *    The "-" deselect button
    */
   $('#deselection-tool').click(function(e) {
                                e.preventDefault();
@@ -750,7 +889,7 @@ $(function() {
                                });
   
   /*
-   *    The Select More tool button
+   *    The "+" selection button
    */
   $('#selection-tool').click(function(e) {
                              e.preventDefault();
@@ -768,6 +907,10 @@ $(function() {
                              aladin.select();
                              });
   
+  /*
+   *    The Up Arrow button to add selection
+   *    to active tabs
+   */
   $('#add-selection-tool').click(function(e) {
                              e.preventDefault();
                              $(this).blur();
@@ -775,6 +918,10 @@ $(function() {
                                  addSelectionToActiveOverlays();
                              });
   
+  /*
+   *    The Down Arrow to remove selection
+   *    from active tabs
+   */
   $('#remove-selection-tool').click(function(e) {
                                  e.preventDefault();
                                  $(this).blur();
@@ -783,18 +930,8 @@ $(function() {
                                  });
   
   /*
-   *    The Create Tab tool
-   */
-  $('#add_tab').click(function(e) {
-                             e.preventDefault();
-                             $(this).blur();
-                            //$(this).toggleClass('active');
-                            createNewTabUsingSelection();
-                             });
-  
-  /*
    *    The button that shows/hides the
-   *    main filter menu!
+   *    main filter menu
    */
   $('#toggle-filter-menu').click(function(e) {
                                  e.preventDefault();
@@ -806,7 +943,7 @@ $(function() {
                                  });
   
   /*
-   *    Date Slider bar listener
+   *    The date slider bar
    */
   $('#survey-date-slider').noUiSlider({
                                       range: {
@@ -816,6 +953,11 @@ $(function() {
                                       step: 24 * 60 * 60 * 1000,
                                       start: [ Date.parse("10/06/2011 02:44 PM"), Date.parse("10/06/2013 02:44 PM") ]
                                       });
+  
+  /*
+   *    When the date slider is slid, the dates will be
+   *    updated
+   */
   $('#survey-date-slider').on('slide', function() {
                               
                               var range = $(this).val();
@@ -833,6 +975,11 @@ $(function() {
                                                                max.getFullYear()
                                                                );
                               });
+  
+  /*
+   *    After the date slider is modified, will
+   *    set the date filter
+   */
   $('#survey-date-slider').on('set', function() {
                               
                               var range = $(this).val();
@@ -856,6 +1003,9 @@ $(function() {
                               
                               });
   
+  /*
+   *    The Min date form for inputting dates as text
+   */
   $('#survey-date-slider-start').change(function() {
                                         
                                         var newMin = Date.parse(formatDateString($(this).val()));
@@ -863,6 +1013,10 @@ $(function() {
                                             $('#survey-date-slider').val([newMin, null]);
                                         }
                                         });
+  
+  /*
+   *    The Max date form for inputting dates as text
+   */
   $('#survey-date-slider-end').change(function() {
                                         
                                         var newMax = Date.parse(formatDateString($(this).val()));

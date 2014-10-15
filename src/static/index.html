@@ -52,10 +52,29 @@
             <!-- Title example -->
             <div id="layer-tabs">
                 <button id="tab_0" title="Toggle the surveys associated with this tab" type="button" class="layer-tab btn active" data-toggle="button">1</button>
-                <button id="add_tab" title="Add a new tab" type="button" class="btn" data-toggle="button"><span class="glyphicon glyphicon-plus"></span></button>
+                <button id="add-tab" title="Add a new tab" type="button" class="btn" data-toggle="button"><span class="glyphicon glyphicon-plus"></span></button>
             </div>
             
             <div id="filter-container">
+                
+                <!-- Survey name filter -->
+                <div id="tab-options-filter-header" class="well-title" href="tab-options-filter">
+                    <span>TAB OPTIONS</span>
+                    <span id="tab-options-filter-logo" class="glyphicon glyphicon-th-large"></span>
+                </div>
+                
+                <!-- these buttons are generated automatically based on the JSON files -->
+                <span id="tab-options-filter">
+                    <button color-str="#1f79a3" style="background-color:#1f79a3;border-color:#1f79a3" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></button>
+                    <button color-str="#A94848" style="background-color:#A94848;border-color:#A94848" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></button>
+                    <button color-str="#48A94D" style="background-color:#48A94D;border-color:#48A94D" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></button>
+                    <button color-str="#6448A9" style="background-color:#6448A9;border-color:#6448A9" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></button>
+                    <button color-str="#A3A948" style="background-color:#A3A948;border-color:#A3A948" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></button>
+                    <button id="tab-colour-button-random" title="Change the Active Tab to a Random Colour" type="button" class="btn" data-toggle="button"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    
+                    <button id="move-tab-left" title="Move Tab position left" type="button" class="move-tab-button btn" data-toggle="button"><span class="glyphicon glyphicon-chevron-left"></span></button>
+                    <button id="move-tab-right" title="Move Tab position right" type="button" class="move-tab-button btn" data-toggle="button"><span class="glyphicon glyphicon-chevron-right"></span></button>
+                </span>
                 
                 <!-- Survey name filter -->
                 <div class="well-title" href="survey-name-filter">

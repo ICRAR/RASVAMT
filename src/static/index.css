@@ -2,7 +2,7 @@ body {
     overflow:hidden;
 }
 
-.btn {
+#filter-ui .btn {
     padding: 2px 6px;
     margin-top:1px;
     margin-bottom:1px;
@@ -11,7 +11,7 @@ body {
     outline:none !important;
 }
 
-.btn.active {
+#filter-ui .btn.active {
     color: #DDDDDD;
 }
 
@@ -32,7 +32,7 @@ body {
     background-color: #1f79a3;
     border-color: #1f79a3;
 }
-#layer-tabs #add_tab {
+#layer-tabs #add-tab {
     background-color: #000000;
     border-color: #AAAAAA;
     height:20px;
@@ -40,8 +40,31 @@ body {
     opacity:0.8;
     margin:2px;
 }
-#layer-tabs #add_tab .glyphicon-plus {
+#layer-tabs #add-tab .glyphicon-plus {
     right: 3px;
+    top: -1px;
+}
+
+#tab-options-filter .btn {
+    width:20px;
+    height:20px;
+}
+#tab-options-filter #tab-colour-button-random {
+    background-color:#000000;
+}
+#tab-options-filter #tab-colour-button-random .glyphicon-question-sign {
+    right: 4px;
+    top: -1px;
+}
+#tab-options-filter .move-tab-button {
+    background-color:#000000;
+}
+#tab-options-filter .move-tab-button .glyphicon {
+    right: 4px;
+    top: -1px;
+}
+#tab-options-filter #tab-colour-button-random .glyphicon-question-sign {
+    right: 4px;
     top: -1px;
 }
 
@@ -247,6 +270,13 @@ table {
 
 .aladin-container {
     background-color: #3A3A3A;
+}
+
+.zoomPlus {
+    background-color: rgba(0,0,0,0.6);
+}
+.zoomMinus {
+    background-color: rgba(0,0,0,0.6);
 }
 
 .collapsed {
