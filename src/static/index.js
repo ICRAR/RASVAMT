@@ -4,21 +4,98 @@ var tour = new Tour({
   {
     element: ".navbar-brand",
     title: "Welcome to the ICRAR Rasvama",
-    content : "This is a tool made for monitoring radio astronomy surveys"
+    content : "This is a tool made for monitoring radio astronomy surveys",
+    backdrop : true
   },
   {
     element: "#toggle-filter-menu",
     title: "Filter Menu",
-    content: "You can filter surveys from here"
+    content: "You can filter surveys from here",
+    onShow : function (tour) { 
+      showFilterMenu();
+    }
   },
   {
+    element: "#survey-name-filter",
+    title: "Project filters",
+    content: "You can select which surveys to display by project"
+  },
+  {
+    element: "#survey-date-filter",
+    title: "Date filters",
+    content: "You can change the date range"
+  },
+  // TODO : Change the dates automatically
+    {
+    element: "#survey-date-slider-start",
+    title: "Date Input filters",
+    content: "You can input the start date",
+    onShow : function (tour) { 
+      var sampleDate = "28/02/2013"; 
+      $("#survey-date-slider-start").change(sampleDate);
+      applyFilters();
+    },
+    onHide : function (tour) {
+      var origDate = "10/06/2011";
+      $("#survey-date-slider-start").change(origDate);
+      applyFilters();
+    }
+  },
+  {
+    element: "#survey-status-filter",
+    title: "Status filters",
+    content: "You can select on status"
+  },
+  {
+    element: "#selection-tool",
+    title: "Select SBs",
+    content: "Select SBs to get grouped statistics or send to tab"
+  },
+  {
+    element: "#add-selection-tool",
+    title: "Add SBs to tab",
+    content: "This will add selected SBs to a tab"
+  },
+  {
+    element: "#add_tab",
+    title: "New tab",
+    content: "Create new tab or add selected SBs to a tab"
+  },
+  {
+    // TODO : Open and demonstrate different  layer options
     element: ".aladin-layersControl",
     title: "Change layers",
     content: "Here you can change the layers",
+    onShow : function (tour) {
+      hideFilterMenu();
+    },
     placement: "left"
+  },
+  {
+    // TODO : Open and demonstate
+    element: ".aladin-gotoControl",
+    title: "Search for objects",
+    content: "Search for VO objects",
+    placement : "left"
+  },
+  {
+    element: "#parameter-display",
+    title: "Statistics",
+    content: "Statistics for SBs will appear down here",
+    placement : "top"
+  },
+  {
+    element: ".aladin-frameChoice",
+    title: "Frame",
+    content: "Change frame for display here",
+    placement : "top"
+  },
+  {
+    orphan: true,
+    template : "<div class='popover tour'><div class='arrow'></div><h3 class='popover-title'></h3><div class='popover-content'></div><div class='popover-navigation'><button class='btn btn-default' data-role='prev'>« Prev</button><button class='btn btn-default' data-role='end'>End tour</button></div></div>",
+    title: "Thank you",
+    content: "Enjoy your using the tool for more information please head to the About Us tab"
   }
-  //Insert one for search
-  //Insert one for statistics
   //Insert frame choice
   //Insert stuff for tabs more filtering
 ]});
