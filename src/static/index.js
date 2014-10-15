@@ -14,7 +14,8 @@ var tour = new Tour({
   {
     element: ".aladin-layersControl",
     title: "Change layers",
-    content: "Here you can change the layers"
+    content: "Here you can change the layers",
+    placement: "left"
   }
   //Insert one for search
   //Insert one for statistics
@@ -656,7 +657,17 @@ $(function() {
   /*
    *    Listeners
    */
+    /*
   
+
+  /* When tour tab is clicked play tour again
+  *
+  */
+  $('#play-tour').click(function(e) {
+    tour.restart();
+  });
+
+
   /*
    *    When a filter heading is clicked,
    *    the filters are minimised.
