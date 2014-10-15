@@ -231,6 +231,9 @@ table {
 
 .aladin-frameChoice {
     bottom:50px;
+    background-color:rgba(0,0,0,0.0);
+    outline:none;
+    margin-right:5px;
 }
 
 .collapsed {
