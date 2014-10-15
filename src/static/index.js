@@ -399,7 +399,11 @@ function refreshParameterDisplay() {
         var obj = selected[0];
         var node = JsonHuman.format(obj.data);
         
-        display.append(node);
+        display.append('<p>ScheduleBlock:  ' + obj.data.id + '</p>');
+        display.append('<p>Programm ID: ' + obj.data.ESO.observationBlock.programID + '</p>');
+        display.append('<p>Status: ' + obj.data.ESO.observationBlock.currentQCStatus + '</p>');
+        display.append('<p>Telescope: ' + obj.data.ESO.observationBlock.telescope + '</p>');
+        display.append('<p>Instrument: ' + obj.data.ESO.observationBlock.instrument + '</p>');
         
     }
     else if(count > 1) {

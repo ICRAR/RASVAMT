@@ -161,7 +161,12 @@ body {
     position:absolute;
     bottom:0px;
     right:0px;
-    padding: 2px;
+    padding: 5px;
+    background-color: rgba(0,0,0,0.6);
+    border-radius: 5px;
+}
+#parameter-display p {
+    margin: 0 0 3px;
 }
 
 table {
