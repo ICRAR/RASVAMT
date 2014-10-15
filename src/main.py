@@ -1,15 +1,16 @@
 from flask import Flask, url_for, redirect, render_template, request, g
-#from werkzeug.contrib.fixers import ProxyFix   #(UNCOMMENT FOR DEPLOYMENT WITH GUNICORN/NGINX)
+from contextlib import closing
+
+from werkzeug.contrib.fixers import ProxyFix
 import json
 import sqlite3
-#http://flask.pocoo.org/docs/0.10/patterns/sqlite3/
-#Probably have a look at how to implement DB
+
+#Config settings
+DATABASE = '../db/rasvamt.db'
+DEBUG = True
 
 app = Flask(__name__)
-DATABASE = '../db/rasvamt.db'
-
-
-
+app.config.from_object(__name__)
 
 #json_survey_data is assumed to contain ALL surveys
 json_survey_file = open('./static/WallabyDingoGamaSurvey.json')
@@ -73,13 +74,21 @@ def get_data():
     message=request.args.get('myParam')
     return ('you wrote ' + message)
 
-#app.wsgi_app = ProxyFix(app.wsgi_app)  #(UNCOMMENT FOR DEPLOYMENT WITH GUNICORN/NGINX)
+
+def connect_db():
+    return sqlite3.connect(app.config['DATABASE'])
 
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = connect_to_database()
+        db = g._database = connect_db()
     return db
+
+def init_db():
+    with closing(connect_db()) as db:
+        with app.open_resource('../db/schema.sql', mode='r') as f:
+            db.cursor().executescript(f.read())
+        db.commit()
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -89,8 +98,14 @@ def close_connection(exception):
 
 
 if __name__ == '__main__':
-    # For Testing
-    #app.debug = True
-    #app.run()
+    # Could expand arguments but that will do 
+    import argparse
+    parser = argparse.ArgumentParser(description='Flask application for Rasvamt')
+    parser.add_argument('-l', action="store_true", dest="runlocal", default=False,help="Run deployment locally")
+    args = parser.parse_args()
+    if args.runlocal:
+        app.run()
     # For deployment
-    app.run(host='0.0.0.0', port=8000)
+    else:
+        app.wsgi_app = ProxyFix(app.wsgi_app)
+        app.run(host='0.0.0.0', port=8000)

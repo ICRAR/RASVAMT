@@ -107,17 +107,9 @@ HOST=${HOSTS[$(($i-1))]}
 
 if [ $LOCALFLAG ]
 then 
-    #Automatically uncomment and run local version
     echo "Deploying local install check 127.0.0.1:5000 in browser"
-    if [ ! -f locallock ]
-    then
-    #This seems like a dumb way of doing things atm
-    sed 's/#app.run()/app.run/' src/main.py > tmp1
-	yes | sed 's/app.run(host/#&/' tmp1 > $RUNDIR/main.py
-    touch locallock
-    fi
     cd $RUNDIR
-	python main.py
+	python main.py -l
 elif [ $SSHFLAG ]
 then
 	cd $RUNDIR
@@ -141,13 +133,6 @@ then
     cd $TESTDIR
     locust -H "http://$HOST"
 else
-    echo "Creating new deployment"
-	if [ -f locallock ]
-    then
-	sed 's/[^#]app.run()/ #app.run()/' src/main.py > tmp1
-	yes | sed 's/\(#\)\(app.run(host\)/\2/' tmp1 > $RUNDIR/main.py
-    rm locallock
-    fi
     cd $RUNDIR
 	fab test_deploy
 fi
