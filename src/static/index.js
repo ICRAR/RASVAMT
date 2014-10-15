@@ -57,7 +57,7 @@ var tour = new Tour({
     content: "This will add selected SBs to a tab"
   },
   {
-    element: "#add_tab",
+    element: "#add-tab",
     title: "New tab",
     content: "Create new tab or add selected SBs to a tab"
   },
