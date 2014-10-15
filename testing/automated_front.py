@@ -5,6 +5,8 @@ import argparse
 hosts = [ host.strip("\n") for host in open('../logs/hosts_file','r').xreadlines() ] 
 #Just use last host from host file
 HOST = hosts[len(hosts)-1]
+
+#Currently only testing local deployment but change LOCALHOST 
 LOCALHOST='http://localhost:5000/'
 
 class SeleniumTestCase(unittest.TestCase):
@@ -33,6 +35,15 @@ class SeleniumTestCase(unittest.TestCase):
 	def test_home_page(self):
 		self.client.get(LOCALHOST)
 		assert self.client.title == 'Rasvamt'
+	def check_filter_menu(self):
+		filter_menu = self.client.find_element_by_class_name('toggle_filter_menu')
+		webdriver.ActionChains(self.client.driver).move_to_element(filter_menu).click(filter_menu).perform()
+	def check_goto_control(self):
+		goto_control = self.client.find_element_by_css_selector('.aladin-goto_control')
+		pass
+	def check_layer_control(self):
+		layer_control = self.client.find_element_by_css_selector('.aladin-layersControl')
+		pass
 
 
 if __name__ == '__main__':

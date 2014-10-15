@@ -1,4 +1,3 @@
-import urllib2
 import unittest
 from main import app
 from flask import url_for,jsonify
@@ -18,6 +17,9 @@ class MyLiveTest(TestCase):
         response = self.client.get("/jsontest/")
         self.assertEquals(response.json, dict(success=True))
 
+    def test_sb_json(self):
+        pass
+
     def test_index(self):
         response = self.client.get("/")
         self.assert200(response)
@@ -25,6 +27,7 @@ class MyLiveTest(TestCase):
         url = url_for('static', filename='index.css')
         response = self.client.get(url)
         self.assert200(response)
+
 
 if __name__ == '__main__':
     unittest.main()
