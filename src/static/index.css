@@ -236,6 +236,10 @@ table {
     margin-right:5px;
 }
 
+.aladin-container {
+    background-color: #3A3A3A;
+}
+
 .collapsed {
     padding-right: 0;
 }
