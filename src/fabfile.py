@@ -806,17 +806,21 @@ def init_deploy():
     
     sudo('mkdir /etc/supervisor/')
     sudo('mkdir /etc/supervisor/conf.d/')
+        
     #Having trouble with 
     with cd(env.APP_DIR_ABS+'/RASVAMT/src/'):
-        sudo('python ../db/create_db.py')
         sudo('cp nginx.conf /etc/nginx/')
         sudo('cp rasvama.conf /etc/supervisor/conf.d/')
+        virtualenv(run('python ../db/create_db.py'))
         sudo('chmod +x gunicorn_start')
+
 
     #check if nginx is running else
     sudo('service nginx start')
     print(red("Server setup and ready to deploy"))
     #Think we have 
+
+
 
 @task(alias='run')
 def deploy():
@@ -825,7 +829,7 @@ def deploy():
     env.user ='ec2-user'
     print(red("Beginning Deploy:"))
     #might need setenv 
-
+    create_db()
     #sudo(virtualenv('supervisorctl restart RASVAMT'))
     with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
         sudo('./gunicorn_start')
@@ -844,12 +848,12 @@ def update_deploy():
     set_env()
     #sudo(virtualenv('supervisorctl restart RASVAMT'))
     git_pull()
+
+
     with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
         sudo('cp nginx.conf /etc/nginx/')
         sudo('cp rasvama.conf /etc/supervisor/conf.d/')
-        #Removing create database stuff
-        run('python ../db/create_db.py')
-        #sudo('create_db.py')
+        (virtualenv(run('python ../db/create_db.py'))
         try:
             sudo('service nginx reload')
         except:

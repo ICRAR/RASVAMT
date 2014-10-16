@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
-    <head>
+    {% block head %}
         <title>RASVAMT</title>
         <!-- <link rel="stylesheet" type="text/css" href="file/style.css"/> -->
-        <link rel="stylesheet" href="/file/jquery.mobile-1.4.2.min.css">
-        <link rel="stylesheet" href="/file/bootstrap/css/bootstrap.min.dark.css"/>
-        <link rel="stylesheet" href="/file/index.css"/>
+        <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.dark.css"/>
+        <link rel="stylesheet" href="../static/index.css"/>
         </head>
-        <script src="/file/jquery-1.11.1.min.js"></script>
-        <script src="/file/bootstrap/js/bootstrap.min.js"></script>
-    <body>
-        
-        <h1>{{ title }}</h1>
-       
-    </body>
+        <script src="../static/jquery-1.11.1.min.js"></script>
+        <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}{% endblock %}
+    <div id="content">{% block content %}{% endblock %}</div>
+  </body>
 </html>
