@@ -18,50 +18,37 @@
     
     <body>
         
-        <!-- The top navbar -->
-        <nav class="navbar navbar-default" role="navigation" id='navigation'>
-            
-            <!-- Navbar Header -->
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/">Rasvamt</a>
-            </div>
-            
-            <!-- Navbar items -->
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                
-                <!-- Left items -->
-                <ul class="nav navbar-nav">
-                    <li class="active">
-                        <a href="/file/about.html">About</a>
-                    </li>
-                    <li>
-                        <a href="/file/contact.html">Contact</a>
-                    </li>
-                </ul>
-                
-                <!-- Right item -->
-                <p class="navbar-text pull-right">ICRAR</p>
-            </div>
-        </nav>
+        <!-- The main navbar -->
+        <div id="main-navbar">
+            <a class="navbar-header" href="/">Rasvamt</a>
+            <a class="navbar-item" href="/file/about.html">About</a>
+        </div>
         
         <!-- Page details -->
-        <div class="bs-docs-section">
-            <div class="container">
+        
+        <div class="row">
+            <div class="col-md-8">
                 <h1>What is Rasvamt?</h1>
-                <p>RASVAMT stands for Radio Astronomy Survey Visualisation and Monitoring Tool. This is a project set-out to implement a tool specialised to support the planning and monitoring of the execution and reduction of large-scale, or all-sky surveys for Radio Astronomy. The idea is to implement this along the same ideas as the SVMT plugin for Stellarium, but very much aligned to the needs of Radio Astronomy. Primarily the project has been created as an educational software development project for computer science students, but the intention is to arrive at a fully working product by following an agile development model. This will be supported by using an agile development tool set as well as direct feedback from customers (scientists). The tool will be based on the Aladin-Lite widgets on the client side and probably a Python based server-side implementation.</p>
-            </div>
-            <div class="container">
+                <p>RASVAMT stands for Radio Astronomy Survey Visualisation and Monitoring Tool. This is a project set-out to implement a tool specialised to support the planning and monitoring of the execution and reduction of large-scale, or all-sky surveys for Radio Astronomy. The idea is to implement this along the same ideas as the SVMT plugin for Stellarium, but very much aligned to the needs of Radio Astronomy. Primarily the project has been created as an educational software development project for computer science students, but the intention is to arrive at a fully working product by following an agile development model.</p>
+
+                <h2>Aladin Lite</h2>
+                <p>Aladin lite is a lightweight version of the Aladin tool, running in the browser and geared towards simple visualization of a sky region.</p>
+                <a href="http://aladin.u-strasbg.fr/AladinLite/">aladin.u-strasbg.fr/AladinLite/</a>
+
                 <h2>Acknowledgments</h2>
-                <p>All tools used to create the application, are open source projects. The main application used is <a href="http://aladin.u-strasbg.fr/AladinLite/">Aladin-Lite</a> a lightweight version of the Aladin tool, running in the browser and geared towards simple visualization of a sky region. Other tools include 
+                <p>A special thanks goes out to the authors of the following open-source libraries. These libraries were essential to the project.</p>
                 <ul>
-                <li>Flask</li>
-                <li>Amazon Web Services</li>
-                <li>jQuery</li>
-                <li>Fabric</li>
+                    <li><a href="http://flask.pocoo.org/">Flask</a></li>
+                    <li><a href="http://getbootstrap.com/">Bootstrap</a></li>
+                    <li><a href="http://bootswatch.com/cyborg/">Bootstrap Cyborg CSS</a></li>
+                    <li><a href="http://bootstraptour.com/">Bootstrap Tour</a></li>
+                    <li><a href="http://refreshless.com/nouislider/">noUISlider</a></li>
+                    <li><a href="http://danski.github.io/spahql/">SpahQL</a></li>
+                    <li><a href="http://refreshless.com/nouislider/">noUISlider</a></li>
                 </ul>
-                </p>
             </div>
         </div>
+        
         
     </body>
 </html>

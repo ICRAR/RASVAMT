@@ -1,5 +1,53 @@
+/*
+ This file is part of RASVAMT.
+ 
+ RASVAMT is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ RASVAMT is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with RASVAMT.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 body {
     overflow:hidden;
+    display:inline-block;
+}
+
+#main-navbar {
+    width:250px;
+    height:50px;
+    padding:0;
+    margin:0;
+    display:inline-block;
+}
+
+#main-navbar a {
+    font-family: "Roboto","Helvetica Neue",Helvetica,Arial,sans-serif;
+    float: left;
+    text-decoration: none;
+}
+
+#main-navbar a:hover {
+    color:#FFFFFF;
+}
+
+#main-navbar .navbar-header {
+    color:#E4E4E4;
+    margin: 12px 15px;
+    font-size:18px;
+}
+
+#main-navbar .navbar-item {
+    color:#ABABAB;
+    margin: 15px 15px;
+    font-size:15px;
 }
 
 #filter-ui .btn {
