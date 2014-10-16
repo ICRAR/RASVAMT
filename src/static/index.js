@@ -19,7 +19,7 @@
 var tour = new Tour({
   steps: [
   {
-    element: ".navbar-brand",
+    element: "#main-navbar",
     title: "Welcome to the ICRAR Rasvama",
     content : "This is a tool made for monitoring radio astronomy surveys",
     backdrop : true
@@ -117,111 +117,29 @@ var tour = new Tour({
   //Insert stuff for tabs more filtering
 ]});
 
+/* GLOBALS */
+/////////////
+
+// The main aladin object
 var aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:180, showReticle:false});
 
 // Add catalog (points overlay) object to Aladin
-// The catalog should only appear when selecting surveys/SBs
 var catalog = aladin.createCatalog({name: 'Catalog'});
 aladin.addCatalog(catalog);
 
-// main object cache, and variable to query objects
+// main object cache, and SpahQL object to query objects
 var obj_cache = [];
 var obj_query = SpahQL.db(obj_cache);
 
-// selected objects stuff
+// Used in selecting objects
 var selected = [];
 var selecting = true;
 
-// filters cache
+// Contains all active filters
 var filters = {};
 
-// overlays reference
+// A reference to the main overlays
 var overlays = aladin.view.overlays;
-
-/*
-*	CALCULATION OF SELECTION POINT
-*/
-function getAveragePoint(points) {
-    var average = [0, 0];
-    
-    for(var i = 0; i < points.length; i++) {
-        var p = points[i];
-        average[0] += getDisplacement(average[0],p[0])/(i+1);//adds to the running average
-        average[1] += getDisplacement(average[1],p[1])/(i+1);
-    }
-    
-    //normalises angle between -180 -> 180
-    if(average[0]>180){
-        average[0]= average[0]-360;
-    }
-    else if (average[0]<(-180)){
-        average[0]+=360;
-    }
-    
-    if(average[1]>180){
-        average[1]+= -360;
-    }
-    else if (average[1]<(-180)){
-        average[1]+=360;
-    }
-    
-    return average;
-}
-//returns displacement between to angles (not distance)
-function getDisplacement(point0,point1){
-    if(Math.abs(point0 - point1)>180){
-        var x = Math.abs(point0)+ Math.abs(point1) -360;
-        if(point0<point1){
-            return x;
-        }
-        else {
-            return -x;
-        }
-    }
-    else {
-        return (point1-point0);
-    }
-}
-
-/*
- *  Generates unique colour from a string seed. (DEPRECATED)
- *  'mod' will increase the brightness.
- */
-/*
-var stringToColor = function(str, mod) {
-    
-    // str to hash
-    for (var i = 0, hash = 0; i < str.length; hash = str.charCodeAt(i++) + ((hash << 5) - hash));
-    
-    // int/hash to hex
-    for (var i = 0, colour = "#"; i < 3; ) {
-        var c = ((hash >> i++ * 8) & 0xFF);
-        c = c - (mod * 30) + 20;
-        if(c < 0) {
-            c = 0;
-        }
-        colour += ("00" + c.toString(16)).slice(-2);
-    }
-    
-    return colour;
-}
-function statusIndex(status) {
-    
-    if(status == "PLANNED") {
-        return 3;
-    }
-    else if(status == "OBSERVED") {
-        return 2;
-    }
-    else if(status == "QUALITY CONTROL") {
-        return 1;
-    }
-    else if(status == "PROCESSED") {
-        return 0;
-    }
-    return 0;
-}
- */
 
 /*
  *  Requests JSON survey/SB objects from the
@@ -326,6 +244,53 @@ function getJSONData() {
 /* HELPER FUNCTIONS */
 //////////////////////
 
+/*
+ *	CALCULATION OF POINT POSITION
+ */
+function getAveragePoint(points) {
+    var average = [0, 0];
+    
+    for(var i = 0; i < points.length; i++) {
+        var p = points[i];
+        average[0] += getDisplacement(average[0],p[0])/(i+1);//adds to the running average
+        average[1] += getDisplacement(average[1],p[1])/(i+1);
+    }
+    
+    //normalises angle between -180 -> 180
+    if(average[0]>180){
+        average[0]= average[0]-360;
+    }
+    else if (average[0]<(-180)){
+        average[0]+=360;
+    }
+    
+    if(average[1]>180){
+        average[1]+= -360;
+    }
+    else if (average[1]<(-180)){
+        average[1]+=360;
+    }
+    
+    return average;
+}
+function getDisplacement(point0,point1){
+    if(Math.abs(point0 - point1)>180){
+        var x = Math.abs(point0)+ Math.abs(point1) -360;
+        if(point0<point1){
+            return x;
+        }
+        else {
+            return -x;
+        }
+    }
+    else {
+        return (point1-point0);
+    }
+}
+
+/*
+ *	CREATION OF FOOTPRINTS/POINTS
+ */
 function newFootprint(obj, overlay) {
     
     var points = obj.data.ESO.observationBlock.tileCoverage[0];
@@ -340,7 +305,6 @@ function newFootprint(obj, overlay) {
     currentFootprints.push.apply(currentFootprints, newFootprints);
     overlay.addFootprints(newFootprints);
 }
-
 function newPoint(obj) {
     
     // Create object's selection point
@@ -492,6 +456,9 @@ function showFilterMenu() {
     $('#filter-ui').removeClass('collapsed');
 }
 
+/*
+ *	Hide an object
+ */
 function hideObject(o) {
     
     var fps = o.footprints;
@@ -499,6 +466,10 @@ function hideObject(o) {
         fps[i].hide();
     }
 }
+
+/*
+ *	Show an object
+ */
 function showObject(o) {
     
     var fps = o.footprints;
@@ -508,15 +479,27 @@ function showObject(o) {
         }
     }
 }
+
+/*
+ *	Show/hide an object's point
+ */
 function showPoint(o) {
     o.point.show();
 }
 function hidePoint(o) {
     o.point.hide();
 }
+
+/*
+ *	Is an object selected?
+ */
 function isSelected(o) {
     return o.point.isSelected;
 }
+
+/*
+ *	Select an object
+ */
 function selectObject(o) {
     
     if(!isSelected(o)) {
@@ -529,6 +512,10 @@ function selectObject(o) {
         selected.push(o);
     }
 }
+
+/*
+ *	Deselect an object
+ */
 function deselectObject(o) {
     
     if(isSelected(o)) {
@@ -545,6 +532,10 @@ function deselectObject(o) {
         }
     }
 }
+
+/*
+ *	Selects all visible objects
+ */
 function selectAllVisibleObjects() {
     
     for(var i = 0; i < obj_cache.length; i++) {
@@ -553,6 +544,10 @@ function selectAllVisibleObjects() {
         }
     }
 }
+
+/*
+ *	Deselects all objects
+ */
 function deselectAllObjects() {
     
     for(var i = 0; i < selected.length; i++) {
@@ -566,6 +561,10 @@ function deselectAllObjects() {
     
     selected = [];
 }
+
+/*
+ *	Is an object visible?
+ */
 function isVisible(obj) {
     
     var fps = obj.footprints;
@@ -576,9 +575,17 @@ function isVisible(obj) {
     }
     return false;
 }
+
+/*
+ *	Is an overlay visible?
+ */
 function overlayIsVisible(index) {
     return overlays[index].isShowing;
 }
+
+/*
+ *	Show an overlay
+ */
 function showOverlay(index) {
     if(!overlayIsVisible(index)) {
         // apply filters and show footprints
@@ -586,6 +593,10 @@ function showOverlay(index) {
         applyFilters();
     }
 }
+
+/*
+ *	Hide an overlay
+ */
 function hideOverlay(index) {
     if(overlayIsVisible(index)) {
         // apply filters and show footprints
@@ -593,11 +604,19 @@ function hideOverlay(index) {
         applyFilters();
     }
 }
+
+/*
+ *	Delete an overlay
+ */
 function removeOverlay(index) {
     hideOverlay(index);
     overlays.splice(index, 1);
 }
 
+/*
+ *	Returns a random colour.
+ *  Used for overlays and tabs
+ */
 function getRandomColor() {
 
     var color = '#';
@@ -609,6 +628,10 @@ function getRandomColor() {
     
     return color;
 }
+
+/*
+ *	Does this object belong to this overlay?
+ */
 function objectHasOverlay(obj, overlay) {
     
     var fps = obj.footprints
@@ -621,6 +644,10 @@ function objectHasOverlay(obj, overlay) {
     return false;
 }
 
+/*
+ *	Remove an object's footprints from
+ *  an overlay.
+ */
 function removeFootprint(obj, overlay) {
     var fps = obj.footprints
     for (var i = 0; i < fps.length; i++) {
@@ -632,6 +659,9 @@ function removeFootprint(obj, overlay) {
     }
 }
 
+/*
+ *	Adds selected objects to all active overlays
+ */
 function addSelectionToActiveOverlays() {
     
     if(selected.length > 0) {
@@ -650,6 +680,9 @@ function addSelectionToActiveOverlays() {
     }
 }
 
+/*
+ *	Removes selected objects from all active overlays
+ */
 function removeSelectionFromActiveOverlays() {
     
     if(selected.length > 0) {
@@ -668,6 +701,9 @@ function removeSelectionFromActiveOverlays() {
     }
 }
 
+/*
+ *	Creates new overlay/tab using selection
+ */
 function createNewTabUsingSelection() {
     
     var overlayIndex = overlays.length;
@@ -738,7 +774,7 @@ function setFilter(filter, id) {
 }
 
 /*
- *  Changes the colour of a tab and its matching overlay
+ *  Changes the colour of a tab, and its matching overlay
  */
 function changeTabColor(color_str) {
     
@@ -766,6 +802,11 @@ function updateTabs() {
                          });
 }
 
+/*
+ *  Updates the "TAB OPTIONS" tab.
+ *  If one tab is active, show the options.
+ *  Else, hide the options.
+ */
 function updateTabOptions() {
     
     if(getActiveTab() > -1) {
@@ -780,6 +821,11 @@ function updateTabOptions() {
     }
 }
 
+/*
+ *  Returns the index of the active tab.
+ *  If more than one tab is active, or no tabs
+ *  are active, returns -1.
+ */
 function getActiveTab() {
     
     var index = -1;
@@ -1177,10 +1223,10 @@ $(function() {
   hideFilterMenu();
   getJSONData();
   
+  // Initialize the tour
+  tour.init();
+  
+  // Start the tour
+  tour.start();
+  
   });
-
-// Initialize the tour
-tour.init();
-
-// Start the tour
-tour.start();
