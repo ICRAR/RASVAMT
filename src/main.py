@@ -1,4 +1,17 @@
-from flask import Flask, url_for, redirect, render_template, request, g
+# Main application for deploying RASVAMT application
+# Copyright (C) 2014  Cameron Poole & Joseph Dunne
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+from flask import Flask, url_for, redirect, render_template, request, g, jsonify
 from contextlib import closing
 
 from werkzeug.contrib.fixers import ProxyFix
@@ -58,6 +71,18 @@ def get_survey_sb(id):
         if s['id'] == id:
             return json.dumps(s)
     return "404 Page"
+
+# TODO function to pull out all json sbs with ids
+# For now pull from json but have sample code for database
+@app.route('/sbs/<ids>')
+def get_multi_sbs(ids):
+    multi_sb = {}
+    for eachsb in ids.split('+'):
+        multi_sb = json_sb_data['eachsb']
+    # db_query
+    # Using the db would be for each_sb in executemany?? get_query(db_query,ids)
+    return jsonify(multi_sb)
+
 
 # JUST AN EXAMPLE
 # an example of rendering templates. This sets 'title' to the argument 'message' in the GET request.
