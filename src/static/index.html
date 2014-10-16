@@ -41,8 +41,8 @@
         <!-- The main navbar -->
         <div id="main-navbar">
             <a class="navbar-header" href="/">Rasvamt</a>
-            <a class="navbar-item" href="/file/about.html">About</a>
-            <a class="navbar-item" id="play-tour" role="button" href="#">Tour</a>
+            <a class="navbar-item" title="About page" href="/file/about.html">About</a>
+            <a class="navbar-item" title="Take a tour of RASVAMT" id="play-tour" role="button" href="#">Tour</a>
         </div>
         
         <!-- The Filtering box -->
@@ -114,10 +114,10 @@
                 
                 <!-- Survey status filter -->
                 <span id="survey-status-filter">
-                    <button id="status_1" href='[/data/status!="PLANNED"]' type="button" class="simple-filter-button btn active" data-toggle="button">PLANNED</button>
-                    <button id="status_2" href='[/data/status!="OBSERVED"]' type="button" class="simple-filter-button btn active" data-toggle="button">OBSERVED</button>
-                    <button id="status_3" href='[/data/status!="QUALITY CONTROL"]' type="button" class="simple-filter-button btn active" data-toggle="button">QUALITY CONTROL</button>
-                    <button id="status_4" href='[/data/status!="PROCESSED"]' type="button" class="simple-filter-button btn active" data-toggle="button">PROCESSED</button>
+                    <button id="status_1" title="Filter by status" href='[/data/status!="PLANNED"]' type="button" class="simple-filter-button btn active" data-toggle="button">PLANNED</button>
+                    <button id="status_2" title="Filter by status" href='[/data/status!="OBSERVED"]' type="button" class="simple-filter-button btn active" data-toggle="button">OBSERVED</button>
+                    <button id="status_3" title="Filter by status" href='[/data/status!="QUALITY CONTROL"]' type="button" class="simple-filter-button btn active" data-toggle="button">QUALITY CONTROL</button>
+                    <button id="status_4" title="Filter by status" href='[/data/status!="PROCESSED"]' type="button" class="simple-filter-button btn active" data-toggle="button">PROCESSED</button>
                 </span>
                 
                 <!-- Survey organization filter -->
@@ -139,8 +139,8 @@
                 
                 <!-- Survey selection tool -->
                 <span id="survey-selection-tool">
-                    <button id="selection-tool" title="Select surveys to display statistics, right mouse click and drag" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-screenshot"></span></button>
-                    <button id="deselection-tool" title="Use mouse to drag and deselect surveys" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-minus"></span></button>
+                    <button id="selection-tool" title="Select surveys to display statistics" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-screenshot"></span></button>
+                    <button id="deselection-tool" title="Deselect surveys" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-minus"></span></button>
                     <button id="all-selection-tool" title="Selects all surveys" class="btn" type="button" class="btn"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
                     <button id="clear-selection-tool" title="Clears selection" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-ban-circle"></span></button>
                     <button id="add-selection-tool" title="Adds selection to all active tabs" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-arrow-up"></span></button>

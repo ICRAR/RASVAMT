@@ -194,7 +194,7 @@ function getJSONData() {
               // If it doesnt, add the button
               var project = obj.data.project;
               if(!surveys[project]) {
-                var button = $('<button id="project_'+project+'" href=\'[/data/project!="'+project+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+project+'</button>');
+                var button = $('<button id="project_'+project+'" title="Filter by survey" href=\'[/data/project!="'+project+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+project+'</button>');
                 $('#survey-name-filter').append(button);
                 surveys[project] = {};
               }
@@ -202,7 +202,7 @@ function getJSONData() {
               // If it doesnt, add the button
               var creator = obj.data.creator;
               if(!creators[creator]) {
-              var button = $('<button id="creator_'+creator+'" href=\'[/data/creator!="'+creator+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+creator+'</button>');
+              var button = $('<button id="creator_'+creator+'" title="Filter by creator" href=\'[/data/creator!="'+creator+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+creator+'</button>');
               $('#survey-creator-filter').append(button);
               creators[creator] = {};
               }
@@ -743,7 +743,7 @@ function createNewTabUsingSelection() {
         
     }
     
-    var button = $('<span type="button" class="layer-tab btn active" data-toggle="button">'+(overlayIndex+1)+'  <span class="glyphicon glyphicon-remove"></span></span>');
+    var button = $('<span type="button" title="Toggle tab" class="layer-tab btn active" data-toggle="button">'+(overlayIndex+1)+'  <span title="Remove Tab" class="glyphicon glyphicon-remove"></span></span>');
     button.css('background-color', overlayColor);
     button.css('border-color', overlayColor);
     //button.draggable({cancel:false, axis:"x"});
@@ -812,7 +812,7 @@ function updateTabs() {
     $('#layer-tabs .layer-tab').each( function(i) {
                          
                          if(i > 0) {
-                         $(this).html(i+1 + '  <span class="glyphicon glyphicon-remove"></span>');
+                         $(this).html(i+1 + '  <span title="Remove Tab" class="glyphicon glyphicon-remove"></span>');
                          }
                          
                          });
