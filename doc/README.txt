@@ -1,47 +1,49 @@
 i.	People involved
-Leon Drygala: Project Manager, in charge of project organisation
-Joseph Dunne: Front-end Developer
-Cameron Poole: Back-end Developer
-Tan Yu Hwang Aaron: Testing
-Justin Venkitachalam: Testing
 
-ii.	How source directory is organized
-List of directories,purpose and important files in  each:
-top dir: Top directory containing all folders
--RASVAMA.sh : wrapper script for running commands
+Leon Drygala         : Project Manager, in charge of project organisation
+Joseph Dunne         : Front-end Developer
+Cameron Poole        : Back-end Developer
+Tan Yu Hwang Aaron   : Testing
+Justin Venkitachalam : Testing
 
-src: Contains program for running our tool
--fabfile.py: Contains script for connecting and creating ec2 instance and updating our instance
--gunicorn_start: Starts the application on cloud deployment
--flask_test.py: Unit tests flask application
--liveserver_flask.py: Tests if application is deployed
 
-doc: Contains user documentation
--INSTALL.txt: Directions for deployment 
+ii.	Source directory
 
-logs: Logging folder for storing logs mainly for debugging purposes
--hosts_file: This lists all hosts that you have deployed application on
+top directory   	 	: Top directory containing all folders
+	-RASVAMA.sh 	 	: Wrapper script for running commands
 
-testing: Scripts for testing our tool
--automated_front.py: Runs selenium tests
+src 				 	: Contains program for running our tool
+	-fabfile.py		 	: Contains script for connecting and creating and updating an ec2 instance
+	-gunicorn_start	 	: Starts the application on cloud deployment
+	-flask_test.py	 	: Unit tests flask application
+	-liveserver_flask.py: Tests if application is deployed
 
-scripts: Useful scripts for doing stuff
+doc 					: Contains user documentation
+	-INSTALL.txt		: Directions for deployment 
 
-db: Database folder stores db
+logs 					: Logging folder for storing logs mainly for debugging purposes
+	-hosts_file			: This lists all hosts that you have deployed application on
 
-iii.	How user go about running the application
-Please see install.txt
-Once installed can reconnect if Fabric is install.
-User should keep track of host they want to connect to.
+testing 				: Scripts for testing our tool
+	-automated_front.py	: Runs selenium tests
 
-To update a host user can run 
-RASVAMA.sh -U (runs update with last deployed host)
-or
-(Other operations can performed in the src directory using)
+scripts 				: Useful scripts for doing stuff
+	-createSampleData.py: Creates Sample data 
 
+db 						: Database folder stores db
+	-create_db.py		: Creates main database for application
+
+
+iii.	How to run the application
+
+To run, double click gunicorn_start.
+For installation instructions, refer to install.txt.
+Connection to host can be reconnected as long as Fabric is installed.
+
+To effect a host, run:
 fab [(operation)|update|deploy] -i identity_file -H host 
 
-To get a full list of all operations run 
+To get a full list of all operations run:
 fab -l
 
 Or else can ssh into ec2 instance

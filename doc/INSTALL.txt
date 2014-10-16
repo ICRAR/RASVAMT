@@ -1,4 +1,5 @@
 Installation Instructions
+========================
 
 There are two type of installations feasible, the simplest is a local installation.
 The local installation is for those investigating the functionality of RASVAMA.
@@ -36,6 +37,28 @@ It relies on a few extra packages to do this.
 	or 
 	fab test_deploy in src directory 
 
+ii. 
+
+Testing
+=======
+Tests for flask and  database are run automatically during deploy, but can test if server is deployed with `python liveserver_flask.py`.
+Automated frontend tests can also be run using the selenium script (automated_frontend.py) in the testing directory, however this does require the selenium python package
+
+iii.	Login name and passwords
+
+aws_access_key_id = YOURACCESSKEY
+aws_secret_access_key = YOURSECRETKEY
+
+
+iv.	Other essential requirements
+
+1. python 2.7			(https://wiki.python.org/moin/BeginnersGuide/Download)
+2. Mac or Linux 		(Does not work on windows OS)
+3. pip (optional) 		(https://pip.pypa.io/en/latest/installing.html)
+4. virtualenv (optional) 	(http://virtualenv.readthedocs.org/en/latest/virtualenv.html#installation)
+5. python package flask 	(http://flask.pocoo.org/docs/0.10/installation/)
+
+
 
 AWS installation
 ================
@@ -55,11 +78,11 @@ cp this key into ~/.ssh/
 You may also need github ssh keys 
 https://help.github.com/articles/generating-ssh-keys
 
-[Credentials]
-aws_access_key_id = YOURACCESSKEY
-aws_secret_access_key = YOURSECRETKEY
 
-Testing
-=======
-Run automatically during deploy but can test if server is deployed with `python liveserver_flask.py`
+
+	- Need a secret/key pair called RASVAMT.pem
+	- Need secrurity group RASVAMT
+
+
+
 
