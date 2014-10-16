@@ -134,6 +134,7 @@ var obj_query = SpahQL.db(obj_cache);
 // Used in selecting objects
 var selected = [];
 var selecting = true;
+var cancel_selection = false;
 
 // Contains all active filters
 var filters = {};
@@ -336,6 +337,13 @@ aladin.on('select', function(selection) {
           // Hide all points, as the selection is done
           for (var i = 0; i < obj_cache.length; i++) {
                 hidePoint(obj_cache[i]);
+          }
+          
+          // To stop the selection code from running when
+          // the selection is cancelled by clicking on filters
+          if(cancel_selection) {
+            cancel_selection = false;
+            return;
           }
           
           // Iterates through selection, either
@@ -735,7 +743,7 @@ function createNewTabUsingSelection() {
         
     }
     
-    var button = $('<button type="button" class="layer-tab btn active" data-toggle="button">'+(overlayIndex+1)+'  <span class="glyphicon glyphicon-remove"></span></button>');
+    var button = $('<span type="button" class="layer-tab btn active" data-toggle="button">'+(overlayIndex+1)+'  <span class="glyphicon glyphicon-remove"></span></span>');
     button.css('background-color', overlayColor);
     button.css('border-color', overlayColor);
     //button.draggable({cancel:false, axis:"x"});
@@ -912,6 +920,7 @@ $(function() {
    */
   $('#filter-ui').click(function(e) {
                                     e.preventDefault();
+                                    cancel_selection = true;    // to cancel the selection code when run
                                     aladin.fire('selectend');
                                     });
   
@@ -936,7 +945,6 @@ $(function() {
   $('#layer-tabs').on('click', '.layer-tab', function(e) {
                         e.preventDefault();
                         $(this).blur();
-                      
                         var index = $('#layer-tabs .layer-tab').index($(this));
                         if($(this).is('.active')) {
                             $(this).addClass('inactive');
@@ -955,7 +963,7 @@ $(function() {
    *    When the 'X' on a tab is clicked, the
    *    tab and overlay is removed.
    */
-  $('#layer-tabs').on('click', '.glyphicon-remove', function(e) {
+  $('#layer-tabs').on('click', '.layer-tab .glyphicon-remove', function(e) {
                       e.stopPropagation();
                       
                       var tab = $(this).parent();
