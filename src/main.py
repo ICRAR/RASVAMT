@@ -11,7 +11,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
-from flask import Flask, url_for, redirect, render_template, request, g, jsonify,Response
+from flask import Flask, url_for, redirect, render_template, request, g, jsonify,Response,abort
 from contextlib import closing
 
 from werkzeug.contrib.fixers import ProxyFix
@@ -20,7 +20,7 @@ import sqlite3
 
 #Config settings
 DATABASE = '../db/rasvamt.db'
-DEBUG = True
+DEBUG = False
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -59,7 +59,7 @@ def check_survey(id):
 def get_survey(id):
     if check_survey(id):
             return jsonify(json_survey_data[int(id)])
-    return "404 Page"
+    return abort(404)
 
 # for getting all SBs. Possibly have arguments to filter the results!
 @app.route('/sb/')
@@ -68,17 +68,6 @@ def get_sbs():
 
 def check_id(id):
     return id in json_sb_data
-
-# for getting a particular SB (deprecated)
-#@app.route('/sb/<id>')
-#def get_survey_sb(id):
-#    ob = None
-#    for sb in json_sb_data:
-#        if sb['id'] == id:
-#            ob = sb
-#    if not bool(ob):
-#            return jsonify(ob)
-#    return "404 Page"
 
 # TODO function to pull out all json sbs with ids
 # For now pull from json but have sample code for database
@@ -96,14 +85,6 @@ def get_multi_sbs(ids):
     # db_query
     # Using the db would be for each_sb in executemany?? get_query(db_query,ids)
     return json.dumps(multi_sb)
-
-# JUST AN EXAMPLE
-# an example of rendering templates. This sets 'title' to the argument 'message' in the GET request.
-#@app.route('/rename')
-#def rename():
-#    message = request.args.get('message')
-#    # this function looks in the 'templates' folder
-#    return render_template('index.html', title=message)
 
 # JUST AN EXAMPLE
 # example of using arguments in the GET request
@@ -143,10 +124,14 @@ def get_investigator(id):
         investigators=res,
         title="Investigators")
 
+@app.route('/test404')
+def get_404():
+    abort(404)
+
 # TODO Custom html
-#@app.errorhandler(404)
-#def page_not_found(e):
-#    return render_template('404.html'), 404
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html',title="Whoooops")
 
 @app.teardown_appcontext
 def close_connection(exception):

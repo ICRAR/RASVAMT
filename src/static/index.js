@@ -402,9 +402,10 @@ function refreshParameterDisplay() {
          */
         var QCStatus = {};
         var scopes = {};
+        var link_to_json = '/sb/';
         for (var i = 0; i < objects.length; i++) {
             
-            var obj = objects[0];
+            var obj = objects[i];
             var currentQCStatus = obj.data.ESO.observationBlock.currentQCStatus;
             var telescope = obj.data.ESO.observationBlock.telescope;
             
@@ -417,6 +418,8 @@ function refreshParameterDisplay() {
                 scopes[telescope] = 0;
             }
             scopes[telescope] += 1;
+            
+            link_to_json += obj.data.id + '+';
         }
         
         // create string to display
@@ -434,7 +437,7 @@ function refreshParameterDisplay() {
         /*
          *  Display information
          */
-        display.append('<p>Count: ' + objects.length + '</p>');
+        display.append('<p>Count: <a href="' + link_to_json + '">' + objects.length + '</a></p>');
         display.append('<p>Telescope(s):</p>');
         display.append(scopesString);
         display.append('<p>QC Status:</p>');
