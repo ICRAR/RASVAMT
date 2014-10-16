@@ -67,13 +67,17 @@ def get_sbs():
     return json.dumps(json_sb_data)
 
 def check_id(id):
-    return bool(json_sb_data[int(id)])
+    return id in json_sb_data
 
 # for getting a particular SB
 @app.route('/sb/<id>')
 def get_survey_sb(id):
-    if check_id(id):
-            return jsonify(json_sb_data[int(id)])
+    ob = None
+    for sb in json_sb_data:
+        if sb['id'] == id:
+            ob = sb
+    if not bool(ob):
+            return jsonify(ob)
     return "404 Page"
 
 # TODO function to pull out all json sbs with ids
@@ -81,9 +85,11 @@ def get_survey_sb(id):
 @app.route('/sbs/<ids>')
 def get_multi_sbs(ids):
     multi_sb = []
-    for eachsb in ids.split('+'):
-        if check_id:
-            multi_sb.append(json_sb_data[int(eachsb)])
+    idslist = ids.split('+')
+    print idslist
+    for sb in json_sb_data:
+        if sb['id'] in idslist:
+            multi_sb.append(sb)
         else:
             #skip any bad 
             continue
@@ -122,10 +128,19 @@ def query_db(query, args=(), one=False):
     cur.close()
     return (rv[0] if rv else None) if one else rv
 
+def make_dicts(cursor, row):
+    return dict((cur.description[idx][0], value)
+                for idx, value in enumerate(row))
+
 @app.route('/investigators/<id>')
 def get_investigator(id):
+    res = query_db("select * from investigators where id ?",[id])
+    idict = make_dicts(get_db().cursor(),res)
+    print res, idict
+
+    print res[0]
     return render_template('investigators.html', 
-        investigators=query_db("select * from investigators where id = {}".format(id)),
+        investigators=res,
         title="Investigators")
 
 # TODO Custom html
