@@ -49,7 +49,7 @@ def get_file(filename):
 # should return all the surveys. Possibly have arguments to filter results!
 @app.route('/survey/')
 def get_surveys():
-    return Response(json.dumps(json_survey_data),  mimetype='application/json')
+    return json.dumps(json_survey_data)
 
 def check_survey(id):
     return bool(json_survey_data[int(id)])
@@ -58,13 +58,13 @@ def check_survey(id):
 @app.route('/survey/<id>/')
 def get_survey(id):
     if check_survey(id):
-            return Response(json.dumps(json_survey_data[int(id)]),  mimetype='application/json')
+            return jsonify(json_survey_data[int(id)])
     return "404 Page"
 
 # for getting all SBs. Possibly have arguments to filter the results!
 @app.route('/sb/')
 def get_sbs():
-    return Response(json.dumps(json_sb_data),  mimetype='application/json')
+    return json.dumps(json_sb_data)
 
 def check_id(id):
     return bool(json_sb_data[int(id)])
@@ -89,8 +89,7 @@ def get_multi_sbs(ids):
             continue
     # db_query
     # Using the db would be for each_sb in executemany?? get_query(db_query,ids)
-    return  Response(json.dumps(multi_sb),  mimetype='application/json')
-
+    return jsonify({'sbs':multi_sb})
 
 # JUST AN EXAMPLE
 # an example of rendering templates. This sets 'title' to the argument 'message' in the GET request.
