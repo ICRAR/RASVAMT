@@ -1,10 +1,9 @@
 <!-- extend base layout -->
 {% extends "base.html" %}
 {% block body %}
-{% for person in investigators %}
+<h1>Investigators<h1>
 <p>
-    {{ person.id }} : <b>{{ person.primaryInvestigator }}</b>
+    {{ investigators.id }} : <b>{{ investigators.primaryInvestigator }}</b>
 </p>
-{% endfor %}
 {% endblock %}
          

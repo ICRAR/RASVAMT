@@ -20,7 +20,7 @@ import sqlite3
 
 #Config settings
 DATABASE = '../db/rasvamt.db'
-DEBUG = True
+DEBUG = False
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -103,11 +103,19 @@ def get_db():
         db = g._database = connect_db()
     return db
 
+
+
 def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
-    rv = cur.fetchall()
-    cur.close()
-    return (rv[0] if rv else None) if one else rv
+	conn = get_db()
+	conn.row_factory = make_dicts
+	cur = conn.execute(query, args)
+	rv = cur.fetchall()
+	cur.close()
+	return (rv[0] if rv else None) if one else rv
+
+def query_many():
+	"""Query array on db"""
+	pass
 
 def make_dicts(cursor, row):
     return dict((cursor.description[idx][0], value)
@@ -115,12 +123,11 @@ def make_dicts(cursor, row):
 
 @app.route('/investigators/<id>')
 def get_investigator(id):
-    res = query_db("select * from investigators where id ?",[id])
-    idict = make_dicts(get_db(),res)
-    print res, idict
-    return render_template('investigators.html', 
-        investigators=res,
-        title="Investigators")
+	row = query_db("select * from investigators where id = (?)",[id],one=True)
+	return render_template('investigators.html', 
+		investigators=row,
+		title="Investigators")
+
 
 @app.route('/test404')
 def get_404():

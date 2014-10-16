@@ -853,13 +853,13 @@ def update_deploy():
     with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
         sudo('cp nginx.conf /etc/nginx/')
         sudo('cp rasvama.conf /etc/supervisor/conf.d/')
-        virtualenv('python ../db/create_db.py')
         try:
             sudo('service nginx reload')
         except:
             sudo('service nginx start')
         sudo('chmod +x gunicorn_start')
         sudo('./gunicorn_start')
+        #virtualenv('python ../db/create_db.py')
 
 @task
 @serial
