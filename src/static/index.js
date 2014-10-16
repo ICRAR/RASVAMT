@@ -137,7 +137,6 @@ var filters = {};
 
 // overlays reference
 var overlays = aladin.view.overlays;
-var lastTab = 0;
 
 /*
 *	CALCULATION OF SELECTION POINT
@@ -319,8 +318,8 @@ function getJSONData() {
               setFilter('[/footprints/*/overlay/isShowing }~{ {true}]', 'tab_filter');
               
               // apply changes
-              $('#tab-options-filter-logo').css('color', overlays[0].color);
               applyFilters();
+              updateTabOptions();
               });
 }
 
@@ -743,12 +742,14 @@ function setFilter(filter, id) {
  */
 function changeTabColor(color_str) {
     
-    overlays[lastTab].color = color_str;
-    var tab = $($('#layer-tabs .layer-tab').get(lastTab));
-    tab.css('background-color', color_str);
-    tab.css('border-color', color_str);
-    $('#tab-options-filter-logo').css('color', color_str);
-    aladin.view.forceRedraw();
+    var activeTab = getActiveTab();
+    if(activeTab > -1) {
+        overlays[activeTab].color = color_str;
+        var tab = $($('#layer-tabs .layer-tab').get(activeTab));
+        tab.css('background-color', color_str);
+        tab.css('border-color', color_str);
+        aladin.view.forceRedraw();
+    }
 }
 
 /*
@@ -765,22 +766,51 @@ function updateTabs() {
                          });
 }
 
+function updateTabOptions() {
+    
+    if(getActiveTab() > -1) {
+        
+        $('#tab-options-filter-options').show();
+        $('#tab-options-filter-message').hide();
+    }
+    else {
+        
+        $('#tab-options-filter-options').hide();
+        $('#tab-options-filter-message').show();
+    }
+}
+
+function getActiveTab() {
+    
+    var index = -1;
+    for(var i = 0; i < overlays.length; i++) {
+        if(overlayIsVisible(i)) {
+            if(index > -1) {
+                return -1;
+            }
+            index = i;
+        }
+    }
+    return index;
+}
+
 /*
  *  Moves a tab left, and its overlay towards the back
  */
 function moveTabLeft() {
     
-    if(lastTab > 1) {
+    var activeTab = getActiveTab();
+    if(activeTab > 1) {
         
-        var temp = overlays[lastTab - 1];
-        overlays[lastTab-1] = overlays[lastTab];
-        overlays[lastTab] = temp;
+        var temp = overlays[activeTab - 1];
+        overlays[activeTab-1] = overlays[activeTab];
+        overlays[activeTab] = temp;
         
-        var tab = $($('#layer-tabs .layer-tab').get(lastTab));
-        tab.insertBefore($($('#layer-tabs .layer-tab').get(lastTab-1)));
+        var tab = $($('#layer-tabs .layer-tab').get(activeTab));
+        tab.insertBefore($($('#layer-tabs .layer-tab').get(activeTab-1)));
         updateTabs();
         
-        lastTab = lastTab - 1;
+        activeTab = activeTab - 1;
         aladin.view.forceRedraw();
     }
 }
@@ -790,17 +820,18 @@ function moveTabLeft() {
  */
 function moveTabRight() {
     
-    if(lastTab > 0 && lastTab < overlays.length - 1) {
+    var activeTab = getActiveTab();
+    if(activeTab > 0 && activeTab < overlays.length - 1) {
         
-        var temp = overlays[lastTab + 1];
-        overlays[lastTab + 1] = overlays[lastTab];
-        overlays[lastTab] = temp;
+        var temp = overlays[activeTab + 1];
+        overlays[activeTab + 1] = overlays[activeTab];
+        overlays[activeTab] = temp;
         
-        var tab = $($('#layer-tabs .layer-tab').get(lastTab));
-        tab.insertAfter($($('#layer-tabs .layer-tab').get(lastTab+1)));
+        var tab = $($('#layer-tabs .layer-tab').get(activeTab));
+        tab.insertAfter($($('#layer-tabs .layer-tab').get(activeTab+1)));
         updateTabs();
         
-        lastTab = lastTab + 1;
+        activeTab = activeTab + 1;
         aladin.view.forceRedraw();
     }
 }
@@ -813,8 +844,6 @@ $(function() {
   /*
    *    Listeners
    */
-    /*
-  
 
   /* When tour tab is clicked play tour again
   *
@@ -837,16 +866,6 @@ $(function() {
                            });
   
   /*
-   *    When "TAB OPTIONS" header is clicked, the small coloured
-   *    logo will appear/disappear
-   */
-  $('#tab-options-filter-header').click(function(e) {
-                                       e.preventDefault();
-                                       var logo = $('#tab-options-filter-logo');
-                                       logo.toggle();
-                                       });
-  
-  /*
    *    When a tab is clicked, it will show/hide the overlay.
    *    If the tab is being activated, the "TAB OPTIONS" tab will be
    *    set to the tab.
@@ -863,10 +882,9 @@ $(function() {
                         else {
                             $(this).removeClass('inactive');
                             showOverlay(index);
-                      
-                            lastTab = index;
-                            $('#tab-options-filter-logo').css('color', overlays[index].color);
                         }
+                      
+                        updateTabOptions();
                       
                         });
   
@@ -883,11 +901,7 @@ $(function() {
                       removeOverlay(index);
                       tab.remove();
                       updateTabs();
-                      
-                      if(index == lastTab) {
-                        lastTab = 0;
-                      }
-                      $('#tab-options-filter-logo').css('color', overlays[0].color);
+                      updateTabOptions();
                       
                       });
   /*
@@ -900,9 +914,7 @@ $(function() {
                       $(this).toggleClass('active');
                       
                       createNewTabUsingSelection();
-                      
-                      lastTab = overlays.length - 1;
-                      $('#tab-options-filter-logo').css('color', overlays[lastTab].color);
+                      updateTabOptions();
                       });
   
   /*
