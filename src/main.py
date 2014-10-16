@@ -11,7 +11,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
-from flask import Flask, url_for, redirect, render_template, request, g, jsonify
+from flask import Flask, url_for, redirect, render_template, request, g, jsonify,Response
 from contextlib import closing
 
 from werkzeug.contrib.fixers import ProxyFix
@@ -51,12 +51,14 @@ def get_file(filename):
 def get_surveys():
     return json.dumps(json_survey_data)
 
+def check_survey(id):
+    return bool(json_survey_data[int(id)])
+
 # for getting a particular survey id
 @app.route('/survey/<id>/')
 def get_survey(id):
-    for s in json_survey_data:  #can replace with some query on SQL database
-        if s['id'] == id:
-            return json.dumps(s)
+    if check_survey(id):
+            return jsonify(json_survey_data[int(id)])
     return "404 Page"
 
 # for getting all SBs. Possibly have arguments to filter the results!
@@ -64,25 +66,30 @@ def get_survey(id):
 def get_sbs():
     return json.dumps(json_sb_data)
 
+def check_id(id):
+    return bool(json_sb_data[int(id)])
+
 # for getting a particular SB
 @app.route('/sb/<id>')
 def get_survey_sb(id):
-    for s in json_sb_data:  #can replace with some query on SQL database
-        if s['id'] == id:
-            return json.dumps(s)
+    if check_id(id):
+            return jsonify(json_sb_data[int(id)])
     return "404 Page"
 
 # TODO function to pull out all json sbs with ids
 # For now pull from json but have sample code for database
 @app.route('/sbs/<ids>')
 def get_multi_sbs(ids):
-    multi_sb = {}
+    multi_sb = []
     for eachsb in ids.split('+'):
-        multi_sb = json_sb_data['eachsb']
+        if check_id:
+            multi_sb.append(json_sb_data[int(eachsb)])
+        else:
+            #skip any bad 
+            continue
     # db_query
     # Using the db would be for each_sb in executemany?? get_query(db_query,ids)
-    return jsonify(multi_sb)
-
+    return jsonify({'sbs':multi_sb})
 
 # JUST AN EXAMPLE
 # an example of rendering templates. This sets 'title' to the argument 'message' in the GET request.
