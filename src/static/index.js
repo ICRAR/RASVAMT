@@ -383,7 +383,7 @@ function refreshParameterDisplay() {
         
         var obj = selected[0];
         
-        display.append('<p>ScheduleBlock:  <a href="/sb/' + obj.data.id + '">' + obj.data.id + '</a></p>');
+        display.append('<p>ScheduleBlock:  <a target="_blank" href="/sb/' + obj.data.id + '">' + obj.data.id + '</a></p>');
         display.append('<p>Programm ID: ' + obj.data.ESO.observationBlock.programID + '</p>');
         display.append('<p>Status: ' + obj.data.ESO.observationBlock.currentQCStatus + '</p>');
         display.append('<p>Telescope: ' + obj.data.ESO.observationBlock.telescope + '</p>');
@@ -406,28 +406,38 @@ function refreshParameterDisplay() {
         }
         
         /*
-         *  Gather information on objects
+         *  Parameters to gather info on objects
          */
         var QCStatus = {};
         var scopes = {};
         var link_to_json = '/sb/';
+        count = 0;
+        
+        /*
+         *  Gather information on objects
+         */
         for (var i = 0; i < objects.length; i++) {
             
             var obj = objects[i];
-            var currentQCStatus = obj.data.ESO.observationBlock.currentQCStatus;
-            var telescope = obj.data.ESO.observationBlock.telescope;
             
-            if(!QCStatus[currentQCStatus]) {
-                QCStatus[currentQCStatus] = 0;
+            if(isVisible(obj)) {
+                
+                var currentQCStatus = obj.data.ESO.observationBlock.currentQCStatus;
+                var telescope = obj.data.ESO.observationBlock.telescope;
+                
+                if(!QCStatus[currentQCStatus]) {
+                    QCStatus[currentQCStatus] = 0;
+                }
+                QCStatus[currentQCStatus] += 1;
+                
+                if(!scopes[telescope]) {
+                    scopes[telescope] = 0;
+                }
+                scopes[telescope] += 1;
+                
+                link_to_json += obj.data.id + '+';
+                count++;
             }
-            QCStatus[currentQCStatus] += 1;
-            
-            if(!scopes[telescope]) {
-                scopes[telescope] = 0;
-            }
-            scopes[telescope] += 1;
-            
-            link_to_json += obj.data.id + '+';
         }
         
         // create string to display
@@ -445,7 +455,7 @@ function refreshParameterDisplay() {
         /*
          *  Display information
          */
-        display.append('<p>Count: <a href="' + link_to_json + '">' + objects.length + '</a></p>');
+        display.append('<p>Count: <a target="_blank" href="' + link_to_json + '">' + count + '</a></p>');
         display.append('<p>Telescope(s):</p>');
         display.append(scopesString);
         display.append('<p>QC Status:</p>');
