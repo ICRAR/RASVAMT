@@ -20,7 +20,7 @@ import sqlite3
 
 #Config settings
 DATABASE = '../db/rasvamt.db'
-DEBUG = False
+DEBUG = True
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -95,7 +95,7 @@ def get_multi_sbs(ids):
             continue
     # db_query
     # Using the db would be for each_sb in executemany?? get_query(db_query,ids)
-    return jsonify({'sbs':multi_sb})
+    return json.dumps(multi_sb)
 
 # JUST AN EXAMPLE
 # an example of rendering templates. This sets 'title' to the argument 'message' in the GET request.
@@ -129,16 +129,14 @@ def query_db(query, args=(), one=False):
     return (rv[0] if rv else None) if one else rv
 
 def make_dicts(cursor, row):
-    return dict((cur.description[idx][0], value)
+    return dict((cursor.description[idx][0], value)
                 for idx, value in enumerate(row))
 
 @app.route('/investigators/<id>')
 def get_investigator(id):
     res = query_db("select * from investigators where id ?",[id])
-    idict = make_dicts(get_db().cursor(),res)
+    idict = make_dicts(get_db(),res)
     print res, idict
-
-    print res[0]
     return render_template('investigators.html', 
         investigators=res,
         title="Investigators")
@@ -150,7 +148,7 @@ def get_404():
 # TODO Custom html
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html',title="Whoooops")
+    return render_template('404.html',title="Whoooops"),404
 
 @app.teardown_appcontext
 def close_connection(exception):
