@@ -76,7 +76,8 @@ def get_survey_sb(id):
     for sb in json_sb_data:
         if sb['id'] == id:
             ob = sb
-    if not bool(ob):
+    print ob
+    if ob:
             return jsonify(ob)
     return "404 Page"
 
@@ -144,9 +145,9 @@ def get_investigator(id):
         title="Investigators")
 
 # TODO Custom html
-#@app.errorhandler(404)
-#def page_not_found(e):
-#    return render_template('404.html'), 404
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 @app.teardown_appcontext
 def close_connection(exception):
