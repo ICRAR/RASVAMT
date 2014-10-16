@@ -115,6 +115,9 @@ body {
     right: 4px;
     top: -1px;
 }
+#tab-options-filter #tab-options-filter-message {
+    font-size:12px;
+}
 
 #survey-name-filter .btn {
     background-color: rgba(0,0,0,0.0);
