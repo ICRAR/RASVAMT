@@ -853,7 +853,7 @@ def update_deploy():
     with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
         sudo('cp nginx.conf /etc/nginx/')
         sudo('cp rasvama.conf /etc/supervisor/conf.d/')
-        (virtualenv(run('python ../db/create_db.py'))
+        virtualenv('python ../db/create_db.py')
         try:
             sudo('service nginx reload')
         except:
