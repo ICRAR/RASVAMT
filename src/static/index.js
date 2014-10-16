@@ -933,6 +933,16 @@ $(function() {
                            e.preventDefault();
                            var url = $(this).attr('href');
                          
+                                    var icon = $(this).children( ".glyphicon" );
+                                    if(icon.is('.glyphicon-chevron-down')) {
+                                    icon.removeClass('glyphicon-chevron-down');
+                                    icon.addClass('glyphicon-chevron-up');
+                                    }
+                                    else {
+                                    icon.removeClass('glyphicon-chevron-up');
+                                    icon.addClass('glyphicon-chevron-down');
+                                    }
+                                    
                             var filters = $('#filter-ui #' + url);
                             filters.toggle();
                            });
