@@ -1,6 +1,19 @@
 """
 Fabric file for installing application portal servers
+Copyright (C) 2014  Cameron Poole
 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>
 Test deployment on EC2 is simple as it only runs on one server
 fab test_deploy
 
@@ -16,10 +29,8 @@ For a local installation under a normal user without sudo access
 fab -u `whoami` -H <IP address> -f machine-setup/deploy.py user_deploy
 """
 #TODO:
-# 1 : APP DIRECTORY IS NOT CHANGING PERMISSIONS
-# 1 : Get Supervisor working
-# 2 : Local installation
-# 3 : Work out users situation
+# 1 : Data base problem
+# 2 : Supervisor 
 import glob
 
 import boto
@@ -797,7 +808,7 @@ def init_deploy():
     sudo('mkdir /etc/supervisor/conf.d/')
     #Having trouble with 
     with cd(env.APP_DIR_ABS+'/RASVAMT/src/'):
-        run('python ../db/create_db.py')
+        sudo('python ../db/create_db.py')
         sudo('cp nginx.conf /etc/nginx/')
         sudo('cp rasvama.conf /etc/supervisor/conf.d/')
         sudo('chmod +x gunicorn_start')
