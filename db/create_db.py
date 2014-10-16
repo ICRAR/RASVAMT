@@ -15,7 +15,7 @@ drop_db = """DROP TABLE if EXISTS surveys ;
             DROP TABLE  if EXISTS eso;
             DROP TABLE  if EXISTS observationblocks;
             DROP TABLE  if EXISTS coverage;
-            DROP TABLE  if EXISTS history"""
+            DROP TABLE  if EXISTS history;"""
 
 
 #Use None to insert a NULL:
