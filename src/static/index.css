@@ -218,6 +218,7 @@ body {
 }
 #parameter-display p {
     margin: 0 0 3px;
+    color: #AAAAAA;
 }
 
 .well-title {
@@ -296,6 +297,12 @@ body {
     z-index: 20;
     background-color: rgba(0,0,0,0.6);
 }
+.aladin-layerBox .aladin-layerIcon {
+    display:none;
+}
+.aladin-layerBox #aladin_lite_Catalog {
+    display:none;
+}
 
 .aladin-gotoControl-container {
     background:rgba(250,250,250,0.3);
@@ -323,6 +330,8 @@ body {
     bottom:auto;
 }
 
+.aladin-
+
 .zoomPlus {
     background-color: rgba(0,0,0,0.6);
 }
@@ -332,13 +341,4 @@ body {
 
 .collapsed {
     padding-right: 0;
-}
-
-.navbar {
-    margin: 0px;
-}
-
-.navbar-default {
-    background-color: rgba(0,0,0,0);
-    border-color: rgba(0,0,0,0);
 }

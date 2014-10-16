@@ -377,64 +377,71 @@ function refreshParameterDisplay() {
     if(count == 1) {
         
         var obj = selected[0];
-        var node = JsonHuman.format(obj.data);
         
-        display.append('<p>ScheduleBlock:  ' + obj.data.id + '</p>');
+        display.append('<p>ScheduleBlock:  <a href="/sb/' + obj.data.id + '">' + obj.data.id + '</a></p>');
         display.append('<p>Programm ID: ' + obj.data.ESO.observationBlock.programID + '</p>');
         display.append('<p>Status: ' + obj.data.ESO.observationBlock.currentQCStatus + '</p>');
         display.append('<p>Telescope: ' + obj.data.ESO.observationBlock.telescope + '</p>');
         display.append('<p>Instrument: ' + obj.data.ESO.observationBlock.instrument + '</p>');
         
     }
-    else if(count > 1) {
-        var QCStatus = []; //matrix of [QCStatus name, count of status]
-        var scopeNames = []; //array of scope names selected
-        for (var i = 0; i<count; i++){ //for all selected
-            foundName = 0;
-            for(var j = 0; j<scopeNames.length; j++){ //check if scope has been listed already
-                if(selected[i].data.ESO.observationBlock.telescope == scopeNames[j]){
-                    foundName = 1;
-                    j = scopeNames.length;
-                }
-            }
-            if(foundName == 0) //if not, add scope name to scope array
-                scopeNames.push(selected[i].data.ESO.observationBlock.telescope);
-            
-            var addedStatus = 0;
-            for(index in QCStatus){ //check if status has already been found, then add to count of that status
-                if(QCStatus[index][0] == selected[i].data.ESO.observationBlock.currentQCStatus){
-                    QCStatus[index][1]++;
-                    addedStatus = 1;
-                    break;
-                }
-            }
-            if(addedStatus == 0){ //status is new, needs new value with count = 1
-                QCStatus.push([selected[i].data.ESO.observationBlock.currentQCStatus, 1]);
-            }
-        }
-        
-        var QCStatusString =''; //create string out of quality control matrix
-        for(index in QCStatus){
-            QCStatusString += QCStatus[index][0] + ': ' + QCStatus[index][1] + '<br>';
-        }
-        
-        display.append($('<p>ScheduleBlocks</p>'));
-        display.append($('<p>Telescope(s):' + scopeNames.toString() +  '</p>'));
-        display.append($('<p>Count: ' + count + '</p>'));
-        display.append($('<p>QC Status:<br>'+ QCStatusString + '</p>'));
-        display.append($('<p>Total Area: </p>'));
-    }
     else {
-        // display all visible objects here
-        var total = 0;
         
-        for(var i = 0; i < obj_cache.length; i++) {
-            if(isVisible(obj_cache[i])) {
-                total++;
-            }
+        /*
+         *  Point the objects to either the selection,
+         *  or all objects (depending on count).
+         */
+        var objects;
+        if(count > 1) {
+            display.append('<p>Selection</p>');
+            objects = selected;
         }
-        display.append('<p>ScheduleBlocks</p>');
-        display.append('<p>'+total+'</p>');
+        else {
+            objects = obj_cache;
+        }
+        
+        /*
+         *  Gather information on objects
+         */
+        var QCStatus = {};
+        var scopes = {};
+        for (var i = 0; i < objects.length; i++) {
+            
+            var obj = objects[0];
+            var currentQCStatus = obj.data.ESO.observationBlock.currentQCStatus;
+            var telescope = obj.data.ESO.observationBlock.telescope;
+            
+            if(!QCStatus[currentQCStatus]) {
+                QCStatus[currentQCStatus] = 0;
+            }
+            QCStatus[currentQCStatus] += 1;
+            
+            if(!scopes[telescope]) {
+                scopes[telescope] = 0;
+            }
+            scopes[telescope] += 1;
+        }
+        
+        // create string to display
+        var QCStatusString ='';
+        for(key in QCStatus){
+            QCStatusString += '<p>' + key + ': ' + QCStatus[key] + '</p>';
+        }
+        
+        // create string to display
+        var scopesString ='';
+        for(key in scopes){
+            scopesString += '<p>' + key + ': ' + scopes[key] + '</p>';
+        }
+        
+        /*
+         *  Display information
+         */
+        display.append('<p>Count: ' + objects.length + '</p>');
+        display.append('<p>Telescope(s):</p>');
+        display.append(scopesString);
+        display.append('<p>QC Status:</p>');
+        display.append(QCStatusString);
     }
 }
 
@@ -898,7 +905,16 @@ $(function() {
     tour.restart();
   });
 
-
+  /*
+   *    This is to prevent the selection tool
+   *    interfering with filter buttons
+   */
+  $('#filter-ui').click(function(e) {
+                                    e.preventDefault();
+                                    aladin.fire('selectend');
+                                    });
+  
+  
   /*
    *    When a filter heading is clicked,
    *    the filters are minimised.
@@ -1066,8 +1082,8 @@ $(function() {
   $('#deselection-tool').click(function(e) {
                                e.preventDefault();
                                $(this).blur();
-                             
-                                //hideFilterMenu();
+                               
+                               e.stopPropagation();
                                
                                 selecting = false;
                                 // show all points of visible SBs
@@ -1086,7 +1102,7 @@ $(function() {
                              e.preventDefault();
                              $(this).blur();
                              
-                             //hideFilterMenu();
+                             e.stopPropagation();
                              
                              selecting = true;
                              // show all points of visible SBs
