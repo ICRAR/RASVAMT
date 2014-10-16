@@ -1,3 +1,819 @@
+commit df1cda52a679c4ffc4341ff0f3fd6787b9f325a8
+Merge: c22b2fb f913b4f
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Fri Oct 17 07:39:12 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit c22b2fba73c59dd81905a669b0a61586aa3611f7
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Fri Oct 17 07:38:31 2014 +0800
+
+    Checking db stuff removed debug
+
+commit f913b4f45289757c401c481f860a890322b51e74
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Fri Oct 17 01:48:00 2014 +0800
+
+    fixed param display issue, param JSON sent to new tab
+
+commit 7c35f1e21b2a850ed0f59e7449f9b6ec9f3f451d
+Merge: 113a93a 63a271e
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 23:08:09 2014 +0800
+
+    Weird confilct
+    Conflicts:
+    	src/main.py
+
+commit 113a93ae16bea04a08021501aaa32aa271f78cfd
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 23:04:29 2014 +0800
+
+    Fixing db stuff
+
+commit 63a271e9c6b1845b964fb8aa5fe42ee531d5d2d8
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 16 22:37:13 2014 +0800
+
+    added some final tooltips
+
+commit 951984f9628269c5c51715b3414919b831da0ccb
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 16 18:49:14 2014 +0800
+
+    glyphicon arrows for titles
+
+commit 6f7a7d4410f825cb1e3f664d3684f0ec3dd89abd
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 16 18:40:33 2014 +0800
+
+    fixed firefox buttons
+
+commit 5e5903d1a8b40eeb0c425945b9f9fda837611d88
+Merge: f50d3d3 fac959d
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 16 18:04:34 2014 +0800
+
+    merged code
+
+commit f50d3d33597b6e57d9e394c6ca400eb8a46c002a
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 16 17:57:54 2014 +0800
+
+    param links
+
+commit fac959dc7c5e1655b482cca50ebc530be4eaf17b
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 17:52:35 2014 +0800
+
+    Changed db
+
+commit 63f67465abb31f25906e07d5ec83a15f0d79fdd4
+Merge: 1ea1dc9 4ed6e18
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 17:34:55 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit 77ea313b6b58b1de7522cb96806f485f6f20b4f9
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 16 17:30:04 2014 +0800
+
+    zoom background CSS
+
+commit 4ed6e18ccf0b2103ffa52d5df49be50f06c8740f
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 16 17:26:19 2014 +0800
+
+    selection tool fix, catalog fix, some param display fixes
+
+commit 1ea1dc9222b6d6c93cff5c266f988eb0bbb47bf8
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 17:05:33 2014 +0800
+
+    Cool background 404
+
+commit 060bf764ce6049eb5f4afae61383ccbc845a5c0b
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 17:05:16 2014 +0800
+
+    404 Page oh yess
+
+commit 94e89c938a0961bdaccc2676d9220c7592aa75f8
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 16 16:50:55 2014 +0800
+
+    commented code, fixed tour  bug
+
+commit 6f0a3ef4b8dc3d3eb6e5913da3862a3fc7723416
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 16:16:06 2014 +0800
+
+    Fixed sb api
+
+commit ba9d9605626afb2162e8b17ec05b02810f45e74d
+Merge: 89eedb3 97c877e
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 16:10:45 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit 89eedb34ece9a15f945d5ad973248a6489d2bee6
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 16:10:10 2014 +0800
+
+    Better api fixed now using sb id
+
+commit 97c877ec70e8479acbaf205d7f0c95dc5874b568
+Merge: 9786ed0 9ad44c0
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 16 15:43:14 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit 9786ed0971de39c4b8be9a891516c99591ac323a
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 16 15:42:14 2014 +0800
+
+    removed unnessecary files
+
+commit 9ad44c0985f78b0179e844b75874dd95e642d15d
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 15:39:43 2014 +0800
+
+    Better api support
+
+commit 6f937b2cc8dc35e0a1fdd82a7ffc165829396e58
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 15:15:15 2014 +0800
+
+    Improved restful api
+
+commit f2f9d50dfdecbf52be65120aa4c70198f7c32f78
+Merge: 101a584 97826f4
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 14:32:00 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit 101a584fe407deac83d112df2bf682003c944869
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 14:31:23 2014 +0800
+
+    docs intergrated with Aaron
+
+commit a30b050380199c6b167a69330983f17c297c6969
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 14:30:58 2014 +0800
+
+    Fixed issue with db
+
+commit 97826f4826a3f48810b6482b1d0bc3e7e18404ce
+Merge: 7da266e 63d4345
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 16 14:11:00 2014 +0800
+
+    merged about.html conflict
+
+commit 7da266e151c57ba38eac8cacb6beda48d69b55b0
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 16 14:07:16 2014 +0800
+
+    added license, about page changes
+
+commit 63d43454554a9ff619117a6dcf8b0b543a4a6cd0
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 14:00:04 2014 +0800
+
+    Error in create_db
+
+commit f961b1897a9fd9bcadbe0e83146b76a586a2ed3d
+Merge: 4c15d59 84f14dd
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 13:41:26 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit 4c15d595997cdad1a3f8785add82a751ed15bde2
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 13:40:58 2014 +0800
+
+    Changes to about page
+
+commit bf7cda1ff8d610fb171a8338e0ee15deae142f50
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 13:19:23 2014 +0800
+
+    Added in GPL v3 license
+
+commit 84f14dd366afc5935bd5c06276f220c0fd6a4285
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 13:16:33 2014 +0800
+
+    Removed end stuff for programs
+
+commit 4965b88efad65ded4d87a19807bbe6b2b996cca9
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 13:15:23 2014 +0800
+
+    Create license gpl v3
+
+commit 2dbdf8af7d46018c1a5b3a53f0373940d39b1c63
+Merge: 7471e4c db8f54c
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 10:54:48 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit 7471e4c5bc6228c527bd7e88b69649afa31a2b5c
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 10:53:50 2014 +0800
+
+    Added db to fab and main
+
+commit 27920d9ad0c9030f241783c00307f1f96774d094
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 16 10:52:36 2014 +0800
+
+    Improved db schema
+
+commit db8f54cdb1feaba4b30659269c24c35497ac1915
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 15 19:04:54 2014 +0800
+
+    small CSS changes
+
+commit 2ebd83ec273546687d0d3860de85691203ba5d42
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 15 18:51:31 2014 +0800
+
+    added leon's display param code
+
+commit 5b3d9da8b237d4b8daeb7a13ee0fe090da29bf9c
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 15 18:36:29 2014 +0800
+
+    merged tab code with tour code
+
+commit 61762964c78ebe4510ca6a96158796e6666fa9f1
+Merge: 2a33713 7979aa5
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 15 18:33:48 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit 2a33713871f7a25323a1006609ab2589cf44087a
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 15 18:33:39 2014 +0800
+
+    added tab options
+
+commit 7979aa5f986c1c8d3e00530f593e64f3f3e083a6
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Oct 15 17:55:43 2014 +0800
+
+    Improved tour needs more input and dynamic changes
+
+commit 36a7963fa2d8cedf23911aecc021018baffc395f
+Merge: fb1b9d9 13eed5f
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Oct 15 16:37:28 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit fb1b9d9f2999c97ccd73805412c02bf074a18649
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Oct 15 16:36:54 2014 +0800
+
+    Added tour restart to navbar
+
+commit 2b4b7ecab8f9ad54f80306c515279363e154acdf
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Oct 15 16:08:33 2014 +0800
+
+    Added tour
+
+commit 13eed5f7d04aa9d1d83aaf919f49436b08f6c297
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 15 14:46:51 2014 +0800
+
+    CSS changes to filter containers
+
+commit cd4b1dcd8bb1cb3b186966816a7667dff237e7c3
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 15 14:39:23 2014 +0800
+
+    CSS change, background is grey
+
+commit dc66a37951b587c9dbf5012fa5432406f503b4c0
+Merge: 4a5b353 618bd32
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Oct 15 14:37:35 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit 4a5b353839cdb63316f57a9be7458dbe5368848d
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Oct 15 14:36:56 2014 +0800
+
+    Added ICRAR html to nav bar
+
+commit 618bd32203447b061aaa66479d5744b257dc4f5e
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 15 14:33:07 2014 +0800
+
+    CSS change to frame-choice
+
+commit 04bc84c4ced0276081ff7eafb33235949fe5a5d7
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 15 14:30:41 2014 +0800
+
+    CSS change to frame-choice
+
+commit 87deaa483a7ec88c35e2e8e3cade61cf545670c4
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Oct 15 12:36:18 2014 +0800
+
+    Changed json
+
+commit 827eb18c51cdb614e29516806e66d0b28d423659
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Oct 15 12:34:57 2014 +0800
+
+    Improved documentation
+
+commit e2d928e1f65193f2049ae4af9961c06744acf5f5
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Wed Oct 15 12:34:26 2014 +0800
+
+    Improved local deployment args in main
+
+commit 49d2ef8daab19460d642a59065f0a4ef50f1959c
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Tue Oct 14 20:52:47 2014 +0800
+
+    Fabfile will check flask_test failure
+
+commit a01cf34d66922b9f0df57462532a8012218918a8
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Tue Oct 14 20:39:24 2014 +0800
+
+    Improved front end testing
+
+commit 45e7c7f0ef6009d40f4b6b9bcd68814e46b43c40
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Tue Oct 14 20:38:50 2014 +0800
+
+    Better testing in fabric file
+
+commit 8a2558aa93d8cc7ed45fe620546a65d7839f46a4
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Tue Oct 14 18:31:14 2014 +0800
+
+    Flask testing works now
+
+commit b96f2858d889345e41d5c30a5e784847c1dcc020
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Tue Oct 14 17:28:52 2014 +0800
+
+    restructure of code, filter buttons styling, add/remove selected SBs to tabs
+
+commit adb8741203490839b68c4a6576a5540b26e7e241
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Mon Oct 13 21:23:49 2014 +0800
+
+    Added testing selenium and flask-testing
+
+commit 7628e22ccd23a074ef48e8efdf0face7ab27592a
+Merge: caf3142 1492c42
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Mon Oct 13 19:26:28 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit caf314274b50dcc775f1d05c15049fcb8c3baf20
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Mon Oct 13 19:23:48 2014 +0800
+
+    Added frameChoice back in
+
+commit 1492c42b2cffa2d9f1443f83628ea45d5a34454f
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Mon Oct 13 17:54:23 2014 +0800
+
+    removed unnessecary array, fixed something i cant remember
+
+commit 56a785f31137672e4820038acc138daa110b65d4
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Mon Oct 13 16:54:51 2014 +0800
+
+    filter tabs now outside expanding window, more param display
+
+commit b18691c9e8eee06756fc5d4e5de84edbdc60875e
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Mon Oct 13 16:31:06 2014 +0800
+
+    selected surveys no longer glitch when tabbed out
+
+commit 0aa67d17509e740e8797c2e87ec1f9495bb75d78
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Mon Oct 13 12:42:15 2014 +0800
+
+    deletion of tabs, better colouring of tabs
+
+commit e6020a921694b821c7272cdff2c7d8a05ef100cc
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Mon Oct 13 11:47:37 2014 +0800
+
+    tab filtering integrated with spahQL filtering
+
+commit e3ff2343aebe785afa776971a57adda7815faa00
+Merge: cc0b56b 2d4bfdb
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Mon Oct 13 06:32:43 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit cc0b56b590fd6bfb062a605101b70604a5b6469f
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Mon Oct 13 06:32:10 2014 +0800
+
+    Improved locust tests and wrapper shell
+
+commit 2d4bfdbd8135078fbb8ac7481f94c7c4738045fa
+Merge: c5d09d9 8bff029
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Mon Oct 13 00:53:03 2014 +0800
+
+    multi param display, survey tabs
+
+commit c5d09d9e64ccb5b8f777a5811cb1afd7f2476218
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Mon Oct 13 00:52:02 2014 +0800
+
+    multi param display, survey tabs
+
+commit 8bff0291732641e234e597cf07888103f0c96941
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Mon Oct 13 00:16:05 2014 +0800
+
+    Update TODO.md
+
+commit 8339982daaabdc963378ef3e3a4ed8760d83c787
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Mon Oct 13 00:07:59 2014 +0800
+
+    Updated amazon instructions
+
+commit 54635f6c319adbe5542a24de214bbebcc063d2c8
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Mon Oct 13 00:03:51 2014 +0800
+
+    Updated installation instructions
+
+commit fb9c89ffdfe3e9bc8151929bd2fbb14558059488
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 12 23:54:21 2014 +0800
+
+    Wrapper script nearly complete
+
+commit 98604d1a37ae2d54e5181ce67d757945c4d68ae3
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 12 21:57:42 2014 +0800
+
+    Attempting to streamline deployment with wrapper
+
+commit 3641b4c831bf4f011a3c5235fdb41a5e5a445ad5
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 12 17:11:26 2014 +0800
+
+    Fixed problem with autostarting
+
+commit ec65aafd1d8f0c86572fb880e5583ce7a4a6f84d
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 12 16:35:01 2014 +0800
+
+    Added supervisor back to fabfile
+
+commit 9904d63999c6c460258f0a151e2c08b9a6e9e984
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 12 16:26:14 2014 +0800
+
+    Started attempting to write some tests
+
+commit 9a0569f20dbee46d7ba950770757b749933790e9
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 12 16:25:45 2014 +0800
+
+    Fixed problem with gunicorn start
+
+commit 940baaaa52a07bfbae54949425502fa30ffa2871
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Sat Oct 11 15:42:08 2014 +0800
+
+    better date slider
+
+commit 1d61ef4e29624b2814bd09e975577de44c8e2f82
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Fri Oct 10 22:41:57 2014 +0800
+
+    made survey colours darker
+
+commit b25357eedbb8d9e0d3f6764d536dd1b238cc3188
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 9 23:30:16 2014 +0800
+
+    colour surveys, creator filter, date fix
+
+commit 42b3bc90472c8eae34a6940a3082d4fc3da2a510
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 9 16:54:44 2014 +0800
+
+    changed button CSS thickness
+
+commit 44a07dac1e1f1ddba1fe51ef4aac8bb668c98a6c
+Merge: d5eed68 9d38786
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 9 16:28:00 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit d5eed687e62633b52a61a8b388ccfd75ededcc12
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Thu Oct 9 16:25:46 2014 +0800
+
+    auto-generated buttons/tests, button css change
+
+commit 9d38786ef2db2f552a1f7f3a0578d34925bae55c
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 9 15:25:47 2014 +0800
+
+    Added new sample data randomised survey
+
+commit bad7e1936617bfbc13cb507f79aee4a9c5c656c7
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 9 15:24:35 2014 +0800
+
+    Create sample data now randomises survey name
+
+commit 25cd010e9d0d44d17d15c588711e084fffcb1e73
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 9 14:15:50 2014 +0800
+
+    Updated some aws settings
+
+commit a8e1364ccb53d9a88bb235ec73a793636700feb7
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 9 13:14:01 2014 +0800
+
+    Removed exec getting 127 status code
+
+commit efff329f95dd3d8470fc8c7ff6597a7545bd7afa
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 9 13:11:21 2014 +0800
+
+    Workers in gunicorn not working
+
+commit ee92faf6e064712a6518fd01ccf7e9ba7cb5385a
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 9 13:07:40 2014 +0800
+
+    Problem with tmp start
+
+commit 7eee736b6b71d3f5102f2e1ceb5084db48e59b15
+Merge: 67bd708 bed88dc
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 9 12:49:07 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+
+commit 67bd708511890dddf920d45d24e3fa205d4b89dc
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 9 12:48:44 2014 +0800
+
+    Started changing css for tooltip
+
+commit b84ca79024a5bb47f84d40a20266c25f2c723eef
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 9 12:47:42 2014 +0800
+
+    Added more detail to readme file
+
+commit d175ed483afc4846d2d1b0c257b194fab8e748b1
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 9 12:30:34 2014 +0800
+
+    Added a temporary start file changed readme
+
+commit bed88dc61b5be52315240011483e2f098efd1ffc
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Thu Oct 9 11:43:32 2014 +0800
+
+    Updated readme.md
+
+commit 33a7549b7ad0116380aa2ebbd18d6ff161bbb5c8
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Sun Oct 5 21:12:12 2014 +0800
+
+    coloured surveys based on status
+
+commit eb5d5bfd0744bf669e6fe714b1f0b37cca44d942
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Sun Oct 5 21:11:10 2014 +0800
+
+    coloured surveys based on status
+
+commit 533215a0dd005184213c81ea98fb6b9364fd52be
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Sun Oct 5 20:33:19 2014 +0800
+
+    Fixed determination of back points in the sky
+
+commit b30ec43ce6c980c42c5ca0f78c70f53c4a6cecaf
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Sun Oct 5 20:05:45 2014 +0800
+
+    Delete indexR.js
+
+commit bede680977a61442ca1803a1eec54abc065e3965
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Sun Oct 5 20:05:37 2014 +0800
+
+    Delete indexR.html
+
+commit 814d325c1bb7312117c81f1a557d3d73c9577a80
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Sun Oct 5 20:05:24 2014 +0800
+
+    Delete indexR.css
+
+commit 3fbf74b4c34f1115b84de5e83dce3bad80ceaea7
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 5 14:24:15 2014 +0800
+
+    Moved install readme to doc folder
+
+commit e4d0251f614eeb3051f7398209ee58bada52e8cb
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 5 14:11:45 2014 +0800
+
+    Fixed problems with telescope selection js
+
+commit 13499efd774d28d342a446dcefa19ccde2314b3b
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 5 14:06:10 2014 +0800
+
+    Added leons telescope stuff. Doesn't work
+
+commit 3f9897a05732ebe85c74c740b36b3e8c868e0483
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 5 13:40:45 2014 +0800
+
+    Changed db path and run
+
+commit 4355ba60b193e861b115d3acfd99c88f98ae0211
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 5 13:37:49 2014 +0800
+
+    Fixing mistakes with jq slider my bad
+
+commit c55cc5442719ef7e8829e9c846fc053355bcb99b
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 5 13:22:45 2014 +0800
+
+    Will put script to run local install or full deploy
+
+commit f1acb3c487001a37bed6a50a6f3be563b3d9d6ae
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 5 13:20:58 2014 +0800
+
+    Removed unecessary files
+
+commit 367da4bc41b425543ee90171cb01bfbe6084da26
+Merge: b9ce375 3ec469b
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 5 13:16:18 2014 +0800
+
+    Merge branch 'master' of https://github.com/ICRAR/RASVAMT
+    
+    Conflicts:
+    	db/rasvamt.db
+    	src/static/bootstrap/js/bootstrap.js
+    	src/static/index.js
+    	src/static/indexR.css
+    	src/static/indexR.html
+    	src/static/indexR.js
+    	src/static/ion.rangeSlider-1.9.3/css/ion.rangeSlider.css
+    	src/static/ion.rangeSlider-1.9.3/css/ion.rangeSlider.skinFlat.css
+    	src/static/ion.rangeSlider-1.9.3/css/normalize.min.css
+    	src/static/ion.rangeSlider-1.9.3/img/sprite-skin-flat.png
+    	src/static/ion.rangeSlider-1.9.3/js/ion.rangeSlider.min.js
+    	static/index(old-wwt).css
+    	static/index(old-wwt).html
+    	static/index(old-wwt).js
+    	static/indexR.css
+    	static/indexR.html
+    	static/indexR.js
+    	static/jQRangeSlider-5.7.0/.DS_Store
+    	static/jQRangeSlider-5.7.0/css/.DS_Store
+
+commit b9ce375412ed091e5572ee68e7e9fb88542fff6c
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 5 13:02:19 2014 +0800
+
+    Changed dir structure
+
+commit 3ec469b6d8397aa18f34dda81dbe76614bdbb183
+Author: Cameron Poole <Cameron.j.poole@gmail.com>
+Date:   Sun Oct 5 12:22:20 2014 +0800
+
+    Update TODO.md
+
+commit f72010ac702c65bce895a939620fb2cc5561289c
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:08:01 2014 +0800
+
+    Rename indexR.js to index(old-wwt).js
+
+commit 12724a251c7510c19cfac131d7f029d1adc458b6
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:07:45 2014 +0800
+
+    Rename indexR.html to index(old-wwt).html
+
+commit 901aa08fb5bc315e373126c2592417ed2c76c4cd
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:07:28 2014 +0800
+
+    Rename indexR.css to index(old-wwt).css
+
+commit 67eadb3141e79417af292a97412378e6242cef1b
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:07:04 2014 +0800
+
+    Delete ion.rangeSlider.min.js
+
+commit ca0d73d6a527e8aeeae4dce0f71d678b7a6d5dd1
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:06:59 2014 +0800
+
+    Delete .DS_Store
+
+commit bccf89fb3be1fa4c3847fcca64118aae54876a18
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:06:50 2014 +0800
+
+    Delete sprite-skin-flat.png
+
+commit 1c6eccd6fc057b8120efaa431083a8c0e4b7aad1
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:06:42 2014 +0800
+
+    Delete .DS_Store
+
+commit 05f4f00b9d1724d977c697cd4ce6f339df3d4f6b
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:06:33 2014 +0800
+
+    Delete normalize.min.css
+
+commit 26920c616053bedab600c992d894a02d777fc1ed
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:06:28 2014 +0800
+
+    Delete ion.rangeSlider.skinFlat.css
+
+commit e8604c14cac46981e023866bf4a3671655acc803
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:06:20 2014 +0800
+
+    Delete ion.rangeSlider.css
+
+commit 1a33b2900aa269472872b145c2c7eb962ed5181d
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:06:13 2014 +0800
+
+    Delete .DS_Store
+
+commit 77bd3faad8a729fc9013991281748febaa3bfac4
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:06:06 2014 +0800
+
+    Delete .DS_Store
+
+commit d4ffb97ba9834013b0ad5f22523a06351779b6b0
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:05:31 2014 +0800
+
+    Delete bootstrap.js
+
+commit 5956c8d4804853fd7df0faf072f9772fc4795f38
+Author: Colkadome <josephdunne1993@gmail.com>
+Date:   Wed Oct 1 19:04:41 2014 +0800
+
+    added date range slider, css
+
 commit 8ebf77ed312fcd693547083d7f2a5a752961514a
 Author: Cameron Poole <Cameron.j.poole@gmail.com>
 Date:   Wed Oct 1 13:33:13 2014 +0800
