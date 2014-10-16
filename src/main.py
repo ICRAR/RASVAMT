@@ -69,20 +69,20 @@ def get_sbs():
 def check_id(id):
     return id in json_sb_data
 
-# for getting a particular SB
-@app.route('/sb/<id>')
-def get_survey_sb(id):
-    ob = None
-    for sb in json_sb_data:
-        if sb['id'] == id:
-            ob = sb
-    if not bool(ob):
-            return jsonify(ob)
-    return "404 Page"
+# for getting a particular SB (deprecated)
+#@app.route('/sb/<id>')
+#def get_survey_sb(id):
+#    ob = None
+#    for sb in json_sb_data:
+#        if sb['id'] == id:
+#            ob = sb
+#    if not bool(ob):
+#            return jsonify(ob)
+#    return "404 Page"
 
 # TODO function to pull out all json sbs with ids
 # For now pull from json but have sample code for database
-@app.route('/sbs/<ids>')
+@app.route('/sb/<ids>')
 def get_multi_sbs(ids):
     multi_sb = []
     idslist = ids.split('+')
@@ -95,22 +95,22 @@ def get_multi_sbs(ids):
             continue
     # db_query
     # Using the db would be for each_sb in executemany?? get_query(db_query,ids)
-    return jsonify({'sbs':multi_sb})
+    return json.dumps(multi_sb)
 
 # JUST AN EXAMPLE
 # an example of rendering templates. This sets 'title' to the argument 'message' in the GET request.
-@app.route('/rename')
-def rename():
-    message = request.args.get('message')
-    # this function looks in the 'templates' folder
-    return render_template('index.html', title=message)
+#@app.route('/rename')
+#def rename():
+#    message = request.args.get('message')
+#    # this function looks in the 'templates' folder
+#    return render_template('index.html', title=message)
 
 # JUST AN EXAMPLE
 # example of using arguments in the GET request
-@app.route('/getdata')
-def get_data():
-    message=request.args.get('myParam')
-    return ('you wrote ' + message)
+#@app.route('/getdata')
+#def get_data():
+#    message=request.args.get('myParam')
+#    return ('you wrote ' + message)
 
 
 def connect_db():

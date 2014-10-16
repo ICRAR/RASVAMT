@@ -232,9 +232,6 @@ function getJSONData() {
                                                   start: [ minDate, maxDate ]
                                                   }, true);
               
-              // apply the tab filter. "only get results that have a visible overlay".
-              setFilter('[/footprints/*/overlay/isShowing }~{ {true}]', 'tab_filter');
-              
               // apply changes
               applyFilters();
               updateTabOptions();
@@ -481,6 +478,7 @@ function showObject(o) {
     
     var fps = o.footprints;
     for(var i=0; i < fps.length; i++) {
+        // shows only footprints belonging to visible overlays
         if(fps[i].overlay.isShowing) {
             fps[i].show();
         }
