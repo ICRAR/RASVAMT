@@ -797,6 +797,7 @@ def init_deploy():
     sudo('mkdir /etc/supervisor/conf.d/')
     #Having trouble with 
     with cd(env.APP_DIR_ABS+'/RASVAMT/src/'):
+        run('python ../db/create_db.py')
         sudo('cp nginx.conf /etc/nginx/')
         sudo('cp rasvama.conf /etc/supervisor/conf.d/')
         sudo('chmod +x gunicorn_start')
@@ -836,7 +837,7 @@ def update_deploy():
         sudo('cp nginx.conf /etc/nginx/')
         sudo('cp rasvama.conf /etc/supervisor/conf.d/')
         #Removing create database stuff
-        #sudo('chmod +x create_db.py')
+        run('python ../db/create_db.py')
         #sudo('create_db.py')
         try:
             sudo('service nginx reload')

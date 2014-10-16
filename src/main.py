@@ -84,11 +84,22 @@ def get_db():
         db = g._database = connect_db()
     return db
 
-def init_db():
-    with closing(connect_db()) as db:
-        with app.open_resource('../db/schema.sql', mode='r') as f:
-            db.cursor().executescript(f.read())
-        db.commit()
+def query_db(query, args=(), one=False):
+    cur = get_db().execute(query, args)
+    rv = cur.fetchall()
+    cur.close()
+    return (rv[0] if rv else None) if one else rv
+
+@app.route('/investigators/<id>')
+def get_investigator(id):
+    return render_template('investigators.html', 
+        investigators=query_db("select * from investigators where id = {}".format(id)),
+        title="Investigators")
+
+# TODO Custom html
+#@app.errorhandler(404)
+#def page_not_found(e):
+#    return render_template('404.html'), 404
 
 @app.teardown_appcontext
 def close_connection(exception):

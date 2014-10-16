@@ -1,0 +1,10 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+{% block body %}
+{% for person in investigators %}
+<p>
+    {{ person.id }} : <b>{{ person.primaryInvestigator }}</b>
+</p>
+{% endfor %}
+{% endblock %}
+         
