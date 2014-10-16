@@ -134,6 +134,7 @@ var obj_query = SpahQL.db(obj_cache);
 // Used in selecting objects
 var selected = [];
 var selecting = true;
+var cancel_selection = false;
 
 // Contains all active filters
 var filters = {};
@@ -193,7 +194,7 @@ function getJSONData() {
               // If it doesnt, add the button
               var project = obj.data.project;
               if(!surveys[project]) {
-                var button = $('<button id="project_'+project+'" href=\'[/data/project!="'+project+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+project+'</button>');
+                var button = $('<button id="project_'+project+'" title="Filter by survey" href=\'[/data/project!="'+project+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+project+'</button>');
                 $('#survey-name-filter').append(button);
                 surveys[project] = {};
               }
@@ -201,7 +202,7 @@ function getJSONData() {
               // If it doesnt, add the button
               var creator = obj.data.creator;
               if(!creators[creator]) {
-              var button = $('<button id="creator_'+creator+'" href=\'[/data/creator!="'+creator+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+creator+'</button>');
+              var button = $('<button id="creator_'+creator+'" title="Filter by creator" href=\'[/data/creator!="'+creator+'"]\' type="button" class="simple-filter-button btn active" data-toggle="button">'+creator+'</button>');
               $('#survey-creator-filter').append(button);
               creators[creator] = {};
               }
@@ -231,9 +232,6 @@ function getJSONData() {
                                                   },
                                                   start: [ minDate, maxDate ]
                                                   }, true);
-              
-              // apply the tab filter. "only get results that have a visible overlay".
-              setFilter('[/footprints/*/overlay/isShowing }~{ {true}]', 'tab_filter');
               
               // apply changes
               applyFilters();
@@ -341,6 +339,13 @@ aladin.on('select', function(selection) {
                 hidePoint(obj_cache[i]);
           }
           
+          // To stop the selection code from running when
+          // the selection is cancelled by clicking on filters
+          if(cancel_selection) {
+            cancel_selection = false;
+            return;
+          }
+          
           // Iterates through selection, either
           // selecting or deselecting points
           for(var i = 0; i < selection.length; i++) {
@@ -405,9 +410,10 @@ function refreshParameterDisplay() {
          */
         var QCStatus = {};
         var scopes = {};
+        var link_to_json = '/sb/';
         for (var i = 0; i < objects.length; i++) {
             
-            var obj = objects[0];
+            var obj = objects[i];
             var currentQCStatus = obj.data.ESO.observationBlock.currentQCStatus;
             var telescope = obj.data.ESO.observationBlock.telescope;
             
@@ -420,6 +426,8 @@ function refreshParameterDisplay() {
                 scopes[telescope] = 0;
             }
             scopes[telescope] += 1;
+            
+            link_to_json += obj.data.id + '+';
         }
         
         // create string to display
@@ -437,7 +445,7 @@ function refreshParameterDisplay() {
         /*
          *  Display information
          */
-        display.append('<p>Count: ' + objects.length + '</p>');
+        display.append('<p>Count: <a href="' + link_to_json + '">' + objects.length + '</a></p>');
         display.append('<p>Telescope(s):</p>');
         display.append(scopesString);
         display.append('<p>QC Status:</p>');
@@ -481,6 +489,7 @@ function showObject(o) {
     
     var fps = o.footprints;
     for(var i=0; i < fps.length; i++) {
+        // shows only footprints belonging to visible overlays
         if(fps[i].overlay.isShowing) {
             fps[i].show();
         }
@@ -734,7 +743,7 @@ function createNewTabUsingSelection() {
         
     }
     
-    var button = $('<button type="button" class="layer-tab btn active" data-toggle="button">'+(overlayIndex+1)+'  <span class="glyphicon glyphicon-remove"></span></button>');
+    var button = $('<span type="button" title="Toggle tab" class="layer-tab btn active" data-toggle="button">'+(overlayIndex+1)+'  <span title="Remove Tab" class="glyphicon glyphicon-remove"></span></span>');
     button.css('background-color', overlayColor);
     button.css('border-color', overlayColor);
     //button.draggable({cancel:false, axis:"x"});
@@ -803,7 +812,7 @@ function updateTabs() {
     $('#layer-tabs .layer-tab').each( function(i) {
                          
                          if(i > 0) {
-                         $(this).html(i+1 + '  <span class="glyphicon glyphicon-remove"></span>');
+                         $(this).html(i+1 + '  <span title="Remove Tab" class="glyphicon glyphicon-remove"></span>');
                          }
                          
                          });
@@ -911,6 +920,7 @@ $(function() {
    */
   $('#filter-ui').click(function(e) {
                                     e.preventDefault();
+                                    cancel_selection = true;    // to cancel the selection code when run
                                     aladin.fire('selectend');
                                     });
   
@@ -923,6 +933,16 @@ $(function() {
                            e.preventDefault();
                            var url = $(this).attr('href');
                          
+                                    var icon = $(this).children( ".glyphicon" );
+                                    if(icon.is('.glyphicon-chevron-down')) {
+                                    icon.removeClass('glyphicon-chevron-down');
+                                    icon.addClass('glyphicon-chevron-up');
+                                    }
+                                    else {
+                                    icon.removeClass('glyphicon-chevron-up');
+                                    icon.addClass('glyphicon-chevron-down');
+                                    }
+                                    
                             var filters = $('#filter-ui #' + url);
                             filters.toggle();
                            });
@@ -935,7 +955,6 @@ $(function() {
   $('#layer-tabs').on('click', '.layer-tab', function(e) {
                         e.preventDefault();
                         $(this).blur();
-                      
                         var index = $('#layer-tabs .layer-tab').index($(this));
                         if($(this).is('.active')) {
                             $(this).addClass('inactive');
@@ -954,7 +973,7 @@ $(function() {
    *    When the 'X' on a tab is clicked, the
    *    tab and overlay is removed.
    */
-  $('#layer-tabs').on('click', '.glyphicon-remove', function(e) {
+  $('#layer-tabs').on('click', '.layer-tab .glyphicon-remove', function(e) {
                       e.stopPropagation();
                       
                       var tab = $(this).parent();

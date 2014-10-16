@@ -41,8 +41,8 @@
         <!-- The main navbar -->
         <div id="main-navbar">
             <a class="navbar-header" href="/">Rasvamt</a>
-            <a class="navbar-item" href="/file/about.html">About</a>
-            <a class="navbar-item" id="play-tour" role="button" href="#">Tour</a>
+            <a class="navbar-item" title="About page" href="/file/about.html">About</a>
+            <a class="navbar-item" title="Take a tour of RASVAMT" id="play-tour" role="button" href="#">Tour</a>
         </div>
         
         <!-- The Filtering box -->
@@ -50,8 +50,8 @@
             
             <!-- Title example -->
             <div id="layer-tabs">
-                <button id="tab_0" title="Toggle the surveys associated with this tab" type="button" class="layer-tab btn active" data-toggle="button">1</button>
-                <button id="add-tab" title="Add a new tab" type="button" class="btn" data-toggle="button"><span class="glyphicon glyphicon-plus"></span></button>
+                <span id="tab_0" title="Toggle the surveys associated with this tab" type="button" class="layer-tab btn active" data-toggle="button">1</span>
+                <span id="add-tab" title="Add a new tab" type="button" class="btn" data-toggle="button"><span class="glyphicon glyphicon-plus"></span></span>
             </div>
             
             <div id="filter-container">
@@ -59,20 +59,21 @@
                 <!-- Survey name filter -->
                 <div class="well-title" href="tab-options-filter">
                     <span>TAB OPTIONS</span>
+                    <span class="glyphicon glyphicon-chevron-down"></span>
                 </div>
                 
                 <!-- these buttons are generated automatically based on the JSON files -->
                 <span id="tab-options-filter">
                     <div id="tab-options-filter-options">
-                        <button color-str="#1f79a3" style="background-color:#1f79a3;border-color:#1f79a3" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></button>
-                        <button color-str="#A94848" style="background-color:#A94848;border-color:#A94848" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></button>
-                        <button color-str="#48A94D" style="background-color:#48A94D;border-color:#48A94D" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></button>
-                        <button color-str="#6448A9" style="background-color:#6448A9;border-color:#6448A9" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></button>
-                        <button color-str="#A3A948" style="background-color:#A3A948;border-color:#A3A948" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></button>
-                        <button id="tab-colour-button-random" title="Change the Active Tab to a Random Colour" type="button" class="btn" data-toggle="button"><span class="glyphicon glyphicon-question-sign"></span></button>
+                        <span color-str="#1f79a3" style="background-color:#1f79a3;border-color:#1f79a3" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></span>
+                        <span color-str="#A94848" style="background-color:#A94848;border-color:#A94848" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></span>
+                        <span color-str="#48A94D" style="background-color:#48A94D;border-color:#48A94D" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></span>
+                        <span color-str="#6448A9" style="background-color:#6448A9;border-color:#6448A9" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></span>
+                        <span color-str="#A3A948" style="background-color:#A3A948;border-color:#A3A948" title="Change the Active Tab to this Colour" type="button" class="tab-colour-button btn active" data-toggle="button"></span>
+                        <span id="tab-colour-button-random" title="Change the Active Tab to a Random Colour" type="button" class="btn" data-toggle="button"><span class="glyphicon glyphicon-question-sign"></span></span>
                         
-                        <button id="move-tab-left" title="Move Tab position left" type="button" class="move-tab-button btn" data-toggle="button"><span class="glyphicon glyphicon-chevron-left"></span></button>
-                        <button id="move-tab-right" title="Move Tab position right" type="button" class="move-tab-button btn" data-toggle="button"><span class="glyphicon glyphicon-chevron-right"></span></button>
+                        <span id="move-tab-left" title="Move Tab position left" type="button" class="move-tab-button btn" data-toggle="button"><span class="glyphicon glyphicon-chevron-left"></span></span>
+                        <span id="move-tab-right" title="Move Tab position right" type="button" class="move-tab-button btn" data-toggle="button"><span class="glyphicon glyphicon-chevron-right"></span></span>
                     </div>
                     <div id="tab-options-filter-message">
                         <p>(Please select a single tab to modify)</p>
@@ -82,6 +83,7 @@
                 <!-- Survey name filter -->
                 <div class="well-title" href="survey-name-filter">
                     <span>SURVEYS</span>
+                    <span class="glyphicon glyphicon-chevron-down"></span>
                 </div>
                 
                 <!-- these buttons are generated automatically based on the JSON files -->
@@ -92,6 +94,7 @@
                 <!-- Survey date filter -->
                 <div class="well-title" href="survey-date-filter">
                     <span>DATE FILTERING</span>
+                    <span class="glyphicon glyphicon-chevron-down"></span>
                 </div>
                 
                 <!-- Survey date filter -->
@@ -106,19 +109,21 @@
                 <!-- Survey status filter -->
                 <div class="well-title" href="survey-status-filter">
                     <span>STATUS FILTERING</span>
+                    <span class="glyphicon glyphicon-chevron-down"></span>
                 </div>
                 
                 <!-- Survey status filter -->
                 <span id="survey-status-filter">
-                    <button id="status_1" href='[/data/status!="PLANNED"]' type="button" class="simple-filter-button btn active" data-toggle="button">PLANNED</button>
-                    <button id="status_2" href='[/data/status!="OBSERVED"]' type="button" class="simple-filter-button btn active" data-toggle="button">OBSERVED</button>
-                    <button id="status_3" href='[/data/status!="QUALITY CONTROL"]' type="button" class="simple-filter-button btn active" data-toggle="button">QUALITY CONTROL</button>
-                    <button id="status_4" href='[/data/status!="PROCESSED"]' type="button" class="simple-filter-button btn active" data-toggle="button">PROCESSED</button>
+                    <button id="status_1" title="Filter by status" href='[/data/status!="PLANNED"]' type="button" class="simple-filter-button btn active" data-toggle="button">PLANNED</button>
+                    <button id="status_2" title="Filter by status" href='[/data/status!="OBSERVED"]' type="button" class="simple-filter-button btn active" data-toggle="button">OBSERVED</button>
+                    <button id="status_3" title="Filter by status" href='[/data/status!="QUALITY CONTROL"]' type="button" class="simple-filter-button btn active" data-toggle="button">QUALITY CONTROL</button>
+                    <button id="status_4" title="Filter by status" href='[/data/status!="PROCESSED"]' type="button" class="simple-filter-button btn active" data-toggle="button">PROCESSED</button>
                 </span>
                 
                 <!-- Survey organization filter -->
                 <div class="well-title" href="survey-creator-filter">
                     <span>CREATOR</span>
+                    <span class="glyphicon glyphicon-chevron-down"></span>
                 </div>
                 
                 <!-- Survey organization filter -->
@@ -129,12 +134,13 @@
                 <!-- Survey selection tool -->
                 <div class="well-title" href="survey-selection-tool">
                     <span>SELECT SURVEYS</span>
+                    <span class="glyphicon glyphicon-chevron-down"></span>
                 </div>
                 
                 <!-- Survey selection tool -->
                 <span id="survey-selection-tool">
-                    <button id="selection-tool" title="Select surveys to display statistics, right mouse click and drag" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-screenshot"></span></button>
-                    <button id="deselection-tool" title="Use mouse to drag and deselect surveys" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-minus"></span></button>
+                    <button id="selection-tool" title="Select surveys to display statistics" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-screenshot"></span></button>
+                    <button id="deselection-tool" title="Deselect surveys" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-minus"></span></button>
                     <button id="all-selection-tool" title="Selects all surveys" class="btn" type="button" class="btn"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
                     <button id="clear-selection-tool" title="Clears selection" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-ban-circle"></span></button>
                     <button id="add-selection-tool" title="Adds selection to all active tabs" class="btn" type="button" class="btn"><span class="glyphicon glyphicon-arrow-up"></span></button>
