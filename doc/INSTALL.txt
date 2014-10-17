@@ -1,17 +1,16 @@
 Installation Instructions
-========================
+=========================
 
-There are two type of installations feasible, the simplest is a local installation.
-The local installation is for those investigating the functionality of RASVAMA.
-The second type creates a cloud instance using Amazon Web Services, this is used by ICRAR to host other software.
+i.	Essential requirements
+==============================
+1. python 2.7			(https://wiki.python.org/moin/BeginnersGuide/Download)
+2. Mac or Linux 		(Does not work on windows OS)
+3. pip (optional) 		(https://pip.pypa.io/en/latest/installing.html)
+4. virtualenv (optional) 	(http://virtualenv.readthedocs.org/en/latest/virtualenv.html#installation)
+5. python package flask 	(http://flask.pocoo.org/docs/0.10/installation/)
 
-The requirements for a local installation are python2.7 and the python package flask.
-Some additional packages make life much easier pip ( python package management ) and virtualenv ( keeps env the same for build/ not necessary ).
-NOTE: Most of the build was created using mac and linux.
-	- Python and it's packages struggle with windows but maybe try using cygwin
-
-
-[LOCAL INSTALLATION]
+ii.	Local Installation
+==========================
 1. Check you have python version 2.7 ( attempt to run python2.7 /bin/python2.7 )
 2. Get the Flask package. 
 	- Either use *<sudo> pip install Flask *You may have to use sudo
@@ -19,70 +18,14 @@ NOTE: Most of the build was created using mac and linux.
 3. Run RASVAMA.sh -l or in src dir run python main.py 
 4. Visit localhost:5000 or 127.0.0.1:5000
 
-[Full deploy using AWS]
-A full deployment uses amazon web services (AWS) to create a cloud deployment.
-It relies on a few extra packages to do this.
-1. Get the python package fabric ( pip install fabric )
-	- or visit http://www.fabfile.org/
-	- Fabric is a ssh command line utility and allows us to easily set up our deployment
-2. Get the python package boto:
-	- Boto essentially allows you to connect and run stuff with AWS
-3. Set up AWS essentials:
-	- First you’ll need an AWS account( https://aws.amazon.com/ )
-	- Need a secret/key pair called RASVAMT.pem (http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html ) 
-	- Need secrurity group RASVAMT (http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html)
-	- Need IAM ( your AWS access key and AWS secret key and this to home directory in file called .boto)
-	- See AWS Installation for more advice
-4. Run RASVAMA.sh
-	or 
-	fab test_deploy in src directory 
-
-ii. 
-
-Testing
-=======
+iii. Testing
+============
 Tests for flask and  database are run automatically during deploy, but can test if server is deployed with `python liveserver_flask.py`.
 Automated frontend tests can also be run using the selenium script (automated_frontend.py) in the testing directory, however this does require the selenium python package
 
-iii.	Login name and passwords
-
+iv.	Login name and passwords
+================================
 aws_access_key_id = YOURACCESSKEY
 aws_secret_access_key = YOURSECRETKEY
-
-
-iv.	Other essential requirements
-
-1. python 2.7			(https://wiki.python.org/moin/BeginnersGuide/Download)
-2. Mac or Linux 		(Does not work on windows OS)
-3. pip (optional) 		(https://pip.pypa.io/en/latest/installing.html)
-4. virtualenv (optional) 	(http://virtualenv.readthedocs.org/en/latest/virtualenv.html#installation)
-5. python package flask 	(http://flask.pocoo.org/docs/0.10/installation/)
-
-
-
-AWS installation
-================
-If logged in go to aws https://console.aws.amazon.com/iam/home?#users 
-Create new key and download credentials
-Create group adminsitrator
-Add user to group
-Configuring Boto Credentials
-http://boto.readthedocs.org/en/latest/boto_config_tut.html
-Create instance
-download security key
-make sure add http to security rules
-Next you will need a security key-pair which matches the US region east and a security group
-called RASVAMT.pem maybe you might get that off him
-cp this key into ~/.ssh/
-
-You may also need github ssh keys 
-https://help.github.com/articles/generating-ssh-keys
-
-
-
-	- Need a secret/key pair called RASVAMT.pem
-	- Need secrurity group RASVAMT
-
-
 
 
