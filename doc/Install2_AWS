@@ -14,7 +14,8 @@ i.	Essential requirements
 5. python package flask 	(http://flask.pocoo.org/docs/0.10/installation/)
 
 
-[Full deploy using AWS]
+ii.	Full deploy using AWS
+==============================
 A full deployment uses amazon web services (AWS) to create a cloud deployment.
 It relies on a few extra packages to do this.
 1. Get the python package fabric ( pip install fabric )
@@ -32,8 +33,8 @@ It relies on a few extra packages to do this.
 	or 
 	fab test_deploy in src directory 
 
-AWS installation
-================
+iii.	AWS installation
+========================
 If logged in go to aws https://console.aws.amazon.com/iam/home?#users 
 Create new key and download credentials
 Create group adminsitrator
@@ -52,3 +53,10 @@ https://help.github.com/articles/generating-ssh-keys
 
 - Need a secret/key pair called RASVAMT.pem
 - Need secrurity group RASVAMT
+
+
+iv.	Boto Credentials File(~/.boto)
+=====================================
+[Credentials]
+aws_access_key_id = YOURACCESSKEY
+aws_secret_access_key = YOURSECRETKEY
