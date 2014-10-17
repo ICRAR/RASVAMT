@@ -55,5 +55,5 @@ fab [(operation)|update|deploy] -i identity_file -H host
 To get a full list of all operations run:
 fab -l
 
-Or else can ssh into ec2 instance
+Or to ssh into ec2 instance
 ssh -i identity_file  user@host
