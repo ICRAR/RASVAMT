@@ -4,7 +4,7 @@ Installation Instructions
 i.	Essential requirements
 ==============================
 1. python 2.7			(https://wiki.python.org/moin/BeginnersGuide/Download)
-2. Mac or Linux 		(Does not work on windows OS)
+2. Mac or Linux 		(Works less than on optimal on Windows)
 3. pip (optional) 		(https://pip.pypa.io/en/latest/installing.html)
 4. virtualenv (optional) 	(http://virtualenv.readthedocs.org/en/latest/virtualenv.html#installation)
 5. python package flask 	(http://flask.pocoo.org/docs/0.10/installation/)
@@ -22,10 +22,5 @@ iii. Testing
 ============
 Tests for flask and  database are run automatically during deploy, but can test if server is deployed with `python liveserver_flask.py`.
 Automated frontend tests can also be run using the selenium script (automated_frontend.py) in the testing directory, however this does require the selenium python package
-
-iv.	Login name and passwords
-================================
-aws_access_key_id = YOURACCESSKEY
-aws_secret_access_key = YOURSECRETKEY
 
 
