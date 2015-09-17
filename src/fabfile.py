@@ -31,9 +31,9 @@ fab -u `whoami` -H <IP address> -f machine-setup/deploy.py user_deploy
 #TODO:
 # 1 : Data base problem
 # 2 : Supervisor 
-import glob
+import glob, inspect
 
-import boto
+import boto, boto.ec2
 import os
 import time
 import flask_test
@@ -47,6 +47,8 @@ from fabric.operations import prompt
 from fabric.network import ssh
 from fabric.utils import puts, abort, fastprint
 from fabric.colors import *
+from fabric.exceptions import NetworkError
+
 try:
     import urllib2
 except:
@@ -57,21 +59,31 @@ thisDir = os.path.dirname(os.path.realpath(__file__))
 
 USERNAME = 'ec2-user'
 POSTFIX = False
+BRANCH = 'master'    # this is controlling which branch is used in git clone
 
 # The AMI Ids are correct for the US-EAST1 region
 AMI_IDs = {'New':'ami-7c807d14', 'CentOS':'ami-aecd60c7', 'SLES':'ami-e8084981'}
 # Probably want to change region for us to ap-southeast-2
 SYD_AMI_IDs = {'New':'ami-d9fe9be3','CentOS':'ami-5d254067','SLES':'ami-3760040d'}
-AMI_ID = AMI_IDs['New']
+
+#### This should be replaced by another key and security group
+AWS_REGION = 'us-east-1'
+AWS_PROFILE = 'NGAS'
+KEY_NAME = 'icrar_ngas'
+AWS_KEY = os.path.expanduser('~/.ssh/{0}.pem'.format(KEY_NAME))
+AWS_SEC_GROUP = 'NGAS' # Security group allows SSH and other ports
+
+AMI_NAME = 'New'
+AMI_ID = AMI_IDs[AMI_NAME]
 INSTANCE_NAME = 'RASVAMT'
 INSTANCE_TYPE = 't1.micro'
 INSTANCES_FILE = os.path.expanduser('~/.aws/aws_instances')
 
 #### This should be replaced by another key and security group
-AWS_KEY = os.path.expanduser('~/.ssh/RASVAMT.pem')
-KEY_NAME = 'RASVAMT'
+AWS_KEY = os.path.expanduser('~/.ssh/icrar_ngas.pem')
+KEY_NAME = 'icrar_ngas'
 #SECURITY_GROUPS = {'RASVAMT':'Allows ssh with RASVAMT'} # Security group allows SSH and other ports
-SECURITY_GROUPS = ['RASVAMT']
+SECURITY_GROUPS = ['NGAS']
 ####
 ELASTIC_IP = 'False'
 APP_PYTHON_VERSION = '2.7'
@@ -129,6 +141,126 @@ PUBLIC_KEYS = os.path.expanduser('~/.ssh')
 # WEB_HOST = 0
 # UPLOAD_HOST = 1
 # DOWNLOAD_HOST = 2
+
+@task
+def connect():
+    puts(blue("\n***** Entering task {0} *****\n".format(inspect.stack()[0][3])))
+    if not env.has_key('AWS_PROFILE') or not env.AWS_PROFILE:
+        env.AWS_PROFILE = AWS_PROFILE
+    if not env.has_key('key_filename') or not env.key_filename:
+        env.key_filename = AWS_KEY
+
+    conn = boto.ec2.connect_to_region(AWS_REGION, profile_name=env.AWS_PROFILE)
+    return conn
+
+@task
+def aws_create_key_pair():
+    """
+    Create the AWS_KEY if it does not exist already and copies it into ~/.ssh
+    """
+    puts(blue("\n***** Entering task {0} *****\n".format(inspect.stack()[0][3])))
+    if not env.has_key('AWS_PROFILE') or not env.AWS_PROFILE:
+        env.AWS_PROFILE = AWS_PROFILE
+    conn = boto.ec2.connect_to_region(AWS_REGION, profile_name=env.AWS_PROFILE)
+    kp = conn.get_key_pair(KEY_NAME)
+    if not kp: # key does not exist on AWS
+        kp = conn.create_key_pair(KEY_NAME)
+        puts(green("\n******** KEY_PAIR created!********\n"))
+        if os.path.exists(os.path.expanduser(AWS_KEY)):
+            os.unlink(AWS_KEY)
+        kp.save('~/.ssh/')
+        Rkey = RSA.importKey(kp.material)
+        env.SSH_PUBLIC_KEY = Rkey.exportKey('OpenSSH')
+        puts(green("\n******** KEY_PAIR written!********\n"))
+    else:
+        puts(green('***** KEY_PAIR exists! *******'))
+
+    if not os.path.exists(os.path.expanduser(AWS_KEY)): # don't have the private key
+        if not kp:
+            kp = conn.get_key_pair(KEY_NAME)
+        puts(green("\n******** KEY_PAIR retrieved********\n"))
+        Rkey = RSA.importKey(kp.material)
+        env.SSH_PUBLIC_KEY = Rkey.exportKey('OpenSSH')
+        kp.save('~/.ssh/')
+        puts(green("\n******** KEY_PAIR written!********\n"))
+    puts(green("\n******** Task {0} finished!********\n".\
+        format(inspect.stack()[0][3])))
+    conn.close()
+    return
+
+
+def check_create_aws_sec_group():
+    """
+    Check whether default security group exists
+    """
+    puts(blue("\n***** Entering task {0} *****\n".format(inspect.stack()[0][3])))
+    conn = connect()
+    sec = conn.get_all_security_groups()
+    conn.close()
+    if map(lambda x:x.name.upper(), sec).count(AWS_SEC_GROUP):
+        puts(green("\n******** Group {0} exists!********\n".format(AWS_SEC_GROUP)))
+        return True
+    else:
+        ngassg = conn.create_security_group(AWS_SEC_GROUP, 'NGAS default permissions')
+        ngassg.authorize('tcp', 22, 22, '0.0.0.0/0')
+        ngassg.authorize('tcp', 80, 80, '0.0.0.0/0')
+        ngassg.authorize('tcp', 5678, 5678, '0.0.0.0/0')
+        ngassg.authorize('tcp', 7777, 7777, '0.0.0.0/0')
+        ngassg.authorize('tcp', 8888, 8888, '0.0.0.0/0')
+        return False
+    puts(green("\n******** Task {0} finished!********\n".\
+        format(inspect.stack()[0][3])))
+
+@task
+def whatsmyip():
+    """
+    Returns the external IP address of the host running fab.
+
+    NOTE: This is only used for EC2 setups, thus it is assumed
+    that the host is on-line.
+    """
+    puts(blue("\n***** Entering task {0} *****\n".format(inspect.stack()[0][3])))
+    whatismyip = 'http://bot.whatismyipaddress.com/'
+    try:
+        myip = urllib.urlopen(whatismyip).readlines()[0]
+    except:
+        puts(red('Unable to derive IP through {0}'.format(whatismyip)))
+        myip = '127.0.0.1'
+    puts(green('IpAddress = "{0}"'.format(myip)))
+
+    return myip
+
+
+@task
+def check_ssh():
+    """
+    Check availability of SSH on HOST
+    """
+    puts(blue("\n***** Entering task {0} *****\n".format(inspect.stack()[0][3])))
+
+    if not env.has_key('key_filename') or not env.key_filename:
+        env.key_filename = AWS_KEY
+    else:
+        puts(red("SSH key_filename: {0}".format(env.key_filename)))
+    if not env.has_key('user') or not env.user:
+        env.user = USERNAME
+    else:
+        puts(red("SSH user name: {0}".format(env.user)))
+
+    ssh_available = False
+    ntries = 10
+    tries = 0
+    t_sleep = 30
+    while tries < ntries and not ssh_available:
+        try:
+            run("echo 'Is SSH working?'", combine_stderr=True)
+            ssh_available = True
+            puts(green("SSH is working!"))
+        except NetworkError:
+            puts(red("SSH is NOT working after {0} seconds!".format(str(tries*t_sleep))))
+            tries += 1
+            time.sleep(t_sleep)
+
 
 @task
 def set_env():
@@ -218,18 +350,13 @@ def create_instance(names, use_elastic_ip, public_ips):
     :rtype: string
     :return: The public host name of the AWS instance
     """
-
     puts('Creating instances {0} [{1}:{2}]'.format(names, use_elastic_ip, public_ips))
     number_instances = len(names)
     if number_instances != len(public_ips):
         abort('The lists do not match in length')
 
     # This relies on a ~/.boto file holding the '<aws access key>', '<aws secret key>'
-    conn = boto.connect_ec2()
-    
-#    for sec,desc in SECURITY_GROUPS.iteritems():
-#        if sec not in conn.get_all_security_groups():
-#            conn.create_security_group(sec,desc).authorize('tcp', 80, 80, '0.0.0.0/0')
+    conn = boto.ec2.connect_to_region(AWS_REGION, profile_name=env.AWS_PROFILE)
 
     if use_elastic_ip:
         # Disassociate the public IP
@@ -237,7 +364,9 @@ def create_instance(names, use_elastic_ip, public_ips):
             if not conn.disassociate_address(public_ip=public_ip):
                 abort('Could not disassociate the IP {0}'.format(public_ip))
 
-    reservations = conn.run_instances(AMI_ID, instance_type=INSTANCE_TYPE, key_name=KEY_NAME, security_groups=SECURITY_GROUPS, min_count=number_instances, max_count=number_instances)
+    reservations = conn.run_instances(AMI_IDs[env.AMI_NAME], instance_type=INSTANCE_TYPE, \
+                                    key_name=KEY_NAME, security_groups=[AWS_SEC_GROUP],\
+                                    min_count=number_instances, max_count=number_instances)
     instances = reservations.instances
     # Sleep so Amazon recognizes the new instance
     for i in range(4):
@@ -245,20 +374,29 @@ def create_instance(names, use_elastic_ip, public_ips):
         time.sleep(5)
 
     # Are we running yet?
+    iid = []
     for i in range(number_instances):
-        while not instances[i].update() == 'running':
-            fastprint('.')
-            time.sleep(5)
+        iid.append(instances[i].id)
 
-    # Sleep a bit more Amazon recognizes the new instance
-    for i in range(4):
+    stat = conn.get_all_instance_status(iid)
+    running = [x.state_name=='running' for x in stat]
+    puts('\nWaiting for instances to be fully available:\n')
+    while sum(running) != number_instances:
         fastprint('.')
         time.sleep(5)
-    puts('.')
+        stat = conn.get_all_instance_status(iid)
+        running = [x.state_name=='running' for x in stat]
+    puts('.') #enforce the line-end
+
+    # Local user and host
+    userAThost = os.environ['USER'] + '@' + whatsmyip()
 
     # Tag the instance
     for i in range(number_instances):
-        conn.create_tags([instances[i].id], {'Name': names[i]})
+        conn.create_tags([instances[i].id], {'Name': names[i],
+                                             'Created By':userAThost,
+                                             })
+
 
     # Associate the IP if needed
     if use_elastic_ip:
@@ -267,29 +405,27 @@ def create_instance(names, use_elastic_ip, public_ips):
             if not conn.associate_address(instance_id=instances[i].id, public_ip=public_ips[i]):
                 abort('Could not associate the IP {0} to the instance {1}'.format(public_ips[i], instances[i].id))
 
-    # Give AWS time to switch everything over
-    time.sleep(10)
-
     # Load the new instance data as the dns_name may have changed
     host_names = []
     for i in range(number_instances):
         instances[i].update(True)
         puts('Current DNS name is {0} after associating the Elastic IP'.format(instances[i].dns_name))
+        puts('Instance ID is {0}'.format(instances[i].id))
+        print blue('In order to terminate this instance you can call:')
+        print blue('fab terminate:instance_id={0}'.format(instances[i].id))
         host_names.append(str(instances[i].dns_name))
-
 
     # The instance is started, but not useable (yet)
     puts('Started the instance(s) now waiting for the SSH daemon to start.')
-    for i in range(12):
-        fastprint('.')
-        time.sleep(5)
-    puts('.')
-    
-    #Keep track of hosts
-    with open(HOSTS_FILE,'a') as hostfile:
-        for name in host_names:
-            hostfile.write(name+"\n")
+    env.host_string = host_names[0]
+
+    if env.AMI_NAME in ['CentOS', 'SLES']:
+        env.user = 'root'
+    else:
+        env.user = USERNAME
+    check_ssh()
     return host_names
+
 
 @task
 def get_linux_flavor():
@@ -461,10 +597,10 @@ def git_clone():
     copy_public_keys()
     with cd(env.APP_DIR_ABS):
         try:
-            sudo('git clone https://{1}.git'.format(env.GITUSER, env.GITREPO))
+            run('git clone https://{1}.git'.format(env.GITUSER, env.GITREPO))
         except:
             gituser = raw_input("Enter git user name")
-            sudo('git clone https://{1}.git'.format(gituser,env.GITREPO))
+            run('git clone https://{1}.git'.format(gituser,env.GITREPO))
 
     print(green("Clone complete"))
 
@@ -475,7 +611,7 @@ def git_pull():
     """
     copy_public_keys()
     with cd(env.APP_DIR_ABS+'/RASVAMT'):
-        sudo('git pull')
+        run('git pull')
 
 @task
 def git_clone_tar():
@@ -720,16 +856,22 @@ def test_env():
 
     Allow the user to select if a Elastic IP address is to be used
     """
+    puts(blue("\n***** Entering task {0} *****\n".format(inspect.stack()[0][3])))
+    if not env.has_key('AWS_PROFILE') or not env.AWS_PROFILE:
+        env.AWS_PROFILE = AWS_PROFILE
+    if not env.has_key('BRANCH') or not env.BRANCH:
+        env.BRANCH = BRANCH
     if not env.has_key('instance_name') or not env.instance_name:
-        env.instance_name = INSTANCE_NAME
+        env.instance_name = INSTANCE_NAME.format(env.BRANCH)
     if not env.has_key('use_elastic_ip') or not env.use_elastic_ip:
         env.use_elastic_ip = ELASTIC_IP
     if not env.has_key('key_filename') or not env.key_filename:
         env.key_filename = AWS_KEY
-    if not env.has_key('ami_name') or not env.ami_name:
-        env.ami_name = 'CentOS'
-    env.AMI_ID = AMI_IDs[env.ami_name]
-    env.instance_name = INSTANCE_NAME
+    if not env.has_key('AMI_NAME') or not env.AMI_NAME:
+        env.AMI_NAME = AMI_NAME
+    env.instance_name = INSTANCE_NAME.format(env.BRANCH)
+    if not env.has_key('user') or not env.user:
+        env.user = USERNAME
     env.use_elastic_ip = ELASTIC_IP
     if 'use_elastic_ip' in env:
         use_elastic_ip = to_boolean(env.use_elastic_ip)
@@ -746,21 +888,25 @@ def test_env():
     if 'instance_name' not in env:
         prompt('AWS Instance name: ', 'instance_name')
 
+    if env.AMI_NAME in ['CentOS', 'SLES']:
+        env.user = 'root'
+    # Check and create the key_pair if necessary
+    aws_create_key_pair()
+    # Check and create security group if necessary
+    check_create_aws_sec_group()
     # Create the instance in AWS
     host_names = create_instance([env.instance_name], use_elastic_ip, [public_ip])
     env.hosts = host_names
     if not env.host_string:
         env.host_string = env.hosts[0]
-    env.user = USERNAME
-    if env.ami_name == 'SLES':
-        env.user = 'root'
 
     env.key_filename = AWS_KEY
     env.roledefs = {
         'rasvamtmgr' : host_names,
         'rasvamt' : host_names,
     }
-    print "\n\n******** EC2 ENVIRONMENT SETUP!********\n\n"
+    puts(green("\n******** EC2 INSTANCE SETUP COMPLETE!********\n"))
+
 
 @task
 def local_deploy():
@@ -799,21 +945,23 @@ def init_deploy():
     #check if git repo exists pull else clone
     print(red("Initialising deployment"))
     set_env()
-    if check_dir(env.APP_DIR_ABS+'/RASVAMT'):
-        git_pull()
-    else:
-        git_clone()
-    
-    sudo('mkdir /etc/supervisor/')
-    sudo('mkdir /etc/supervisor/conf.d/')
+    with settings(user=env.USERS[0]):
+        if check_dir(env.APP_DIR_ABS+'/RASVAMT'):
+            git_pull()
+        else:
+            git_clone()
+    sudo('mkdir -p /etc/supervisor/')
+    sudo('mkdir -p /etc/supervisor/conf.d/')
         
     #Having trouble with 
     with cd(env.APP_DIR_ABS+'/RASVAMT/src/'):
         sudo('cp nginx.conf /etc/nginx/')
         sudo('cp rasvama.conf /etc/supervisor/conf.d/')
-        virtualenv(run('python ../db/create_db.py'))
         sudo('chmod +x gunicorn_start')
 
+    with settings(user=env.USERS[0]):
+        virtualenv('cd RASVAMT/src; python {0}/create_db.py'.\
+               format('../db'))
 
     #check if nginx is running else
     sudo('service nginx start')
@@ -829,7 +977,7 @@ def deploy():
     env.user ='ec2-user'
     print(red("Beginning Deploy:"))
     #might need setenv 
-    create_db()
+    #create_db()
     #sudo(virtualenv('supervisorctl restart RASVAMT'))
     with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
         sudo('./gunicorn_start')
@@ -1023,3 +1171,19 @@ def uninstall_user():
 #            sudo('rm /etc/init.d/ngamsServer', warn_only=True)
     else:
         run('rm -rf {0}'.format(env.APP_DIR_ABS))
+
+@task
+def assign_ddns():
+    """
+    This task installs the noip ddns client to the specified host.
+    After the installation the configuration step is executed and that
+    requires some manual input. Then the noip2 client is started in background.
+    
+    NOTE: Obviously this should only be carried out for one NGAS deployment!!
+    """
+    sudo('yum-config-manager --enable epel')
+    sudo('yum install -y noip')
+    sudo('sudo noip2 -C')
+    sudo('chkconfig noip on')
+    sudo('service noip start')
+
