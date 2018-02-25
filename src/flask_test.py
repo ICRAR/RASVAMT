@@ -1,7 +1,7 @@
 import unittest
 from main import app
 from flask import url_for,jsonify
-from flask.ext.testing import TestCase
+from flask_testing import TestCase
 
 @app.route("/jsontest/")
 def json_tester():

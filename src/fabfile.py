@@ -30,7 +30,7 @@ fab -u `whoami` -H <IP address> -f machine-setup/deploy.py user_deploy
 """
 #TODO:
 # 1 : Data base problem
-# 2 : Supervisor 
+# 2 : Supervisor
 import glob, inspect
 
 import boto, boto.ec2
@@ -103,7 +103,7 @@ HOSTS_FILE = '../logs/hosts_file'
 #Keep log of process
 ssh.util.log_to_file('../logs/setup.log',10)
 
-#Check Boto 
+#Check Boto
 BOTO_CONFIG = os.path.expanduser('~/.boto')
 
 YUM_PACKAGES = [
@@ -117,6 +117,7 @@ YUM_PACKAGES = [
    'gcc',
    'patch',
    'nginx',
+   'libffi-devel',
 ]
 
 APT_PACKAGES = [
@@ -132,6 +133,7 @@ PIP_PACKAGES = [
         'fabric',
         'boto',
         'flask',
+        'flask-testing',
         'gunicorn',
         'pysendfile',
         'supervisor',
@@ -321,23 +323,23 @@ def set_env():
             """.\
             format(env.user, env.key_filename, env.hosts,
                    env.host_string, env.postfix, env.APP_DIR_ABS,
-                   env.APP_DIR, env.USERS, env.HOME, env.PREFIX, 
+                   env.APP_DIR, env.USERS, env.HOME, env.PREFIX,
                    env.src_dir))
 
 
 
 @task(alias='setup')
 def check_setup():
-    """ Check current user has everything required to deploy 
+    """ Check current user has everything required to deploy
 
-    Includes boto config/aws config 
+    Includes boto config/aws config
     Security keys, possibly check permissions
     """
     if not os.path.isfile(BOTO_CONFIG):
     	abort('Require boto config to create instance')
     #Check if user can import Flask
     #Check if user can import boto
-    
+
 
 @task
 def create_instance(names, use_elastic_ip, public_ips):
@@ -736,7 +738,7 @@ def postfix_config():
     smtp_sasl_security_options = noanonymous
     smtp_tls_CAfile = /etc/postfix/cacert.pem
     smtp_use_tls = yes
-    
+
     # smtp_generic_maps
     smtp_generic_maps = hash:/etc/postfix/generic
     default_destination_concurrency_limit = 1" >> /etc/postfix/main.cf''')
@@ -772,12 +774,12 @@ def user_setup():
         sudo('chown {0}:{1} /home/{0}/.ssh/authorized_keys'.format(user, GROUP))
     #change to allow group permissions to acces home
         #sudo('chmod g+rwx /home/{0}/'.format(user))
-        
+
     # create RASVAMT directories and chown to correct user and group
     sudo('mkdir -p {0}'.format(env.APP_DIR_ABS))
     # This not working for some reason
     sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
-    
+
     #These lines are unnecessary i think
     #sudo('mkdir -p {0}/../RASVAMT'.format(env.APP_DIR_ABS))
     #sudo('chown {0}:{1} {2}/../RASVAMT'.format(env.USERS[0], GROUP, env.APP_DIR_ABS))
@@ -936,12 +938,12 @@ def user_deploy():
 def init_deploy():
     """
     Install the init script for an operational deployment
-    Requires user with sudo access 
+    Requires user with sudo access
     """
-    #TODO:Sort out ec2-user into rasvamt group ? 
+    #TODO:Sort out ec2-user into rasvamt group ?
     if not env.has_key('APP_DIR_ABS') or not env.APP_DIR_ABS:
         env.APP_DIR_ABS = '{0}/{1}/'.format('/home/rasvamt', APP_DIR)
-    
+
     #check if git repo exists pull else clone
     print(red("Initialising deployment"))
     set_env()
@@ -952,8 +954,8 @@ def init_deploy():
             git_clone()
     sudo('mkdir -p /etc/supervisor/')
     sudo('mkdir -p /etc/supervisor/conf.d/')
-        
-    #Having trouble with 
+
+    #Having trouble with
     with cd(env.APP_DIR_ABS+'/RASVAMT/src/'):
         sudo('cp nginx.conf /etc/nginx/')
         sudo('cp rasvama.conf /etc/supervisor/conf.d/')
@@ -966,7 +968,7 @@ def init_deploy():
     #check if nginx is running else
     sudo('service nginx start')
     print(red("Server setup and ready to deploy"))
-    #Think we have 
+    #Think we have
 
 
 
@@ -976,7 +978,7 @@ def deploy():
     set_env()
     env.user ='ec2-user'
     print(red("Beginning Deploy:"))
-    #might need setenv 
+    #might need setenv
     #create_db()
     #sudo(virtualenv('supervisorctl restart RASVAMT'))
     with cd(env.APP_DIR_ABS+'/RASVAMT/src'):
@@ -1081,7 +1083,7 @@ def user_fix():
 def uninstall():
     """
     Uninstall RASVAMT, RASVAMT users and init script.
-    
+
     NOTE: This can only be used with a sudo user.
     """
     set_env()
@@ -1140,7 +1142,7 @@ def test_flask_app():
         result = local('python flask_test.py',capture=True)
         if result.failed and not confirm("Tests failed. Continue anyway?"):
             abort("Aborting at user request")
-    
+
 @task
 def test_front_end():
     """
@@ -1178,7 +1180,7 @@ def assign_ddns():
     This task installs the noip ddns client to the specified host.
     After the installation the configuration step is executed and that
     requires some manual input. Then the noip2 client is started in background.
-    
+
     NOTE: Obviously this should only be carried out for one NGAS deployment!!
     """
     sudo('yum-config-manager --enable epel')
@@ -1186,4 +1188,3 @@ def assign_ddns():
     sudo('sudo noip2 -C')
     sudo('chkconfig noip on')
     sudo('service noip start')
-
