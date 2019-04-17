@@ -137,6 +137,11 @@ env.pkgs = {
                     'wget',
                     ],
             'APP_EXTRA_PYTHON_PACKAGES': [
+                    'flask',
+                    'flask-testing',
+                    'gunicorn',
+                    'pysendfile',
+                    'supervisor',
                     'pycrypto',
                     'sphinx',
                     ],
@@ -145,25 +150,32 @@ env.pkgs = {
 # This dictionary defines the visible exported tasks.
 __all__ = [
     'sysinitstart_RASVAMT_and_check_status',
+    'start_unicorn',
+    'stop_gunicorn',
 ]
 
 # >>> The following lines need to be after the definitions above!!!
 
-from fabfileTemplate.utils import sudo, info, success, default_if_empty
+from fabfileTemplate.utils import run, sudo, info, success, default_if_empty
 from fabfileTemplate.system import check_command
 from fabfileTemplate.APPcommon import virtualenv, APP_doc_dependencies, APP_source_dir, APP_root_dir
 from fabfileTemplate.APPcommon import extra_python_packages, APP_user, build, APP_install_dir
 
-def APP_build_cmd():
 
-    build_cmd = []
+def APP_build_cmd():
 
     env.APP_INSTALL_DIR = os.path.abspath(os.path.join(home(), APP_INSTALL_DIR_NAME))
     env.APP_ROOT_DIR = os.path.abspath(os.path.join(home(), APP_ROOT_DIR_NAME))
     env.APP_SRC_DIR = os.path.abspath(os.path.join(home(), APP_SRC_DIR_NAME))
-    with settings(user=env.AWS_SUDO_USER):
-        with cd(env.APP_ROOT_DIR+'/RASVAMT/src'):
-            sudo('./gunicorn_start')
+
+    build_cmd = []
+
+    # create RASVAMT directories and chown to correct user and group
+    run('mkdir -p {0}'.format(env.APP_INSTALL_DIR))
+    # This not working for some reason
+    # sudo('chown -R {0}:{1} {2}'.format(env.USERS[0], GROUP, APP_INSTALL_DIR))
+
+    run('ln -s {0}/src {1}/src'.format(env.APP_SRC_DIR, env.APP_INSTALL_DIR))
  
     return ' '.join(build_cmd)
 
@@ -178,30 +190,23 @@ def install_sysv_init_script(nsd, nuser, cfgfile):
     """
     with settings(user=env.AWS_SUDO_USER):
 
-        #check if git repo exists pull else clone
         print(red("Initialising deployment"))
 
-        # with settings(user=env.USERS[0]):
-        #     if check_dir(env.APP_DIR_ABS+'/RASVAMT'):
-        #         git_pull()
-        #     else:
-        #         git_clone()
+        sudo('usermod -a -G {} ec2-user'.format(env.APP_USER))
         sudo('mkdir -p /etc/supervisor/')
         sudo('mkdir -p /etc/supervisor/conf.d/')
 
         sudo('cp {0}/fabfile/init/sysv/nginx.conf /etc/nginx/.'.
             format(APP_source_dir()))
-        # copy uwsgi nginx conf file
+        # copy nginx and supervisor conf files
         sudo('cp {0}/fabfile/init/sysv/rasvama.conf /etc/supervisor/conf.d/.'.
             format(APP_source_dir()))
-        with cd(env.APP_SRC_DIR):
-            sudo('chmod +x gunicorn_start')
 
+        # create the DB
         with settings(user=env.APP_USER):
             virtualenv('cd {0}/db; python create_db.py'.format(env.APP_SRC_DIR))
 
         #check if nginx is running else
-        sudo('service nginx start')
         print(red("Server setup and ready to deploy"))
         #Think we have
 
@@ -220,7 +225,13 @@ def sysinitstart_RASVAMT_and_check_status():
     #
     # Please replace following line with something meaningful
     # virtualenv('ngamsDaemon start -cfg {0} && sleep 2'.format(tgt_cfg))
+
+    env.APP_INSTALL_DIR = os.path.abspath(os.path.join(home(), APP_INSTALL_DIR_NAME))
+    env.APP_ROOT_DIR = os.path.abspath(os.path.join(home(), APP_ROOT_DIR_NAME))
+    env.APP_SRC_DIR = os.path.abspath(os.path.join(home(), APP_SRC_DIR_NAME))
+
     info('Start {0} and check'.format(APP))
+    start_unicorn()
     with settings(user=env.AWS_SUDO_USER):
         sudo('service nginx start')
     try:
@@ -232,6 +243,39 @@ def sysinitstart_RASVAMT_and_check_status():
     r = u.read()
     u.close()
     assert r.find('rasvamt-s-user-documentation') > -1, red("RASVAMT NOT running")
+
+@task
+def start_unicorn():
+    """
+    Starts the gunicorn daemon which in turn will be called by nginx.
+    """
+    HOME = home()
+    env.APP_INSTALL_DIR = os.path.abspath(os.path.join(HOME, APP_INSTALL_DIR_NAME))
+    env.APP_ROOT_DIR = os.path.abspath(os.path.join(HOME, APP_ROOT_DIR_NAME))
+    env.APP_SRC_DIR = os.path.abspath(os.path.join(HOME, APP_SRC_DIR_NAME))
+
+    NAME = "RASVAMT"
+    FLASKDIR = env.APP_INSTALL_DIR+'/src'
+    SOCKFILE = env.APP_INSTALL_DIR+'/sock'
+    PIDFILE = env.APP_INSTALL_DIR+'/gunicorn.pid'
+    USER = env.APP_USER
+    GROUP = env.APP_USER
+    NUM_WORKERS = '3'
+    with settings(user=env.APP_USER):
+        with cd(FLASKDIR):
+            run('{0}/bin/gunicorn main:app -b 127.0.0.1:5000 -D '.format(env.APP_INSTALL_DIR) +\
+                ' --name {0}'.format(NAME) + \
+                ' --user={0} --group={1}'.format(USER, GROUP) +\
+                ' --bind=unix:{0}'.format(SOCKFILE) +\
+                ' --workers={0}'.format(NUM_WORKERS) +\
+                ' --log-level=debug --pythonpath={0}'.format(FLASKDIR) +\
+                ' -p {0}'.format(PIDFILE)
+            )
+
+@task
+def unicorn():
+    with settings(user=env.APP_USER):
+        run('pkill gunicorn')
 
 def dummy():
     pass
