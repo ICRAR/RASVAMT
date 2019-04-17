@@ -278,6 +278,9 @@ def unicorn():
         run('pkill gunicorn')
 
 def dummy():
+    """
+    Don't remove this!!
+    """
     pass
 
 env.build_cmd = APP_build_cmd
