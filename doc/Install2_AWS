@@ -18,41 +18,31 @@ ii.	Full deploy using AWS
 ==============================
 A full deployment uses amazon web services (AWS) to create a cloud deployment.
 It relies on a few extra packages to do this.
-1. Get the python package fabric ( pip install fabric )
-	- or visit http://www.fabfile.org/
+1. Get the python package fabric3 ( pip install fabric3 )
 	- Fabric is a ssh command line utility and allows us to easily set up our deployment
-2. Get the python package boto:
+2. Get the python package boto (pip install boto):
 	- Boto essentially allows you to connect and run stuff with AWS
 3. Set up AWS essentials:
 	- First you’ll need an AWS account( https://aws.amazon.com/ )
-	- Need a secret/key pair called RASVAMT.pem (http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html ) 
-	- Need secrurity group RASVAMT (http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html)
 	- Need IAM ( your AWS access key and AWS secret key and this to home directory in file called .boto)
 	- See AWS Installation for more advice
-4. Run RASVAMA.sh
-	or 
-	fab test_deploy in src directory 
+4. run fab hl.aws_deploy in root directory of RASVAMT checkout
 
 iii.	AWS installation
 ========================
 If logged in go to aws https://console.aws.amazon.com/iam/home?#users 
 Create new key and download credentials
-Create group adminsitrator
+Create group administrator
 Add user to group
 Configuring Boto Credentials
 http://boto.readthedocs.org/en/latest/boto_config_tut.html
-Create instance
-download security key
-make sure add http to security rules
-Next you will need a security key-pair which matches the US region east and a security group
-called RASVAMT.pem maybe you might get that off him
-cp this key into ~/.ssh/
+Then run the command:
+fab hl.aws_deploy
+This will create a security group if non existent and also a key-pair. The key file icrar_rasvamt.pem will
+be copied into ~/.ssh/
 
 You may also need github ssh keys 
 https://help.github.com/articles/generating-ssh-keys
-
-- Need a secret/key pair called RASVAMT.pem
-- Need secrurity group RASVAMT
 
 
 iv.	Boto Credentials File(~/.boto)
