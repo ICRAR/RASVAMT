@@ -49,7 +49,7 @@ try:
     #Create tables may need multiple execute stmts
     cur.executescript(drop_db)
     #TODO load scehma from file
-    with open("db/schema.sql",'r') as dbschema:
+    with open("schema.sql",'r') as dbschema:
         cur.executescript(dbschema.read())
         conn.commit()
 
