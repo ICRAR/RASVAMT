@@ -6,5 +6,5 @@ Primarily the project has been created as an educational software development pr
 
 INSTALLATION
 ===========
-See install.txt file in doc foldler
+See install.txt file in doc folder
 
